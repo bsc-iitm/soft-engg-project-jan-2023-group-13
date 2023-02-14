@@ -13,9 +13,9 @@
 * *As a* student, 
  *I want to be able to* see the status of my ticket and updates made by the support team 
  *so that* I can stay updated on the progress of my concern or query.
-* *As a* student, 
+* ~~*As a* student, 
  *I want to be able to* communicate with the support team regarding my ticket through the system 
- *so that* I can get answers to my queries and concerns.
+ *so that* I can get answers to my queries and concerns.~~
 * *As a* student, 
  *I want to be able to* see a history of all my tickets and their status 
  *so that* I can keep track of my past concerns and queries.
@@ -31,12 +31,12 @@
 * *As a* support team member, 
  *I want to be able to* update the status of a support ticket 
  *so that* the student knows the progress of their concern or query.
-* *As a* support team member, 
+* ~~*As a* support team member, 
  *I want to be able to* communicate with the student regarding their ticket 
- *so that* I can provide answers to their queries and concerns.
-* *As a* support team member, 
+ *so that* I can provide answers to their queries and concerns.~~
+* ~~*As a* support team member, 
  *I want to be able to* categorize the support tickets 
- *so that* I can prioritize and respond to them in an organized manner.
+ *so that* I can prioritize and respond to them in an organized manner.~~
 * *As a* support team member, 
  *I want to be able to* see the history of a support ticket 
  *so that* I can understand the student's previous concerns and queries.
@@ -53,15 +53,7 @@
 * *As a*n administrator, 
  *I want to be able to* see the support tickets categorized by type 
  *so that* I can monitor the types of concerns and queries the students are facing.
-Tertiary User: IT department
 
-* *As a*n IT department member, 
- *I want to be able to* maintain the online support ticketing system 
- *so that* it runs smoothly and efficiently.
-* *As a*n IT department member, 
- *I want to be able to* provide technical support to the students and support team 
- *so that* they can use the system effectively.
- 
-* *As a*n IT department member, 
- *I want to be able to* ensure the security of the system 
- *so that* the students' personal and sensitive information is protected.
+* *As a*n administrator, 
+ *I want to be able to* add new tags
+ *so that* I can control the allowed types of tickets.
