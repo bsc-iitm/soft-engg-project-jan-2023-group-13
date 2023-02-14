@@ -4,8 +4,8 @@
 
 ### Student:
 
-As a student, I want to create a new support ticket for my query or concern, 
-So that the support team can address it and provide me with a resolution.
+**As a student, I want to create a new support ticket for my query or concern, 
+So that the support team can address it and provide me with a resolution.**
 
 As a student, I want to be able to like or upvote an already existing ticket, 
 So that the most popular concerns or queries can be prioritized by the support team.
