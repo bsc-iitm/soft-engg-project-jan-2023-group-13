@@ -61,6 +61,7 @@ Tertiary User: IT department
 * *As a*n IT department member, 
  *I want to be able to* provide technical support to the students and support team 
  *so that* they can use the system effectively.
+ 
 * *As a*n IT department member, 
  *I want to be able to* ensure the security of the system 
  *so that* the students' personal and sensitive information is protected.
