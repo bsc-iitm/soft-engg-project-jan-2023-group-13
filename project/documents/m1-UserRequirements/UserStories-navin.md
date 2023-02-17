@@ -57,3 +57,8 @@
 * *As a*n administrator, 
  *I want to be able to* add new tags
  *so that* I can control the allowed types of tickets.
+
+ * *As a*n administrator, 
+ *I want to be able to* assign different tags to different support users
+ *so that* they will be able to see only the tickets with relevant tags assigned to them.
+
