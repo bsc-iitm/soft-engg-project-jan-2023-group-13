@@ -1,0 +1,36 @@
+Widescreen Page: Landing page - Students
+Block: Navigation
+    One row
+    Image "ImagineUI"   
+    Link to Home
+    Link to Profile
+    Link to My tickets
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+
+Block: Tickets   
+    One row
+    Header "My Tickets"   
+        One row
+            "Ticket 1"
+            "Open"
+        One row
+            "Ticket 2"
+            "Resolved"
+        One row
+            "Ticket 3"
+            "Resolved"    
+        One row
+            "Ticket 4"
+            "Open"       
+    
+       
+    
+Block: Raise New
+    Header Raise a new support ticket
+    Input "Subject"
+    Input "Tags"
+    Input body
+    Button "Post"

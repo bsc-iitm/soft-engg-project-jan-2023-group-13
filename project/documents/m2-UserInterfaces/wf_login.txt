@@ -1,0 +1,14 @@
+Widescreen Page: Landing page
+Block: Navigation
+    One row
+    Image "Smart Ticketing"
+
+
+Blocks aligned in two columns
+    
+Block: Login
+    Header Login   
+    Input e-mail
+    Input password    
+    Button "Login"        
+    "Not a member? Register"

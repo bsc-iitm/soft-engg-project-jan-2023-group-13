@@ -1,0 +1,55 @@
+Widescreen Page: Profile Page
+Block: Navigation
+    One row
+    Image "ImagineUI"   
+    Link to Home
+    Link to Profile
+    Link to My tickets
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+Block: Ticket and Comment  
+    Blocks aligned in two columns
+
+    Block: Ticket   
+        Two row
+        Header "Profile"   
+
+         
+        
+        One row
+            "Name:"
+            "Navin Kumar Singh"
+            "(Edit)"
+            
+        One row
+            "email:"
+            "navin@mail.com"
+
+        One row
+            "# of tickets raised:"
+            "21"    
+
+        One row
+            "# of tickets resolved:"
+            "15"     
+
+        One row
+            "# of open tickets:"
+            "6" 
+
+    
+    Block: Profile Pic
+        ""
+        ""
+        ""
+        Image "Profile Pic "  
+        "(Add/Change)"
+   
+    
+
+   
+       
+    
+
