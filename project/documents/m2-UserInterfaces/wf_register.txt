@@ -1,4 +1,4 @@
-Widescreen Page: Landing page
+Widescreen Page: Register page
 Block: Navigation
     One row
     Image "Smart Support"
