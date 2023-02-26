@@ -5,6 +5,7 @@ Block: Navigation
     Link to Home
     Link to Profile    
     Link to "All Tickets"
+    Link to "Search"
     Link to Logout
     
    
