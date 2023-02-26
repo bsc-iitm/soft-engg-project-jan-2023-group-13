@@ -1,0 +1,76 @@
+Widescreen Page: Landing page - Support Team
+Block: Navigation
+    One row
+    Image "ImagineUI"   
+    Link to Home
+    Link to Profile    
+    Link to "All Tickets"
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+
+Block: OpenTickets   
+    One row
+    Header "Open Tickets" 
+        One row
+            "Subject" 
+            "" 
+            "" 
+            ""             
+            "Votes"
+            "Action"
+        One row
+            "Ticket 1 subject"
+            "16"
+            "" 
+            "Respond"
+        One row
+            "Ticket 2 subject"
+            "10"
+            "" 
+             "Respond"
+        One row
+            "Ticket 3 subject"
+            "09"
+            "" 
+             "Respond"
+        One row
+            "Ticket 4 subject"
+            "06"
+            "" 
+             "Respond" 
+
+    
+Block: ResolvedTickets   
+    One row
+    Header "Resolved Tickets"   
+        One row
+            "Subject" 
+            "" 
+            "" 
+            ""             
+            "Votes"
+            
+        One row
+            "Ticket 1 subject"
+            "16"
+            "" 
+            
+        One row
+            "Ticket 2 subject"
+            "10"
+            "" 
+             
+        One row
+            "Ticket 3 subject"
+            "09"
+            "" 
+             
+        One row
+            "Ticket 4 subject"
+            "06"
+            "" 
+             
+    
+

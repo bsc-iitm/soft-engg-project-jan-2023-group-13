@@ -12,9 +12,12 @@ Blocks aligned in two columns
 Block: Ticket and Comment  
     Blocks aligned in two columns
 
-    Block: Ticket   
-        Two row
-        Header "Ticket Title"   
+    Block: Ticket           
+        One row              
+            Header "Ticket Title"              
+        One row    
+            button "+" 
+            "12 votes" 
         One row
             "Tag 1"
             "Tag 2"

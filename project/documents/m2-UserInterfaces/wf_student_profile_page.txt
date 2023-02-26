@@ -1,4 +1,4 @@
-Widescreen Page: Profile Page
+Widescreen Page: Profile Page - Student
 Block: Navigation
     One row
     Image "ImagineUI"   
@@ -32,7 +32,7 @@ Block: Ticket and Comment
             "21"    
 
         One row
-            "# of tickets resolved:"
+            "# of resolved tickets:"
             "15"     
 
         One row
