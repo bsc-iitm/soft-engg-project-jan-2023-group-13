@@ -1,7 +1,7 @@
 Widescreen Page: Profile Page - Student
 Block: Navigation
     One row
-    Image "ImagineUI"   
+    Image "Smart Support"   
     Link to Home
     Link to Profile
     Link to My tickets
@@ -40,16 +40,14 @@ Block: Ticket and Comment
             "6" 
 
     
-    Block: Profile Pic
+    Block: ProfilePic
         ""
         ""
-        ""
-        Image "Profile Pic "  
+        "" 
+        Image "-----"
+        Image "Profile Pic"
+        Image "-----"
+
         "(Add/Change)"
    
     
-
-   
-       
-    
-

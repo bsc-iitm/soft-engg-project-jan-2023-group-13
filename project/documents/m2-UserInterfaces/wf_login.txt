@@ -1,7 +1,7 @@
 Widescreen Page: Landing page
 Block: Navigation
     One row
-    Image "Smart Ticketing"
+    Image "Smart Support"
 
 
 Blocks aligned in two columns

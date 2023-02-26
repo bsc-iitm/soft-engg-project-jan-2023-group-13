@@ -1,7 +1,7 @@
 Widescreen Page: Profile Page - Support
 Block: Navigation
     One row
-    Image "ImagineUI"   
+    Image "Smart Support"   
     Link to Home
     Link to Profile
     Link to "All tickets"
@@ -40,7 +40,9 @@ Block: Ticket and Comment
         ""
         ""
         ""
+        Image "-----"  
         Image "Profile Pic "  
+        Image "-----"  
         "(Add/Change)"
    
     

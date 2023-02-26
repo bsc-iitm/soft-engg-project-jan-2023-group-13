@@ -1,4 +1,4 @@
-Widescreen Page: Landing page - Support Team
+Widescreen Page: Landing page - Admin
 Block: Navigation
     One row
     Image "Smart Support"   
@@ -31,25 +31,25 @@ Block: OpenTickets
             "16"
             "" 
             "2023/02/01"
-            "Respond"
+            "Respond / Assign"
         One row
             "Ticket 2 subject"
             "10"
             "" 
             "2023/02/01"
-             "Respond"
+             "Respond / Assign"
         One row
             "Ticket 3 subject"
             "09"
             "" 
             "2023/02/01"
-             "Respond"
+             "Respond / Assign"
         One row
             "Ticket 4 subject"
             "06"
             "" 
             "2023/02/01"
-             "Respond" 
+             "Respond / Assign" 
 
     
 Block: ResolvedTickets   
@@ -57,40 +57,42 @@ Block: ResolvedTickets
     Header "Resolved Tickets"   
         One row
             "Subject" 
-            "" 
-            "" 
-            ""             
             "Votes"
             "Date"
             ""
             ""
             ""
-            ""
+           
             "Resolved on"
+            "Action"
             
         One row
-            "Ticket 1 subject"
+            "Ticket 1 "
             "16"
             "" 
             "2023/02/01"
             "2023/02/01" 
+            "Add to FAQ"
         One row
-            "Ticket 2 subject" 
+            "Ticket 2 " 
             "10"
             "" 
             "2023/02/01"
             "2023/02/01"  
+            "Add to FAQ"
         One row
-            "Ticket 3 subject"
+            "Ticket 3 "
             "09"
             "" 
             "2023/02/01"
-            "2023/02/01"  
+            "2023/02/01" 
+            "Add to FAQ" 
         One row
-            "Ticket 4 subject"
+            "Ticket 4 "
             "06"
             "" 
             "2023/02/01"
-            "2023/02/01"  
+            "2023/02/01"
+            "Add to FAQ"  
     
 

@@ -1,7 +1,7 @@
 Widescreen Page: Landing page - Students
 Block: Navigation
     One row
-    Image "ImagineUI"   
+    Image "Smart Support"   
     Link to Home
     Link to Profile
     Link to My tickets
@@ -14,16 +14,40 @@ Block: Tickets
     One row
     Header "My Tickets"   
         One row
-            "Ticket 1"
+            "Subject" 
+            "" 
+            "" 
+            ""             
+            "Votes"
+            "" 
+            "Date"
+            "" 
+            "" 
+            "" 
+            "Status"
+        One row
+            "Ticket 1 subject"
+            "16"
+            "" 
+            "2023/02/01"
             "Open"
         One row
-            "Ticket 2"
+            "Ticket 2 subject"
+            "13"
+            "" 
+            "2023/02/01"
             "Resolved"
         One row
-            "Ticket 3"
+            "Ticket 3 subject"
+            "06"
+            "" 
+            "2023/02/01"
             "Resolved"    
         One row
-            "Ticket 4"
+            "Ticket 4 subject"
+            "01"
+            "" 
+            "2023/02/01"
             "Open"       
     
        
