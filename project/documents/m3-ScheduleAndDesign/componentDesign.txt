@@ -1,0 +1,63 @@
+graph TD
+
+subgraph Web Application
+  subgraph Views
+    TicketList
+    TicketForm
+    TicketDetails
+    FaqList
+    FaqDetails
+  end
+  subgraph Controllers
+    TicketController
+    FaqController
+  end
+  subgraph Services
+    TicketService
+    FaqService
+  end
+  subgraph Repositories
+    TicketRepository
+    FaqRepository
+  end
+end
+
+subgraph Database
+  subgraph Tables
+    Users
+    Tickets
+    Comments
+    Votes
+    Tags
+    %% user_tags
+    %% ticket_tags
+    Roles
+    %% roles_user
+    Faqs
+  end
+end
+
+TicketList --> TicketController
+TicketForm --> TicketController
+TicketDetails --> TicketController
+FaqList --> FaqController
+FaqDetails --> FaqController
+
+TicketController --> TicketService
+FaqController --> FaqService
+
+TicketService --> TicketRepository
+FaqService --> FaqRepository
+
+TicketRepository --> Users
+TicketRepository --> Tickets
+TicketRepository --> Comments
+TicketRepository --> Votes
+TicketRepository --> Tags
+%% TicketRepository --> user_tags
+%% TicketRepository --> ticket_tags
+
+FaqRepository --> Faqs
+
+%% Users -.-> roles_user
+%% Roles -.-> roles_user
