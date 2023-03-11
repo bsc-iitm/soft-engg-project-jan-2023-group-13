@@ -1,10 +1,9 @@
 import os
 from flask import Flask
 from flask_security import Security, SQLAlchemySessionUserDatastore
-
 from flask_cors import CORS
 from flask_babel import Babel
-
+from flask_migrate import Migrate
 
 from app.config.config import LocalConfig
 from app.config.flask_security import ExtendedRegisterForm
@@ -13,8 +12,7 @@ from app.data.models import User, Role
 
 
 app = None
-api = None
-cache = None
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__, template_folder="templates")
@@ -27,17 +25,21 @@ def create_app():
     db.init_app(app)
     app.app_context().push()
 
-    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)    
-    app.security = Security(app, user_datastore, register_form=ExtendedRegisterForm) 
-
+    migrate.init_app(app, db)
     app.app_context().push()
 
-    return app, api
+    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)    
+    app.security = Security(app, user_datastore, register_form=ExtendedRegisterForm) 
+    # security = Security(app, user_datastore)
+    app.app_context().push()
+
+    return app
 
 
-app, api = create_app()
+app = create_app()
 CORS(app)
 babel = Babel(app)
+
 
 
 

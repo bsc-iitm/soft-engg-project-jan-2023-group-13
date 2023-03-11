@@ -1,8 +1,29 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-db = SQLAlchemy()
+from sqlalchemy import UniqueConstraint
 
+from .db import db
+
+
+user_tags = db.Table('user_tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.tag_id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id'), primary_key=True),
+    UniqueConstraint("user_id", "tag_id", name="user_tag"),
+)
+
+
+ticket_tags = db.Table('ticket_tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.tag_id'), primary_key=True),
+    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.ticket_id'), primary_key=True),
+    UniqueConstraint("ticket_id", "tag_id", name="ticket_tag"),
+)
+
+roles_users = db.Table(
+    'roles_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('user.user_id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.role_id')),
+    UniqueConstraint("user_id", "role_id", name="user_role"),
+)
 
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -12,6 +33,16 @@ class User(db.Model):
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=True)
     fs_uniquifier = db.Column(db.String, nullable=False)
+    # One-to-many relationship with Tickets
+    tickets = db.relationship('Ticket', backref='student', lazy=True)
+    # One-to-many relationship with Comments
+    comments = db.relationship('Comment', backref='commentor', lazy=True)
+    # One-to-many relationship with Votes
+    votes = db.relationship('Vote', backref='voter', lazy=True)
+    # Many-to-many relationship with Tags
+    tags = db.relationship('Tag', secondary='user_tags', backref='users', lazy=True)
+    # Many-to-many relationship with Roles
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='subquery'))
 
 
 class Ticket(db.Model):
@@ -20,9 +51,14 @@ class Ticket(db.Model):
     title = db.Column(db.String(255), nullable=False)
     body = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False)
-    updated_at = db.Column(db.DateTime, nullable=False)
-    student = db.relationship('User', backref=db.backref('tickets', lazy=True))
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
+    # One-to-many relationship with Comments
+    comments = db.relationship('Comment', backref='ticket', lazy=True)
+    # One-to-many relationship with Votes
+    votes = db.relationship('Vote', backref='ticket', lazy=True)
+    # Many-to-many relationship with Tags
+    tags = db.relationship('Tag', secondary='ticket_tags', backref='tickets', lazy=True)
 
 
 class Comment(db.Model):
@@ -31,50 +67,27 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     body = db.Column(db.Text, nullable=False)
     solution = db.Column(db.Boolean, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False)
-    updated_at = db.Column(db.DateTime, nullable=False)
-    ticket = db.relationship('Ticket', backref=db.backref('comments', lazy=True))
-    user = db.relationship('User', backref=db.backref('comments', lazy=True))
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
 
 
 class Vote(db.Model):
     vote_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.ticket_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False)
-    updated_at = db.Column(db.DateTime, nullable=False)
-    ticket = db.relationship('Ticket', backref=db.backref('votes', lazy=True))
-    user = db.relationship('User', backref=db.backref('votes', lazy=True))
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
 
 
 class Tag(db.Model):
     tag_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20))
-    users = db.relationship('User', secondary='user_tags')
-    tickets = db.relationship('Ticket', secondary='ticket_tags')
-
-
-user_tags = db.Table('user_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.tag_id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
-)
-
-
-ticket_tags = db.Table('ticket_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.tag_id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.ticket_id'), primary_key=True)
-)
 
 
 class Role(db.Model):
     role_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
-
-
-class roles_user(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), primary_key=True)
 
 
 class Faqs(db.Model):
