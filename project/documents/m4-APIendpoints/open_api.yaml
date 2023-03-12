@@ -4,16 +4,22 @@ info:
   version: 1.0.0
   description: API for Smart Support App
 servers:
-  - url: http://127.0.0.1:5000
+  - url: http://127.0.0.1:5000/api
 security:
   - Bearer: ["Authentication-Token: {token}"]    
 tags:
   - name: User
-    description: All user endpoints 
+    description: APIs related to managing users
   - name: Ticket
-    description: All ticket endpoints
+    description: APIs related to managing tickets
   - name: Comment
-    description: All comment endpoints  
+    description: APIs related to managing comments
+  - name: Tag
+    description: APIs related to managing tags
+  - name: Vote
+    description: APIs related to managing votes 
+  - name: FAQ
+    description: APIs related to managing FAQs     
 
 paths:  
   /users:
@@ -211,6 +217,44 @@ paths:
         404:
           description: Ticket not found
 
+  /tickets/{ticket_id}/upvote:
+    post:
+      summary: Upvote a ticket
+      tags:
+        - Vote
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      responses:
+        200:
+          description: Ticket upvoted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        400:
+          description: Invalid input
+        404:
+          description: Ticket not found
+
+  /tickets/{ticket_id}/revoke-vote:
+    delete:
+      summary: Revoke vote on a ticket
+      tags:
+        - Vote
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      responses:
+        200:
+          description: Vote revoked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        400:
+          description: Invalid input
+        404:
+          description: Ticket not found
+
   /comments:
     get:
       summary: Get all comments
@@ -310,7 +354,297 @@ paths:
         404:
           description: Comment not found
 
+  /tags:
+    get:
+      summary: "Get all tags"
+      tags:
+        - "Tag"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+    post:
+      summary: "Create a new tag"
+      tags:
+        - "Tag"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagCreateRequest"
+            example:
+              name: "bug"
+      responses:
+        "201":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+    put:
+      summary: "Update a tag"
+      tags:
+        - "Tag"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of the tag to update"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagUpdateRequest"
+            example:
+              name: "feature"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+    delete:
+      summary: "Delete a tag"
+      tags:
+        - "Tag"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of the tag to delete"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "204":
+          description: "Successful operation"
+  /users/{userId}/tags:
+    post:
+      summary: Assign a tag to a user
+      tags:
+        - User
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/TagId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTagAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  tag_id: 12345
+      responses:
+        '201':
+          description: Tag successfully assigned to the user
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users/{userId}/tags/{tagId}:
+    delete:
+      summary: Revoke a tag from a user
+      tags: 
+        - User
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/TagId'
+      responses:
+        '204':
+          description: Tag successfully revoked from user
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'        
+  /faqs:
+    get:
+      summary: Get all FAQs
+      tags: 
+        - FAQ
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FAQ'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create a new FAQ
+      tags: 
+        - FAQ
+      requestBody:
+        description: Request body containing information about the new FAQ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQCreateRequest'
+            example:
+              question: What is the return policy?
+              answer: We accept returns within 30 days of purchase.
+      responses:
+        '201':
+          description: FAQ created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 30 days of purchase.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          
+  /faqs/{faq_id}:
+    get:
+      summary: Get an FAQ by ID
+      tags: 
+        - FAQ
+      parameters:
+        - $ref: '#/components/parameters/FAQId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 30 days of purchase.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update an existing FAQ
+      tags: 
+        - FAQ
+      parameters:
+        - $ref: '#/components/parameters/FAQId'
+      requestBody:
+        description: Request body containing updated information for the FAQ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQUpdateRequest'
+            example:
+              answer: We accept returns within 60 days of purchase.
+      responses:
+        '200':
+          description: FAQ updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 60 days of purchase.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete an existing FAQ
+      tags: 
+        - FAQ
+      parameters:
+        - $ref: '#/components/parameters/FAQId'
+      responses:
+        '204':
+          description: FAQ deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'        
+  /comments/{comment_id}/solution:
+    put:
+      summary: Mark a comment as solution
+      tags: 
+        - Comment
+      parameters:
+        - $ref: '#/components/parameters/CommentId'
+      responses:
+        '200':
+          description: Comment marked as solution successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+              example:
+                id: 1
+                content: "This is the solution to the problem."
+                author: "JohnDoe"
+                ticket_id: 1
+                solution: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
+  securitySchemes:    
+    Bearer:
+      type: apiKey
+      name: Authentication-Token
+      in: header  
+  parameters:
+    CommentId:
+      name: comment_id
+      in: path
+      description: The ID of the comment to mark as the solution.
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 123
+    FAQId:
+      name: faq_id
+      in: path
+      description: The ID of the FAQ to retrieve or modify.
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        example: 1
+    TicketId:
+      name: id
+      in: path
+      description: ID of the ticket to be updated
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1    
+    UserId:
+      name: user_id
+      in: path
+      description: ID of the user to assign a tag to
+      required: true
+      schema:
+        type: integer
+    TagId:
+      name: tag_id
+      in: path
+      description: ID of the tag to assign
+      required: true
+      schema:
+        type: integer  
   schemas:
     Ticket:
       type: object
@@ -490,3 +824,141 @@ components:
           example: This is an updated comment.
       required:
         - body    
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "The unique identifier for a tag"
+          example: 1
+        name:
+          type: string
+          description: "The name of the tag"
+          example: "Science"
+      required:
+        - name
+    TagCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "The name of the tag"
+          example: "Science"
+      required:
+        - name
+    TagUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "The new name of the tag"
+          example: "Technology"
+      required:
+        - name
+    UserTagAssignmentRequest:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          description: ID of the user to assign a tag to
+        tag_id:
+          type: integer
+          description: ID of the tag to assign
+      required:
+        - user_id
+        - tag_id
+      example:
+        user_id: 1
+        tag_id: 2
+    FAQ:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the FAQ.
+          example: 1
+        question:
+          type: string
+          description: The question for the FAQ.
+          example: What is the return policy?
+        answer:
+          type: string
+          description: The answer for the FAQ.
+          example: We accept returns within 30 days of purchase.
+      required:
+        - question
+    FAQCreateRequest:
+      type: object
+      properties:
+        question:
+          type: string
+          description: The question for the new FAQ.
+          example: What is the return policy?
+          minLength: 1
+        answer:
+          type: string
+          description: The answer for the new FAQ.
+          example: We accept returns within 30 days of purchase.
+          minLength: 1
+      required:
+        - question
+        - answer
+    FAQUpdateRequest:
+      type: object
+      properties:
+        question:
+          type: string
+          description: The updated question for the FAQ.
+          example: What is the return policy?
+        answer:
+          type: string
+          description: The updated answer for the FAQ.
+          example: We accept returns within 60 days of purchase.
+      anyOf:
+        - required:
+            - question
+          not:
+            properties:
+              question:
+                type: string
+                maxLength: 0
+        - required:
+            - answer
+          not:
+            properties:
+              answer:
+                type: string
+                maxLength: 0    
+  responses:
+    BadRequest:
+      description: Invalid request parameter(s)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Error type
+            example:
+              message: Invalid user ID
+              error: Bad Request
+    NotFound:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Error type
+            example:
+              message: Tag not found
+              error: Not Found
