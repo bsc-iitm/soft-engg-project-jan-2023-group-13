@@ -22,7 +22,7 @@ def fake_comments():
     tickets = db.session.query(Ticket).all()
 
     
-    for ticket in range(tickets):
+    for ticket in tickets:
         comment_length = random.choice(comment_lengths)
         comment_count = random.choice(comment_counts)
 
@@ -39,8 +39,25 @@ def fake_comments():
             
             print(ticket.ticket_id, user.user_id, body, created_at)
             print('====================================================')
-            # db.session.add(new_comment)	
-            # db.session.commit()
-    return render_template("hello_world.html")
+            db.session.add(new_comment)	
+            db.session.commit()
+    return 'Success', 200
+
 
    
+@app.route('/fake/comments/mark/solutions', methods=["GET"])
+def mark_solutions():
+    closed_ticekts = Ticket.query.filter(Ticket.status=='Closed')
+    for ticket in closed_ticekts:
+        comments = ticket.comments
+        comment_list = [comment for comment in comments]
+        if len(comment_list) > 0:
+            solution_comment = random.choice(comment_list)
+            solution_comment.solution = 1
+            db.session.add(solution_comment)	
+            db.session.commit()
+
+            print(ticket.ticket_id)
+            print(comment_list)
+            print('====================================================')
+    return 'Success', 200

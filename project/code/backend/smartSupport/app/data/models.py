@@ -55,7 +55,7 @@ class Ticket(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     # One-to-many relationship with Comments
-    comments = db.relationship('Comment', backref='ticket', order_by="desc(Comment.created_at)", lazy='dynamic', 
+    comments = db.relationship('Comment', backref='ticket', order_by="desc(Comment.created_at)", lazy=True, 
                 cascade='delete')
     # One-to-many relationship with Votes
     votes = db.relationship('Vote', backref='ticket', lazy=True)
@@ -68,7 +68,7 @@ class Comment(db.Model):
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.ticket_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    solution = db.Column(db.Boolean, nullable=False, default=False)
+    solution = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
 
