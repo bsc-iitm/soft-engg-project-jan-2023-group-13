@@ -2,10 +2,6 @@ from faker import Faker
 from flask import current_app as app
 from flask_security.utils import hash_password 
 
-import os, sys, email_validator
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(CURRENT_DIR))
-
 from app.data.models import *
 from app.data.db import db
 

@@ -36,7 +36,8 @@ class User(db.Model):
     # One-to-many relationship with Tickets
     tickets = db.relationship('Ticket', backref='student', lazy=True)
     # One-to-many relationship with Comments
-    comments = db.relationship('Comment', backref='commentor', lazy=True)
+    comments = db.relationship('Comment', backref='commentor',  order_by="desc(Comment.created_at)", lazy='dynamic', 
+                cascade='delete')
     # One-to-many relationship with Votes
     votes = db.relationship('Vote', backref='voter', lazy=True)
     # Many-to-many relationship with Tags
@@ -52,9 +53,10 @@ class Ticket(db.Model):
     body = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     # One-to-many relationship with Comments
-    comments = db.relationship('Comment', backref='ticket', lazy=True)
+    comments = db.relationship('Comment', backref='ticket', order_by="desc(Comment.created_at)", lazy='dynamic', 
+                cascade='delete')
     # One-to-many relationship with Votes
     votes = db.relationship('Vote', backref='ticket', lazy=True)
     # Many-to-many relationship with Tags
@@ -66,7 +68,7 @@ class Comment(db.Model):
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.ticket_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    solution = db.Column(db.Boolean, nullable=False)
+    solution = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
 
@@ -75,8 +77,7 @@ class Vote(db.Model):
     vote_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.ticket_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)    
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  
 
 
 class Tag(db.Model):
