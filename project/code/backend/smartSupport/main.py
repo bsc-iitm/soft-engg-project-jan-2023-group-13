@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flask_security import Security, SQLAlchemySessionUserDatastore
+# from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_cors import CORS
 from flask_babel import Babel
 from flask_migrate import Migrate
@@ -28,8 +28,8 @@ def create_app():
     migrate.init_app(app, db)
     app.app_context().push()
 
-    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)    
-    app.security = Security(app, user_datastore, register_form=ExtendedRegisterForm) 
+    # user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)    
+    # app.security = Security(app, user_datastore, register_form=ExtendedRegisterForm) 
     # security = Security(app, user_datastore)
     app.app_context().push()
 
