@@ -58,3 +58,19 @@ def fake_users():
 
    
 
+@app.post('/fake/users')
+def fake_user_tags():
+    roles = ['Admin', 'Support']
+
+    users = User.query.join(User.roles).filter(Role.name.in_(roles)).all()
+    userids = [user.user_id for user in users]
+
+    tags = Tag.query.all()
+    tagids = [tag.tag_id for tag in tags]
+
+    for (tag, user) in zip(tags, users):
+        user.tags.append(tag)
+        db.session.add(user)	
+        db.session.commit()
+        print(tag, user)    
+
