@@ -24,7 +24,7 @@ end = datetime(2023, 2, 28)
 @app.post('/fake/tickets')
 def fake_tickets():
     ticket_lengths = [15, 6, 20, 8, 12]
-    ticket_status = ['Open', 'Closed']    
+    ticket_status = ['Open', 'Resolved']    
 
     roles_to_exclude = ['Admin', 'Support']
     students = User.query.join(User.roles).filter(~User.roles.any(Role.name.in_(roles_to_exclude))).all()

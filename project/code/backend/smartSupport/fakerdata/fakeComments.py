@@ -47,7 +47,7 @@ def fake_comments():
    
 @app.route('/fake/comments/mark/solutions', methods=["GET"])
 def mark_solutions():
-    closed_ticekts = Ticket.query.filter(Ticket.status=='Closed')
+    closed_ticekts = Ticket.query.filter(Ticket.status=='Resolved')
     for ticket in closed_ticekts:
         comments = ticket.comments
         comment_list = [comment for comment in comments]
