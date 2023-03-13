@@ -8,8 +8,10 @@ servers:
 security:
   - Bearer: ["Authentication-Token: {token}"]    
 tags:
+  - name: Users
+    description: APIs related to managing all users
   - name: User
-    description: APIs related to managing users
+    description: APIs related to managing a specific user
   - name: Ticket
     description: APIs related to managing tickets
   - name: Comment
@@ -26,7 +28,7 @@ paths:
     get:
       summary: Get all users
       tags: 
-        - User
+        - Users
       responses:
         "200":
           description: OK
@@ -39,7 +41,7 @@ paths:
     post:
       summary: Create a new user
       tags: 
-        - User
+        - Users
       requestBody:
         required: true
         content:
@@ -55,17 +57,9 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Bad request
-  /users/{user_id}:
-    parameters:
-      - in: path
-        name: user_id
-        required: true
-        schema:
-          type: integer
-          format: int64
-        description: User ID
+  /user:
     get:
-      summary: Get a user by ID
+      summary: Get a user by JWT
       tags: 
         - User
       responses:
@@ -78,17 +72,9 @@ paths:
         "404":
           description: User not found
     put:
-      summary: Update a user by ID
+      summary: Update a user by JWT
       tags: 
         - User
-      parameters:
-        - in: path
-          name: user_id
-          required: true
-          schema:
-            type: integer
-            format: int64
-          description: User ID
       requestBody:
         required: true
         content:
@@ -107,7 +93,7 @@ paths:
         "404":
           description: User not found
     delete:
-      summary: Delete a user by ID
+      summary: Delete a user by JWT
       tags: 
         - User
       responses:
@@ -115,6 +101,56 @@ paths:
           description: No content
         "404":
           description: User not found
+
+  /user/tags:
+    post:
+      summary: Assign a tag to a user
+      tags:
+        - User 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTagAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  username: john.doe
+                  tag_id: 12345
+                  
+      responses:
+        '201':
+          description: Tag successfully assigned to the user
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /user/tags/:
+    put:
+      summary: Revoke a tag from a user
+      tags: 
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTagAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  username: john.doe
+                  tag_id: 12345  
+      responses:
+        '204':
+          description: Tag successfully revoked from user
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'                
 
   /tickets:
     get:
@@ -255,11 +291,11 @@ paths:
         404:
           description: Ticket not found
 
-  /comments:
+  /tickets/{ticket_id}/comments:
     get:
-      summary: Get all comments
+      summary: Get all comments for a ticket by ticket_id
       tags: 
-        - Comment
+        - Ticket
       responses:
         200:
           description: Successful response
@@ -270,9 +306,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Comment'
     post:
-      summary: Create a new comment
+      summary: Create a new comment on a Ticket with ticket_id
       tags: 
-        - Comment
+        - Ticket
       requestBody:
         required: true
         content:
@@ -427,47 +463,7 @@ paths:
       responses:
         "204":
           description: "Successful operation"
-  /users/{userId}/tags:
-    post:
-      summary: Assign a tag to a user
-      tags:
-        - User
-      parameters:
-        - $ref: '#/components/parameters/UserId'
-        - $ref: '#/components/parameters/TagId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserTagAssignmentRequest'
-            examples:
-              example-1:
-                summary: Example of assigning a tag to a user
-                value:
-                  tag_id: 12345
-      responses:
-        '201':
-          description: Tag successfully assigned to the user
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /users/{userId}/tags/{tagId}:
-    delete:
-      summary: Revoke a tag from a user
-      tags: 
-        - User
-      parameters:
-        - $ref: '#/components/parameters/UserId'
-        - $ref: '#/components/parameters/TagId'
-      responses:
-        '204':
-          description: Tag successfully revoked from user
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'        
+  
   /faqs:
     get:
       summary: Get all FAQs
@@ -597,6 +593,95 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+  /tickets/search:
+    get:
+      summary: Search tickets by keyword 
+      tags:
+        - Ticket
+      parameters:
+        - in: query
+          name: q
+          description: Keyword to search for in ticket title and description
+          schema:
+            type: string
+          required: true        
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /tickets/{ticket_id}/close:
+    put:
+      summary: Mark a ticket as resolved
+      tags:
+        - Ticket
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      responses:
+        '204':
+          description: Ticket resolved successfully
+        '404':
+          $ref: '#/components/responses/NotFound'        
+  /tickets/{ticket_id}/notify:
+    post:
+      summary: Send email notification to student about resolved ticket
+      tags:
+        - Ticket
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      requestBody:
+        description: Email notification request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+            example:
+              recipient_email: john.doe@example.com
+              message: Your ticket has been resolved.
+      responses:
+        '200':
+          description: Email sent successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets/{ticket_id}/faqs:
+    post:
+      summary: Convert a ticket to a FAQ
+      tags:
+        - Ticket
+      requestBody:
+        description: Request body containing information about the ticket to be converted
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketToFAQRequest'
+            example:
+              ticket_id: 1
+              question: What is the return policy?
+              answer: We accept returns within 30 days of purchase.
+      responses:
+        '201':
+          description: FAQ created successfully from the ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 30 days of purchase.
+        '400':
+          $ref: '#/components/responses/BadRequest'        
+
 components:
   securitySchemes:    
     Bearer:
@@ -929,6 +1014,39 @@ components:
               answer:
                 type: string
                 maxLength: 0    
+    NotificationRequest:
+      type: object
+      properties:
+        recipient_email:
+          type: string
+          description: The email address of the recipient
+          example: john.doe@example.com
+        message:
+          type: string
+          description: The message to be sent in the email
+          example: Your ticket has been resolved.
+      required:
+        - recipient_email
+        - message  
+    TicketToFAQRequest:
+      type: object
+      properties:
+        ticket_id:
+          type: integer
+          description: The ID of the ticket to be converted to a FAQ.
+          example: 1
+        question:
+          type: string
+          description: The question for the FAQ.
+          example: What is the return policy?
+        answer:
+          type: string
+          description: The answer for the FAQ.
+          example: We accept returns within 30 days of purchase.
+      required:
+        - ticket_id
+        - question
+        - answer
   responses:
     BadRequest:
       description: Invalid request parameter(s)
