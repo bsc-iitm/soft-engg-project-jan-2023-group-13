@@ -10,8 +10,6 @@ security:
 tags:
   - name: Users
     description: APIs related to managing all users
-  - name: User
-    description: APIs related to managing a specific user
   - name: Ticket
     description: APIs related to managing tickets
   - name: Comment
@@ -24,7 +22,7 @@ tags:
     description: APIs related to managing FAQs     
 
 paths:  
-  /users:
+  /user/all:
     get:
       summary: Get all users
       tags: 
@@ -61,7 +59,7 @@ paths:
     get:
       summary: Get a user by JWT
       tags: 
-        - User
+        - Users
       responses:
         "200":
           description: OK
@@ -74,7 +72,7 @@ paths:
     put:
       summary: Update a user by JWT
       tags: 
-        - User
+        - Users
       requestBody:
         required: true
         content:
@@ -95,7 +93,7 @@ paths:
     delete:
       summary: Delete a user by JWT
       tags: 
-        - User
+        - Users
       responses:
         "204":
           description: No content
@@ -106,7 +104,7 @@ paths:
     post:
       summary: Assign a tag to a user
       tags:
-        - User 
+        - Users
       requestBody:
         required: true
         content:
@@ -131,7 +129,7 @@ paths:
     put:
       summary: Revoke a tag from a user
       tags: 
-        - User
+        - Users
       requestBody:
         required: true
         content:
@@ -720,9 +718,9 @@ paths:
 components:
   securitySchemes:    
     Bearer:
-      type: apiKey
-      name: Authentication-Token
-      in: header  
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   parameters:
     CommentId:
       name: comment_id
