@@ -36,6 +36,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
+    
+  /user/register:
     post:
       summary: Create a new user
       tags: 
@@ -55,6 +57,35 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Bad request
+          
+  /user/login:
+    post:
+      summary: login
+      tags: 
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  access_token:
+                    type: string 
+    
+  
   /user:
     get:
       summary: Get a user by JWT
@@ -814,21 +845,20 @@ components:
           type: string
         last_name:
           type: string
-        fs_uniquifier:
-          type: string
+        
       required:
         - User_id
         - Username
         - email
         - first_name
-        - fs_uniquifier
+        
       example:
         user_id: 1
         username: jdoe
         email: jdoe@example.com
         first_name: John
         last_name: Doe
-        fs_uniquifier: 12345
+        
     UserCreateRequest:
       type: object
       properties:
@@ -842,21 +872,20 @@ components:
           type: string
         last_name:
           type: string
-        fs_uniquifier:
-          type: string
+        
       required:
         - Username
         - password
         - email
         - first_name
-        - fs_uniquifier
+        
       example:
         username: jdoe
         password: pass123
         email: jdoe@example.com
         first_name: John
         last_name: Doe
-        fs_uniquifier: 12345
+        
     UserUpdateRequest:
       type: object
       properties:
