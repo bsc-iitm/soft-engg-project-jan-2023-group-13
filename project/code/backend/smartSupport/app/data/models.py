@@ -48,6 +48,14 @@ class User(db.Model):
         'Role', secondary=roles_users,
         backref=db.backref('users', lazy='subquery'))
 
+    def __init__(self, username, email, first_name, last_name, password, fs_uniquifier):
+        self.username = username
+        self.email = email
+        self.first_name = first_name
+        self.last_name = last_name
+        self.password = password
+        self.fs_uniquifier = fs_uniquifier
+
 
 class Ticket(db.Model):
     ticket_id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -13,18 +13,19 @@ from flask_jwt_extended import (
 
 from app.data.db import db
 from app.data.models import User
-
+from app.data.schema import UserSchema
 
 jwt = JWTManager(app)
 salt = bcrypt.gensalt()
 
+user_schema = UserSchema()
 
 @app.post("/api/user/login")
 def login():
     # Getting user Creds
     userdata = request.get_json()
     user_name = userdata["username"]
-    password = userdata["password"].encode()
+    password = userdata["password"].encode('utf-8')
     access_token = create_access_token(identity=1)
     # return jsonify(access_token=access_token)
 
@@ -53,23 +54,21 @@ def register():
     em = User.query.filter_by(email=userdata["email"]).first()
 
     if usr or em:
-        return jsonify("User already Exists")
-    password = userdata["password"].encode()
+        return jsonify("User already Exists"), 409
+    password = userdata["password"].encode('utf-8')
 
     # Hashing Password
     hashed_pass = bcrypt.hashpw(password, salt)
 
     fs_uniquifier = uuid.uuid4().hex
 
-    # commiting Data
-    db.session.add(
-        User(
-            username=userdata["username"], email=userdata["email"], password=hashed_pass,
-            first_name=userdata["first_name"], last_name=userdata["last_name"],
-            fs_uniquifier=fs_uniquifier,
-        ),
+    new_user = User(
+        username=userdata["username"], email=userdata["email"], password=hashed_pass,
+        first_name=userdata["first_name"], last_name=userdata["last_name"],
+        fs_uniquifier=fs_uniquifier,
     )
+
+    # commiting Data
+    db.session.add(new_user)
     db.session.commit()
-    return jsonify("Success")
-
-
+    return user_schema.jsonify(new_user)

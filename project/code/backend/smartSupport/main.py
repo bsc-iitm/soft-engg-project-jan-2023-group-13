@@ -32,11 +32,6 @@ def create_app():
     migrate.init_app(app, db)
     app.app_context().push()
 
-    # user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
-    # app.security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
-    # security = Security(app, user_datastore)
-    # app.app_context().push()
-
     return app
 
 
