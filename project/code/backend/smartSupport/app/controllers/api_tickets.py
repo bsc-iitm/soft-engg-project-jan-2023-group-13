@@ -98,3 +98,20 @@ def put_ticket(ticket_id):
         return ticket_schema.jsonify(ticket), 200
     else:
         raise NotFound(status_code=404, msg='Ticket not found')
+
+
+@app.delete("/api/tickets/<ticket_id>")
+@jwt_required()
+def delete_ticket(ticket_id):
+    current_user_id = get_jwt_identity()
+    ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+
+    if str(ticket.student_id) != str(current_user_id):
+        return jsonify("Not Authorized"), 401
+
+    if ticket:
+        db.session.delete(ticket)
+        db.session.commit()
+        return jsonify('Ticket Deleted'), 204
+    else:
+        raise NotFound(status_code=404, msg='Ticket not found')
