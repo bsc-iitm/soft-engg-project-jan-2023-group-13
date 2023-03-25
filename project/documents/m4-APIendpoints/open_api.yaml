@@ -267,7 +267,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Ticket'
+              $ref: '#/components/schemas/TicketPost'
       responses:
         200:
           description: Return the updated ticket
