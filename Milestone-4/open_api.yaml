@@ -208,7 +208,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Ticket'
-
     post:
       summary: Create a new ticket
       tags:
@@ -832,6 +831,18 @@ components:
           type: string
           format: date-time
           description: The date and time the ticket was last updated
+        student:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
+
       example:
         ticket_id: 1
         title: "Need help with Python"
@@ -839,6 +850,11 @@ components:
         status: "Open"
         created_at: "2022-03-10T18:42:31Z"
         updated_at: "2022-03-10T18:42:31Z"
+        student:
+          username: "Anika"
+          email: "anika@mail.com"
+          first_name: "Anika"
+          last_name: "Mishra"
     TicketPost:
       type: object
       properties:
@@ -939,14 +955,11 @@ components:
     Comment:
       type: object
       properties:
-        id:
+        comment_id:
           type: integer
           format: int64
-        text:
+        body:
           type: string
-        user_id:
-          type: integer
-          format: int64
         ticket_id:
           type: integer
           format: int64
@@ -956,6 +969,17 @@ components:
         updated_at:
           type: string
           format: date-time
+        student:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
       required:
         - id
         - text
@@ -966,21 +990,11 @@ components:
     CommentCreateRequest:
       type: object
       properties:
-        user_id:
-          type: integer
-          description: The ID of the user creating the comment.
-          example: 123
-        ticket_id:
-          type: integer
-          description: The ID of the ticket that the comment is being added to.
-          example: 456
-        content:
+        body:
           type: string
           description: The content of the comment.
           example: "This is a comment on the ticket."
       required:
-        - user_id
-        - ticket_id
         - content
     CommentUpdateRequest:
       type: object

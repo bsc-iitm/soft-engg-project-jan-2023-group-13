@@ -52,7 +52,7 @@ def post_ticket():
     body = ticketdata['body']
 
     Validation.is_valid_string_value(title, 'Title', alpha_only=False)
-    Validation.is_valid_string_value(body, 'Blog Body', alpha_only=False, allow_special_chars=True)
+    Validation.is_valid_string_value(body, 'Ticket Body', alpha_only=False, allow_special_chars=True)
 
     body = Markup(body)
 

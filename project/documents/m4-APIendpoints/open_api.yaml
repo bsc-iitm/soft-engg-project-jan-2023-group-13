@@ -208,7 +208,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Ticket'
-
     post:
       summary: Create a new ticket
       tags:
@@ -991,21 +990,11 @@ components:
     CommentCreateRequest:
       type: object
       properties:
-        comment_id:
-          type: integer
-          format: int64
-          example: 24
-        ticket_id:
-          type: integer
-          description: The ID of the ticket that the comment is being added to.
-          example: 456
         body:
           type: string
           description: The content of the comment.
           example: "This is a comment on the ticket."
       required:
-        - user_id
-        - ticket_id
         - content
     CommentUpdateRequest:
       type: object
