@@ -7,6 +7,8 @@ PUT /user
 DELETE /user
 POST /user/tags
 PUT /user/tags
+~~PUT /user/roles~~
+DELETE /user/roles
 
 # Ticket
 ~~GET /ticekets~~
@@ -26,7 +28,7 @@ POST /tickets/{ticket_id}/faqs
 ~~GET /comments/{comment_id}~~
 ~~PUT /comments/{comment_id}~~
 ~~DELETE /comments/{comment_id}~~
-PUT /comments/{comment_id}/solution
+~~PUT /comments/{comment_id}/solution~~
 
 # Tag
 GET /tags

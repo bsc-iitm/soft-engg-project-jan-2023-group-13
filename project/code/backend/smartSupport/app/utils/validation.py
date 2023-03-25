@@ -11,7 +11,6 @@ class NotFound(HTTPException):
         self.response = make_response(json.dumps(msg), status_code)
 
 
-
 class ValidationErr(HTTPException):
     def __init__(self, status_code, error_code, error_msg):
         msg = {

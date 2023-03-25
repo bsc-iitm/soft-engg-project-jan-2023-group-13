@@ -158,7 +158,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  /user/tags/:
     put:
       summary: Revoke a tag from a user
       tags:
@@ -182,6 +181,52 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+
+  /user/roles:
+    put:
+      summary: Add role to a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  role: "Support"
+                  username: "jdoe"
+      responses:
+        '200':
+          description: Role added to user successfully
+        '404':
+          description: User or role not found
+    delete:
+      summary: Remove role from a user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          description: ID of the user
+          schema:
+            type: integer
+        - in: path
+          name: role_id
+          required: true
+          description: ID of the role
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role removed from user successfully
+        '404':
+          description: User or role not found
+
 
   /tickets:
     get:
@@ -952,6 +997,19 @@ components:
           items:
             type: integer
       # required: []
+    UserRoleAssignmentRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the user to assign the role to.
+        role:
+          type: string
+          description: The name of the role to assign to the user.
+      required:
+        - username
+        - role
+
     Comment:
       type: object
       properties:

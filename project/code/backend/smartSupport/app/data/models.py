@@ -47,7 +47,7 @@ class User(db.Model):
     # Many-to-many relationship with Roles
     roles = db.relationship(
         'Role', secondary=roles_users,
-        backref=db.backref('users', lazy='subquery'))
+        backref=db.backref('users', lazy='dynamic'))
 
     # def __init__(self, username, email, first_name, last_name, password, fs_uniquifier):
     #     self.username = username

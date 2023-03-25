@@ -12,8 +12,10 @@ from flask_jwt_extended import (
 
 
 from app.data.db import db
-from app.data.models import User
+from app.data.models import User, Role
 from app.data.schema import UserSchema
+from app.utils.validation import *
+from app.utils.auth import Auth, NotAuthorized
 
 jwt = JWTManager(app)
 salt = bcrypt.gensalt()
@@ -72,3 +74,28 @@ def register():
     db.session.add(new_user)
     db.session.commit()
     return user_schema.jsonify(new_user)
+
+
+@app.put("/api/user/roles")
+@jwt_required()
+def add_role():
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
+
+    userdata = request.get_json()
+    user = User.query.filter(User.username == userdata["username"]).first()
+    role = Role.query.filter(Role.name == userdata["role"]).first()
+    if not user:
+        raise NotFound(status_code=404, msg='User not found')
+    if not role:
+        raise NotFound(status_code=404, msg='Role not found')
+
+    if role not in user.roles:
+        user.roles.append(role)
+
+        db.session.add(user)
+        db.session.commit()
+        return user_schema.jsonify(user)
+    else:
+        return "Role already exists for the user", 400
