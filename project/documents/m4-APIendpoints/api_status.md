@@ -25,7 +25,7 @@ POST /tickets/{ticket_id}/faqs
 # Comment
 ~~GET /comments/{comment_id}~~
 ~~PUT /comments/{comment_id}~~
-DELETE /comments/{comment_id}
+~~DELETE /comments/{comment_id}~~
 PUT /comments/{comment_id}/solution
 
 # Tag

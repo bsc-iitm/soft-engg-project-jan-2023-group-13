@@ -86,3 +86,16 @@ def put_comment(comment_id):
     else:
         raise NotFound(status_code=404, msg='Comment not found')
 
+
+@app.delete("/api/comments/<comment_id>")
+@jwt_required()
+def delete_comment(comment_id):
+    current_user_id = get_jwt_identity()
+    comment = db.session.query(Comment).filter(Comment.comment_id == comment_id).first()
+    if comment:
+        Auth.authorize(current_user_id, comment.user_id)
+        db.session.delete(comment)
+        db.session.commit()
+        return jsonify('Comment Deleted'), 204
+    else:
+        raise NotFound(status_code=404, msg='Comment not found')
