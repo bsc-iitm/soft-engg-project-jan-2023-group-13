@@ -75,6 +75,13 @@ def put_comment(comment_id):
     comment = db.session.query(Comment).filter(Comment.comment_id == comment_id).first()
     if comment:
         Auth.authorize(current_user_id, comment.user_id)
+        commentdata = request.get_json()
+        body = commentdata['body']
+        Validation.is_valid_string_value(body, 'Comment Body', alpha_only=False,
+                                        allow_special_chars=True)
+        comment.body = Markup(body)
+        db.session.add(comment)
+        db.session.commit()
         return comment_schema.jsonify(comment), 200
     else:
         raise NotFound(status_code=404, msg='Comment not found')
