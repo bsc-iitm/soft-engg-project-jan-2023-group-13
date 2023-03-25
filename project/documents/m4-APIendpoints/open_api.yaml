@@ -217,7 +217,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Ticket'
+              $ref: '#/components/schemas/TicketPost'
       responses:
         201:
           description: Return the newly created ticket
@@ -813,10 +813,6 @@ components:
           type: integer
           format: int64
           description: The unique identifier for the ticket
-        student_id:
-          type: integer
-          format: int64
-          description: The unique identifier for the student who created the ticket
         title:
           type: string
           description: The title of the ticket
@@ -836,12 +832,23 @@ components:
           description: The date and time the ticket was last updated
       example:
         ticket_id: 1
-        student_id: 2
         title: "Need help with Python"
         body: "I'm having trouble understanding Python classes. Can someone help me?"
         status: "Open"
         created_at: "2022-03-10T18:42:31Z"
         updated_at: "2022-03-10T18:42:31Z"
+    TicketPost:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the ticket
+        body:
+          type: string
+          description: The body of the ticket
+      example:
+        title: "Need help with Python"
+        body: "I'm having trouble understanding Python classes. Can someone help me?"
     User:
       type: object
       properties:

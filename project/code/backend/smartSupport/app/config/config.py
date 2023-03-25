@@ -1,6 +1,7 @@
 import os
+from datetime import timedelta
 
-base_dir = os.path.abspath(os.path.dirname(__file__))   
+base_dir = os.path.abspath(os.path.dirname(__file__))
 
 class LocalConfig():
     DEBUG = True
@@ -14,10 +15,10 @@ class LocalConfig():
     SECURITY_SEND_REGISTER_EMAIL = False
     SECURITY_UNAUTHORIZED_VIEW = None
     SECURITY_REGISTERABLE = True
-    SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"   
+    SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"
     SECURITY_USERNAME_ENABLE = True
-    SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = True   
-    WTF_CSRF_CHECK_DEFAULT = False    
+    SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = True
+    WTF_CSRF_CHECK_DEFAULT = False
     SESSION_COOKIE_SAMESITE = None
     USER_IMAGE_FOLDER = "static/images/profile"
 
@@ -25,3 +26,6 @@ class LocalConfig():
     SMTP_SERVER_PORT = 1025
     SENDER_ADDRESS = "admin@smartSupport.com"
     SENDER_PASSWORD = ""
+
+    JWT_SECRET_KEY = "SKBw2u4x246vBnTxBcGrwpUNjbvXZm"
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=15)

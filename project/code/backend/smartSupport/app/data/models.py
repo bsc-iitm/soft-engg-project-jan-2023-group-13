@@ -63,7 +63,7 @@ class Ticket(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='Open')
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, nullable=False,
