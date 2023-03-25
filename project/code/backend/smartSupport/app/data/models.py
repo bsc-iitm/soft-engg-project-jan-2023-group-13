@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from .db import db
 
@@ -48,13 +49,13 @@ class User(db.Model):
         'Role', secondary=roles_users,
         backref=db.backref('users', lazy='subquery'))
 
-    def __init__(self, username, email, first_name, last_name, password, fs_uniquifier):
-        self.username = username
-        self.email = email
-        self.first_name = first_name
-        self.last_name = last_name
-        self.password = password
-        self.fs_uniquifier = fs_uniquifier
+    # def __init__(self, username, email, first_name, last_name, password, fs_uniquifier):
+    #     self.username = username
+    #     self.email = email
+    #     self.first_name = first_name
+    #     self.last_name = last_name
+    #     self.password = password
+    #     self.fs_uniquifier = fs_uniquifier
 
 
 class Ticket(db.Model):
@@ -72,9 +73,13 @@ class Ticket(db.Model):
         'Comment', backref='ticket', order_by="desc(Comment.created_at)", lazy=True,
         cascade='delete')
     # One-to-many relationship with Votes
-    votes = db.relationship('Vote', backref='ticket', lazy=True)
+    votes = db.relationship('Vote', backref='ticket', lazy='dynamic')
     # Many-to-many relationship with Tags
     tags = db.relationship('Tag', secondary='ticket_tags', backref='tickets', lazy=True)
+
+    @property
+    def votes_count(self):
+        return self.votes.count()
 
 
 class Comment(db.Model):
