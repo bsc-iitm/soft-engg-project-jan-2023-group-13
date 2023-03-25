@@ -11,7 +11,6 @@ from flask_jwt_extended import (
     JWTManager,
 )
 
-
 from app.data.db import db
 from app.data.models import Ticket, Vote
 from app.data.schema import TicketSchema
@@ -58,6 +57,17 @@ def post_ticket():
 
     new_ticket = Ticket(title=title, body=body, student_id=current_user_id)
     db.session.add(new_ticket)
-    db.session.commit()
+    # db.session.commit()
 
     return ticket_schema.jsonify(new_ticket), 200
+
+
+@app.get("/api/tickets/<ticket_id>")
+@jwt_required()
+def get_ticket(ticket_id):
+    current_user_id = get_jwt_identity()
+    ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+    if ticket:
+        return ticket_schema.jsonify(ticket), 200
+    else:
+        raise NotFound(status_code=404, msg='Ticket not found')

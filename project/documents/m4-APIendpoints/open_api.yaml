@@ -72,8 +72,10 @@ paths:
               properties:
                 username:
                   type: string
+                  example: jdoe
                 password:
                   type: string
+                  example: pass123
       responses:
         '200':
           description: Successful response
