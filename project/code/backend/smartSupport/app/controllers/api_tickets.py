@@ -16,6 +16,7 @@ from app.data.db import db
 from app.data.models import Ticket, Vote
 from app.data.schema import TicketSchema
 from app.utils.validation import *
+from app.utils.auth import Auth
 
 jwt = JWTManager(app)
 salt = bcrypt.gensalt()
@@ -79,10 +80,8 @@ def put_ticket(ticket_id):
     current_user_id = get_jwt_identity()
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
 
-    if str(ticket.student_id) != str(current_user_id):
-        return jsonify("Not Authorized"), 401
-
     if ticket:
+        Auth.authorize(current_user_id, ticket.user_id)
         ticketdata = request.get_json()
         title = ticketdata['title']
         body = ticketdata['body']
