@@ -115,3 +115,4 @@ def delete_ticket(ticket_id):
         return jsonify('Ticket Deleted'), 204
     else:
         raise NotFound(status_code=404, msg='Ticket not found')
+
