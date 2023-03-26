@@ -122,6 +122,15 @@ def update_user():
 
 
 # Delete a user
+@app.delete("/api/user")
+@jwt_required()
+def delete_tracker():
+    current_userid = get_jwt_identity()
+
+    User.query.filter_by(user_id=current_userid).delete()
+    db.session.commit()
+
+    return jsonify("User deleted successfully")
 
 
 # Assign tags to a user
