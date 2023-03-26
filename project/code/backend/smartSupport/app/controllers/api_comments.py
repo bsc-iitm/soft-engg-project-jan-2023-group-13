@@ -1,16 +1,11 @@
-import bcrypt, uuid
-from datetime import datetime
-from werkzeug.exceptions import Unauthorized
+# import bcrypt, uuid
+# from datetime import datetime
+# from werkzeug.exceptions import Unauthorized
 
-from sqlalchemy import desc, func
+# from sqlalchemy import desc, func
 from flask import current_app as app
 from flask import jsonify, request, Markup
-from flask_jwt_extended import (
-    create_access_token,
-    get_jwt_identity,
-    jwt_required,
-    JWTManager,
-)
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.data.db import db
 from app.data.models import Ticket, Comment
@@ -18,8 +13,8 @@ from app.data.schema import CommentSchema
 from app.utils.validation import Validation, NotFound
 from app.utils.auth import Auth, NotAuthorized
 
-jwt = JWTManager(app)
-salt = bcrypt.gensalt()
+# jwt = JWTManager(app)
+# salt = bcrypt.gensalt()
 
 comment_schema = CommentSchema()
 comments_schema = CommentSchema(many=True)

@@ -1,8 +1,9 @@
 from flask import current_app as app
-from flask_sqlalchemy import SQLAlchemy
+
+# from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
-from app.data.models import Comment
+from app.data.models import Faqs
 
 ma = Marshmallow(app)
 
@@ -48,3 +49,8 @@ class CommentSchema(ma.Schema):
         )
 
     commentor = ma.Nested(UserSchema)
+
+
+class FaqsSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Faqs
