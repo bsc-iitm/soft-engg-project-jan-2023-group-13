@@ -1,8 +1,9 @@
 # Users
-* GET /user/all
+
 * ~~POST /user/register~~
 * ~~POST /user/login~~
-* GET /user
+* ~~GET /user/all~~
+* ~~GET /user~~
 * PUT /user
 * DELETE /user
 * POST /user/tags

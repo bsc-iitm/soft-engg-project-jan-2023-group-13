@@ -20,32 +20,6 @@ from app.utils.auth import Auth, NotAuthorized
 jwt = JWTManager(app)
 salt = bcrypt.gensalt()
 
-user_schema = UserSchema(many=True)
-
-
-@app.post("/api/user/login")
-def login():
-    # Getting user Creds
-    userdata = request.get_json()
-    user_name = userdata["username"]
-    password = userdata["password"].encode("utf-8")
-    # access_token = create_access_token(identity=1)
-    # return jsonify(access_token=access_token)
-
-    # Getting Creds from db
-    curr_user = User.query.filter_by(username=user_name).first()
-
-    # checking creds
-    if curr_user is None:
-        return jsonify({"msg": "Bad username"})
-    elif bcrypt.checkpw(password, curr_user.password):
-        # Creating JWT token
-        # cache.clear()
-        access_token = create_access_token(identity=curr_user.user_id)
-        return jsonify(access_token=access_token)
-    else:
-        return jsonify({"msg": "Bad password"})
-
 
 # Create User
 @app.post("/api/user/register")
@@ -79,15 +53,65 @@ def register():
     return user_schema.jsonify(new_user)
 
 
+# User Login
+@app.post("/api/user/login")
+def login():
+    # Getting user Creds
+    userdata = request.get_json()
+    user_name = userdata["username"]
+    password = userdata["password"].encode("utf-8")
+    # access_token = create_access_token(identity=1)
+    # return jsonify(access_token=access_token)
+
+    # Getting Creds from db
+    curr_user = User.query.filter_by(username=user_name).first()
+
+    # checking creds
+    if curr_user is None:
+        return jsonify({"msg": "Bad username"})
+    elif bcrypt.checkpw(password, curr_user.password):
+        # Creating JWT token
+        # cache.clear()
+        access_token = create_access_token(identity=curr_user.user_id)
+        return jsonify(access_token=access_token)
+    else:
+        return jsonify({"msg": "Bad password"})
+
+
 # get all users
 @app.get("/api/user/all")
 def get_users():
     user_list = User.query.order_by(User.user_id).all()
-    # user_schema = UserSchema(many=True)
+    user_schema = UserSchema(many=True)
     output = user_schema.dump(user_list)
     return jsonify(output)
 
 
+# Get a single user by JWT token
+@app.get("/api/user")
+@jwt_required()
+def get_user():
+    current_userid = get_jwt_identity()
+
+    usr = User.query.filter_by(user_id=current_userid).first()
+
+    # Converts Sql obeject to json object
+    user_schema = UserSchema()
+    output = user_schema.dump(usr)
+    return jsonify(output)
+
+
+# Update a user
+
+# Delete a user
+
+
+# Assign tags to a user
+
+# Change tags for a user
+
+
+# Assign role to a user
 @app.put("/api/user/roles")
 @jwt_required()
 def add_role():
@@ -111,3 +135,6 @@ def add_role():
         return user_schema.jsonify(user)
     else:
         return "Role already exists for the user", 400
+
+
+# remove roles from a user
