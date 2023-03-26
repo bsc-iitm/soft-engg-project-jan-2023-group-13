@@ -127,7 +127,7 @@ class Role(db.Model):
 
 class Faqs(db.Model):
     faq_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    query = db.Column(db.Text, nullable=False)
+    # query = db.Column(db.Text, nullable=False)
     answer = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(
