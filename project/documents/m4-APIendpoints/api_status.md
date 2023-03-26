@@ -4,8 +4,8 @@
 * ~~POST /user/login~~
 * ~~GET /user/all~~
 * ~~GET /user~~
-* PUT /user
-* DELETE /user
+* ~~PUT /user~~
+* ~~DELETE /user~~
 * POST /user/tags
 * PUT /user/tags
 * ~~PUT /user/roles~~

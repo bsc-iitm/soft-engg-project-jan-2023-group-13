@@ -1,5 +1,7 @@
-import bcrypt, uuid
-from datetime import datetime
+import bcrypt
+import uuid
+
+# from datetime import datetime
 
 from flask import current_app as app
 from flask import jsonify, request
@@ -12,7 +14,7 @@ from flask_jwt_extended import (
 
 
 from app.data.db import db
-from app.data.models import User, Role
+from app.data.models import User, Role, user_tags
 from app.data.schema import UserSchema
 from app.utils.validation import *
 from app.utils.auth import Auth, NotAuthorized
@@ -50,6 +52,7 @@ def register():
     # commiting Data
     db.session.add(new_user)
     db.session.commit()
+    user_schema = UserSchema()
     return user_schema.jsonify(new_user)
 
 
@@ -135,6 +138,7 @@ def delete_tracker():
 
 # Assign tags to a user
 
+
 # Change tags for a user
 
 
@@ -159,6 +163,7 @@ def add_role():
 
         db.session.add(user)
         db.session.commit()
+        user_schema = UserSchema()
         return user_schema.jsonify(user)
     else:
         return "Role already exists for the user", 400
