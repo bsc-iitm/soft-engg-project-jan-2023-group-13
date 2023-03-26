@@ -20,7 +20,7 @@ from app.utils.auth import Auth, NotAuthorized
 jwt = JWTManager(app)
 salt = bcrypt.gensalt()
 
-user_schema = UserSchema()
+user_schema = UserSchema(many=True)
 
 
 @app.post("/api/user/login")
@@ -77,6 +77,15 @@ def register():
     db.session.add(new_user)
     db.session.commit()
     return user_schema.jsonify(new_user)
+
+
+# get all users
+@app.get("/api/user/all")
+def get_users():
+    user_list = User.query.order_by(User.user_id).all()
+    # user_schema = UserSchema(many=True)
+    output = user_schema.dump(user_list)
+    return jsonify(output)
 
 
 @app.put("/api/user/roles")
