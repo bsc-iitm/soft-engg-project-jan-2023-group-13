@@ -102,6 +102,24 @@ def get_user():
 
 
 # Update a user
+@app.put("/api/user")
+@jwt_required()
+def update_user():
+    current_userid = get_jwt_identity()
+
+    usr = User.query.filter_by(user_id=current_userid).first()
+
+    user_data = request.get_json()
+    # usr.username = user_data["username"]
+    # usr.password = user_data["password"]
+    usr.email = user_data["email"]
+    usr.first_name = user_data["first_name"]
+    usr.last_name = user_data["last_name"]
+
+    db.session.commit()
+
+    return jsonify(user_data)
+
 
 # Delete a user
 
