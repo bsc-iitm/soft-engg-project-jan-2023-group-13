@@ -31,11 +31,15 @@ def get_comments(ticket_id):
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
 
     if ticket:
-        comments = db.session.query(Comment).filter(Comment.ticket_id == ticket_id).order_by(
-                Comment.created_at.desc()).all()
+        comments = (
+            db.session.query(Comment)
+            .filter(Comment.ticket_id == ticket_id)
+            .order_by(Comment.created_at.desc())
+            .all()
+        )
         return comments_schema.jsonify(comments), 200
     else:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
 
 @app.post("/api/tickets/<ticket_id>/comments")
@@ -45,9 +49,10 @@ def post_comment(ticket_id):
     if ticket:
         current_user_id = get_jwt_identity()
         commentdata = request.get_json()
-        body = commentdata['body']
-        Validation.is_valid_string_value(body, 'Comment Body', alpha_only=False,
-                                        allow_special_chars=True)
+        body = commentdata["body"]
+        Validation.is_valid_string_value(
+            body, "Comment Body", alpha_only=False, allow_special_chars=True
+        )
         body = Markup(body)
 
         new_comment = Comment(body=body, ticket_id=ticket_id, user_id=current_user_id)
@@ -55,7 +60,7 @@ def post_comment(ticket_id):
         db.session.commit()
         return comment_schema.jsonify(new_comment), 200
     else:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
 
 @app.get("/api/comments/<comment_id>")
@@ -65,7 +70,7 @@ def get_comment(comment_id):
     if comment:
         return comment_schema.jsonify(comment), 200
     else:
-        raise NotFound(status_code=404, msg='Comment not found')
+        raise NotFound(status_code=404, msg="Comment not found")
 
 
 @app.put("/api/comments/<comment_id>")
@@ -76,15 +81,16 @@ def put_comment(comment_id):
     if comment:
         Auth.authorize(current_user_id, comment.user_id)
         commentdata = request.get_json()
-        body = commentdata['body']
-        Validation.is_valid_string_value(body, 'Comment Body', alpha_only=False,
-                                        allow_special_chars=True)
+        body = commentdata["body"]
+        Validation.is_valid_string_value(
+            body, "Comment Body", alpha_only=False, allow_special_chars=True
+        )
         comment.body = Markup(body)
         db.session.add(comment)
         db.session.commit()
         return comment_schema.jsonify(comment), 200
     else:
-        raise NotFound(status_code=404, msg='Comment not found')
+        raise NotFound(status_code=404, msg="Comment not found")
 
 
 @app.delete("/api/comments/<comment_id>")
@@ -96,9 +102,9 @@ def delete_comment(comment_id):
         Auth.authorize(current_user_id, comment.user_id)
         db.session.delete(comment)
         db.session.commit()
-        return jsonify('Comment Deleted'), 204
+        return jsonify("Comment Deleted"), 204
     else:
-        raise NotFound(status_code=404, msg='Comment not found')
+        raise NotFound(status_code=404, msg="Comment not found")
 
 
 @app.put("/api/comments/<comment_id>/solution")
@@ -106,20 +112,22 @@ def delete_comment(comment_id):
 def mark_comment_as_solution(comment_id):
     current_user_id = get_jwt_identity()
     comment = db.session.query(Comment).filter(Comment.comment_id == comment_id).first()
-    ticket = db.session.query(Ticket).filter(Ticket.ticket_id == comment.ticket_id).first()
+    ticket = (
+        db.session.query(Ticket).filter(Ticket.ticket_id == comment.ticket_id).first()
+    )
 
     is_support = Auth.authorize_support(current_user_id)
     is_admin = Auth.authorize_admin(current_user_id)
     is_owner = Auth.authorize_owner(current_user_id, comment.user_id)
 
     if not comment:
-        raise NotFound(status_code=404, msg='Comment not found')
+        raise NotFound(status_code=404, msg="Comment not found")
 
     if not ticket:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
-    if (is_admin or is_support or is_owner):
-        if  (ticket.status == "Open"):
+    if is_admin or is_support or is_owner:
+        if ticket.status == "Open":
             print(is_admin, is_support, is_owner, ticket.status)
             ticket.status = "Resolved"
             comment.solution = 1
@@ -133,3 +141,7 @@ def mark_comment_as_solution(comment_id):
     else:
         raise NotAuthorized()
 
+
+@app.get("/api/test")
+def test():
+    return jsonify("test api")

@@ -22,13 +22,14 @@ salt = bcrypt.gensalt()
 
 user_schema = UserSchema()
 
+
 @app.post("/api/user/login")
 def login():
     # Getting user Creds
     userdata = request.get_json()
     user_name = userdata["username"]
-    password = userdata["password"].encode('utf-8')
-    access_token = create_access_token(identity=1)
+    password = userdata["password"].encode("utf-8")
+    # access_token = create_access_token(identity=1)
     # return jsonify(access_token=access_token)
 
     # Getting Creds from db
@@ -46,7 +47,6 @@ def login():
         return jsonify({"msg": "Bad password"})
 
 
-
 # Create User
 @app.post("/api/user/register")
 def register():
@@ -57,7 +57,7 @@ def register():
 
     if usr or em:
         return jsonify("User already Exists"), 409
-    password = userdata["password"].encode('utf-8')
+    password = userdata["password"].encode("utf-8")
 
     # Hashing Password
     hashed_pass = bcrypt.hashpw(password, salt)
@@ -65,8 +65,11 @@ def register():
     fs_uniquifier = uuid.uuid4().hex
 
     new_user = User(
-        username=userdata["username"], email=userdata["email"], password=hashed_pass,
-        first_name=userdata["first_name"], last_name=userdata["last_name"],
+        username=userdata["username"],
+        email=userdata["email"],
+        password=hashed_pass,
+        first_name=userdata["first_name"],
+        last_name=userdata["last_name"],
         fs_uniquifier=fs_uniquifier,
     )
 
@@ -87,9 +90,9 @@ def add_role():
     user = User.query.filter(User.username == userdata["username"]).first()
     role = Role.query.filter(Role.name == userdata["role"]).first()
     if not user:
-        raise NotFound(status_code=404, msg='User not found')
+        raise NotFound(status_code=404, msg="User not found")
     if not role:
-        raise NotFound(status_code=404, msg='Role not found')
+        raise NotFound(status_code=404, msg="Role not found")
 
     if role not in user.roles:
         user.roles.append(role)
