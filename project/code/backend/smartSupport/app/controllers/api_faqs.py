@@ -28,3 +28,15 @@ def faq_byID(faq_id):
     faq_schema = FaqsSchema()
     output = faq_schema.dump(faq)
     return jsonify(output)
+
+
+# Create new Faq
+@app.post("/api/faqs")
+def create_faq():
+    faq_data = request.get_json()
+
+    db.session.add(Faqs(query=faq_data["question"], answer=faq_data["answer"]))
+    db.session.commit()
+    faq = db.session.query(Faqs).filter_by(query=faq_data["question"]).first()
+
+    return jsonify(f"Faq created successfully with id {faq.faq_id}")
