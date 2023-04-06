@@ -43,7 +43,7 @@
 
 # FAQ
 * ~~GET /faqs~~
-* POST /faqs
+* ~~POST /faqs~~
 * ~~GET /faqs/{faq_id}~~
-* PUT /faqs/{faq_id}
-* DELETE /faqs/{faq_id}
+* ~~PUT /faqs/{faq_id}~~
+* ~~DELETE /faqs/{faq_id}~~

@@ -13,6 +13,7 @@ from app.utils.auth import Auth, NotAuthorized
 
 # Get all faqs
 @app.get("/api/faqs")
+@jwt_required()
 def get_faqs():
     faq_list = db.session.query(Faqs).all()
 
@@ -23,8 +24,9 @@ def get_faqs():
 
 # get faq by id
 @app.get("/api/faqs/<faq_id>")
+@jwt_required()
 def faq_byID(faq_id):
-    faq = db.session.query(Faqs).filter_by(faq_id=1).first()
+    faq = db.session.query(Faqs).filter_by(faq_id=faq_id).first()
     faq_schema = FaqsSchema()
     output = faq_schema.dump(faq)
     return jsonify(output)
@@ -32,6 +34,7 @@ def faq_byID(faq_id):
 
 # Create new Faq
 @app.post("/api/faqs")
+@jwt_required()
 def create_faq():
     faq_data = request.get_json()
 
@@ -40,3 +43,27 @@ def create_faq():
     faq = db.session.query(Faqs).filter_by(query=faq_data["question"]).first()
 
     return jsonify(f"Faq created successfully with id {faq.faq_id}")
+
+
+# update a faq
+@app.put("/api/faqs/<faq_id>")
+@jwt_required()
+def update_faq(faq_id):
+    faq = db.session.query(Faqs).filter_by(faq_id=faq_id).first()
+    if faq is None:
+        return jsonify("No log found")
+    else:
+        faq_data = request.get_json()
+        faq.query = faq_data["question"]
+        faq.answer = faq_data["answer"]
+        db.session.commit()
+        return jsonify(faq=faq_data, msg="Faq updated Successfully")
+
+
+# Delete a faq
+@app.delete("/api/faqs/<faq_id>")
+@jwt_required()
+def delete_faq(faq_id):
+    db.session.query(Faqs).filter_by(faq_id=faq_id).delete()
+    db.session.commit()
+    return jsonify(f"Faq delete with id {faq_id} successfully")
