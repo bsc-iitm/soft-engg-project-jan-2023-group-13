@@ -42,8 +42,8 @@
 * DELETE /tickets/{ticket_id}/revoke-vote
 
 # FAQ
-* GET /faqs
+* ~~GET /faqs~~
 * POST /faqs
-* GET /faqs/{faq_id}
+* ~~GET /faqs/{faq_id}~~
 * PUT /faqs/{faq_id}
 * DELETE /faqs/{faq_id}
