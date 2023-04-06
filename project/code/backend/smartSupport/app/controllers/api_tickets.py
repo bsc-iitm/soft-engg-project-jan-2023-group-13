@@ -18,8 +18,8 @@ from app.data.schema import TicketSchema
 from app.utils.validation import *
 from app.utils.auth import Auth
 
-jwt = JWTManager(app)
-salt = bcrypt.gensalt()
+# jwt = JWTManager(app)
+# salt = bcrypt.gensalt()
 
 ticket_schema = TicketSchema()
 tickets_schema = TicketSchema(many=True)

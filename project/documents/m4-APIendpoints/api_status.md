@@ -41,7 +41,7 @@
 * POST /tickets/{ticket_id}/upvote
 * DELETE /tickets/{ticket_id}/revoke-vote
 
-  # FAQ
+# FAQ
 * GET /faqs
 * POST /faqs
 * GET /faqs/{faq_id}

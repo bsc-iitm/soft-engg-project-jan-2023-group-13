@@ -165,8 +165,10 @@ cython_debug/
 project/code/backend/smartSupport/app/config/__pycache__/
 project/code/backend/smartSupport/app/data/__pycache__/
 project/code/backend/smartSupport/app/controllers/__pycache__/
+project/code/backend/smartSupport/app/__pycache__/
 
 project/code/backend/smartSupport/app/data/__pycache__/models.cpython-311.pyc
 project/code/backend/smartSupport/app/controllers/__pycache__/api_comments.cpython-311.pyc
 project/code/backend/smartSupport/app/controllers/__pycache__/api.cpython-311.pyc
 
+project/code/backend/smartSupport/app/__pycache__/__init__.cpython-311.pyc

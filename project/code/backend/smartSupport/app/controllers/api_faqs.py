@@ -13,7 +13,7 @@ from app.utils.auth import Auth, NotAuthorized
 
 @app.get("/api/faqs")
 def get_faqs():
-    faq_list = Faqs.query.order_by(Faqs.faq_id).all()
+    faq_list = db.session.query(Faqs).all()
 
     faq_schema = FaqsSchema(many=True)
     output = faq_schema.dump(faq_list)
