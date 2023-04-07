@@ -32,8 +32,8 @@
 * ~~PUT /comments/{comment_id}/solution~~
 
 # Tag
-* GET /tags
-* POST /tags
+* ~~GET /tags~~
+* ~~POST /tags~~
 * PUT /tags/{tag_id}
 * DELETE /tags/{tag_id}
 

@@ -18,3 +18,16 @@ def get_all_tags():
     output = tag_schema.dump(tag_lists)
 
     return jsonify(output)
+
+
+@app.post("/api/tags")
+@jwt_required()
+def create_tag():
+    tag_data = request.get_json()
+
+    db.session.add(Tag(name=tag_data["name"]))
+    db.session.commit()
+
+    tag = Tag.query.filter_by(name=tag_data["name"]).first()
+
+    return jsonify(f"Tag created successfully with id {tag.tag_id}")
