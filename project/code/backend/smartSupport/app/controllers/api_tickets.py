@@ -81,7 +81,7 @@ def put_ticket(ticket_id):
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
 
     if ticket:
-        Auth.authorize(current_user_id, ticket.user_id)
+        Auth.authorize(current_user_id, ticket.student_id)
         ticketdata = request.get_json()
         title = ticketdata['title']
         body = ticketdata['body']
