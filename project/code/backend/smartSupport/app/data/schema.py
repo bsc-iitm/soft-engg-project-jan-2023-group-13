@@ -3,7 +3,7 @@ from flask import current_app as app
 # from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
-from app.data.models import Faqs
+from app.data.models import Faqs, Tag
 
 ma = Marshmallow(app)
 
@@ -54,3 +54,8 @@ class CommentSchema(ma.Schema):
 class FaqsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Faqs
+
+
+class TagSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Tag

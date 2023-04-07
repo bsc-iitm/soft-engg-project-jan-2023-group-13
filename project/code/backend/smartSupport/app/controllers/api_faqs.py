@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 from app.data.db import db
-from app.data.models import Faqs, Tag
+from app.data.models import Faqs
 from app.data.schema import FaqsSchema
 
 from app.utils.validation import *
