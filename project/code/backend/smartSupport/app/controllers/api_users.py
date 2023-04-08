@@ -63,8 +63,6 @@ def login():
     userdata = request.get_json()
     user_name = userdata["username"]
     password = userdata["password"].encode("utf-8")
-    # access_token = create_access_token(identity=1)
-    # return jsonify(access_token=access_token)
 
     # Getting Creds from db
     curr_user = User.query.filter_by(username=user_name).first()
@@ -74,7 +72,6 @@ def login():
         return jsonify({"msg": "Bad username"})
     elif bcrypt.checkpw(password, curr_user.password):
         # Creating JWT token
-        # cache.clear()
         access_token = create_access_token(identity=curr_user.user_id)
         return jsonify(access_token=access_token)
     else:

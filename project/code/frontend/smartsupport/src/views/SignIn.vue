@@ -62,7 +62,7 @@ export default {
         body: JSON.stringify(this.userdata),
       };
 
-      fetch("http://127.0.0.1:5000/api/login", options)
+      fetch("http://127.0.0.1:5000/api/user/login", options)
         .then((response) => response.json())
         .then((response) => {
           let token = response.access_token;
