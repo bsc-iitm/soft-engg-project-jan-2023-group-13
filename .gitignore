@@ -172,3 +172,28 @@ project/code/backend/smartSupport/app/controllers/__pycache__/api_comments.cpyth
 project/code/backend/smartSupport/app/controllers/__pycache__/api.cpython-311.pyc
 
 project/code/backend/smartSupport/app/__pycache__/__init__.cpython-311.pyc
+
+
+.DS_Store
+node_modules
+/dist
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
