@@ -38,7 +38,7 @@
 * ~~DELETE /tags/{tag_id}~~
 
 # Vote
-* POST /tickets/{ticket_id}/upvote
+* ~~POST /tickets/{ticket_id}/upvote~~
 * DELETE /tickets/{ticket_id}/revoke-vote
 
 # FAQ
