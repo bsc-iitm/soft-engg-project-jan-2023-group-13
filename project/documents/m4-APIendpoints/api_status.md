@@ -39,7 +39,7 @@
 
 # Vote
 * ~~POST /tickets/{ticket_id}/upvote~~
-* DELETE /tickets/{ticket_id}/revoke-vote
+* ~~DELETE /tickets/{ticket_id}/revoke-vote~~
 
 # FAQ
 * ~~GET /faqs~~
