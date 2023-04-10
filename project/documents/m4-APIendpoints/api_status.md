@@ -6,7 +6,7 @@
 * ~~GET /user~~
 * ~~PUT /user~~
 * ~~DELETE /user~~
-* POST /user/tags
+* ~~POST /user/tags~~
 * PUT /user/tags
 * ~~PUT /user/roles~~
 * ~~DELETE /user/roles~~

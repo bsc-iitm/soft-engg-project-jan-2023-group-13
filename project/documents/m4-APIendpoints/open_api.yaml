@@ -170,10 +170,10 @@ paths:
               $ref: '#/components/schemas/UserTagAssignmentRequest'
             examples:
               example-1:
-                summary: Example of assigning a tag to a user
+                summary: Example of removing a tag from a user
                 value:
-                  username: john.doe
-                  tag_id: 12345
+                  username: jdoe
+                  tag_id: 4
       responses:
         '204':
           description: Tag successfully revoked from user

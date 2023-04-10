@@ -163,7 +163,7 @@ def add_role():
         user_schema = UserSchema()
         return user_schema.jsonify(user)
     else:
-        return "Role already exists for the user", 400
+        return jsonify("Role already exists for the user"), 400
 
 
 # remove roles from a user
@@ -210,10 +210,36 @@ def add_usertag():
 
     if tag not in user.tags:
         user.tags.append(tag)
-
         db.session.add(user)
         db.session.commit()
         user_schema = UserSchema()
         return user_schema.jsonify(user)
     else:
         return jsonify("Tag already exists for the user"), 400
+
+
+
+# Remove a tag from a user
+@app.put("/api/user/tags")
+@jwt_required()
+def remove_usertag():
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
+
+    userdata = request.get_json()
+    user = User.query.filter(User.username == userdata["username"]).first()
+    tag = Tag.query.filter(Tag.tag_id == userdata["tag_id"]).first()
+    if not user:
+        raise NotFound(status_code=404, msg="User not found")
+    if not tag:
+        raise NotFound(status_code=404, msg="Tag not found")
+
+    if tag in user.tags:
+        user.tags.remove(tag)
+        db.session.add(user)
+        db.session.commit()
+        user_schema = UserSchema()
+        return user_schema.jsonify(user)
+    else:
+        return jsonify("Tag doesn't exist for the user"), 400
