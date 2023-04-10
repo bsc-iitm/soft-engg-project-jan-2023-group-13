@@ -9,13 +9,13 @@
 * POST /user/tags
 * PUT /user/tags
 * ~~PUT /user/roles~~
-* DELETE /user/roles
+* ~~DELETE /user/roles~~
 
 # Ticket
 * ~~GET /ticekets~~
-* ~~POST /tickets~~
+* ~~POST /tickets~~    **** Attach Tags
 * ~~GET /tickets/{ticket_id}~~
-* ~~PUT /tickets/{ticket_id}~~
+* ~~PUT /tickets/{ticket_id}~~    **** Attach or Remove Tags
 * ~~DELETE /tickets/{ticket_id}~~
 * ~~GET /tickets/{ticket_id}/comments~~
 * ~~POST /tickets/{ticket_id}/comments~~

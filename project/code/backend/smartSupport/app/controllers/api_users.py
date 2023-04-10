@@ -167,3 +167,25 @@ def add_role():
 
 
 # remove roles from a user
+@app.delete("/api/user/roles")
+@jwt_required()
+def delete_role():
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
+
+    userdata = request.get_json()
+    user = User.query.filter(User.username == userdata["username"]).first()
+    role = Role.query.filter(Role.name == userdata["role"]).first()
+
+    if not user:
+        raise NotFound(status_code=404, msg="User not found")
+    if not role:
+        raise NotFound(status_code=404, msg="Role not found")
+
+    if role in user.roles:
+        user.roles.remove(role)
+        db.session.commit()
+        return jsonify("Role removed successfully"), 204
+    else:
+        return jsonify("Role doesn't exist for user"), 400

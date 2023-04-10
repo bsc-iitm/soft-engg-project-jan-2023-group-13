@@ -208,21 +208,20 @@ paths:
       summary: Remove role from a user
       tags:
         - Users
-      parameters:
-        - in: path
-          name: user_id
-          required: true
-          description: ID of the user
-          schema:
-            type: integer
-        - in: path
-          name: role_id
-          required: true
-          description: ID of the role
-          schema:
-            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  role: "Support"
+                  username: "jdoe"
       responses:
-        '200':
+        '204':
           description: Role removed from user successfully
         '404':
           description: User or role not found
