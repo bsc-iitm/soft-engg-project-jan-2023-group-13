@@ -148,8 +148,8 @@ paths:
               example-1:
                 summary: Example of assigning a tag to a user
                 value:
-                  username: john.doe
-                  tag_id: 12345
+                  username: jdoe
+                  tag_id: 4
 
       responses:
         '201':

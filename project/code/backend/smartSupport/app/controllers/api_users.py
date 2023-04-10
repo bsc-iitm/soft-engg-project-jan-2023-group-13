@@ -14,7 +14,7 @@ from flask_jwt_extended import (
 
 
 from app.data.db import db
-from app.data.models import User, Role, user_tags
+from app.data.models import User, Role, Tag
 from app.data.schema import UserSchema
 from app.utils.validation import *
 from app.utils.auth import Auth, NotAuthorized
@@ -189,3 +189,31 @@ def delete_role():
         return jsonify("Role removed successfully"), 204
     else:
         return jsonify("Role doesn't exist for user"), 400
+
+
+
+# Assign a tag to a user
+@app.post("/api/user/tags")
+@jwt_required()
+def add_usertag():
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
+
+    userdata = request.get_json()
+    user = User.query.filter(User.username == userdata["username"]).first()
+    tag = Tag.query.filter(Tag.tag_id == userdata["tag_id"]).first()
+    if not user:
+        raise NotFound(status_code=404, msg="User not found")
+    if not tag:
+        raise NotFound(status_code=404, msg="Tag not found")
+
+    if tag not in user.tags:
+        user.tags.append(tag)
+
+        db.session.add(user)
+        db.session.commit()
+        user_schema = UserSchema()
+        return user_schema.jsonify(user)
+    else:
+        return jsonify("Tag already exists for the user"), 400
