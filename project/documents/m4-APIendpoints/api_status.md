@@ -35,7 +35,7 @@
 * ~~GET /tags~~
 * ~~POST /tags~~
 * ~~PUT /tags/{tag_id}~~
-* DELETE /tags/{tag_id}
+* ~~DELETE /tags/{tag_id}~~
 
 # Vote
 * POST /tickets/{ticket_id}/upvote

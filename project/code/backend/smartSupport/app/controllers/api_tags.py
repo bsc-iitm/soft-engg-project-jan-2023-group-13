@@ -6,6 +6,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.data.db import db
 from app.data.models import Tag
 from app.data.schema import TagSchema
+from app.utils.auth import Auth, NotAuthorized
+
 
 
 # Get all tags
@@ -24,8 +26,11 @@ def get_all_tags():
 @app.post("/api/tags")
 @jwt_required()
 def create_tag():
-    tag_data = request.get_json()
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
 
+    tag_data = request.get_json()
     tag = Tag.query.filter(Tag.name == tag_data["name"]).first()
 
     if not tag:
@@ -41,15 +46,39 @@ def create_tag():
 @app.put("/api/tags/<tag_id>")
 @jwt_required()
 def edit_tag(tag_id):
-    tag_data = request.get_json()
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
 
+    tag_data = request.get_json()
     tag = Tag.query.filter(Tag.tag_id == tag_id).first()
 
     if tag:
         tag.name = tag_data["name"]
         db.session.add(tag)
         db.session.commit()
-        return jsonify(f"Tag name updated successfully")
+
+        tag_schema = TagSchema()
+        output = tag_schema.dump(tag)
+        return jsonify(output)
+    else:
+        return jsonify("Tag doesn't exist"), 400
+
+
+# Change name of a tag
+@app.delete("/api/tags/<tag_id>")
+@jwt_required()
+def delete_tag(tag_id):
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
+
+    tag = Tag.query.filter(Tag.tag_id == tag_id).first()
+
+    if tag:
+        db.session.delete(tag)
+        db.session.commit()
+        return jsonify(f"Tag name delted"), 204
     else:
         return jsonify("Tag doesn't exist"), 400
 
