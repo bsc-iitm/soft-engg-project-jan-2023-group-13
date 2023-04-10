@@ -7,7 +7,7 @@
 * ~~PUT /user~~
 * ~~DELETE /user~~
 * ~~POST /user/tags~~
-* PUT /user/tags
+* ~~PUT /user/tags~~
 * ~~PUT /user/roles~~
 * ~~DELETE /user/roles~~
 
@@ -34,7 +34,7 @@
 # Tag
 * ~~GET /tags~~
 * ~~POST /tags~~
-* PUT /tags/{tag_id}
+* ~~PUT /tags/{tag_id}~~
 * DELETE /tags/{tag_id}
 
 # Vote

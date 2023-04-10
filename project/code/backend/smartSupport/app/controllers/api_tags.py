@@ -20,14 +20,36 @@ def get_all_tags():
     return jsonify(output)
 
 
+# Add a new tag
 @app.post("/api/tags")
 @jwt_required()
 def create_tag():
     tag_data = request.get_json()
 
-    db.session.add(Tag(name=tag_data["name"]))
-    db.session.commit()
+    tag = Tag.query.filter(Tag.name == tag_data["name"]).first()
 
-    tag = Tag.query.filter_by(name=tag_data["name"]).first()
+    if not tag:
+        db.session.add(Tag(name=tag_data["name"]))
+        db.session.commit()
+        new_tag = Tag.query.filter_by(name=tag_data["name"]).first()
+        return jsonify(f"Tag created successfully with id {new_tag.tag_id}")
+    else:
+        return jsonify("Tag with given name already exists"), 400
 
-    return jsonify(f"Tag created successfully with id {tag.tag_id}")
+
+# Change name of a tag
+@app.put("/api/tags/<tag_id>")
+@jwt_required()
+def edit_tag(tag_id):
+    tag_data = request.get_json()
+
+    tag = Tag.query.filter(Tag.tag_id == tag_id).first()
+
+    if tag:
+        tag.name = tag_data["name"]
+        db.session.add(tag)
+        db.session.commit()
+        return jsonify(f"Tag name updated successfully")
+    else:
+        return jsonify("Tag doesn't exist"), 400
+
