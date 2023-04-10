@@ -30,3 +30,22 @@ def upvote_ticket(ticket_id):
         return jsonify(result), 200
     else:
         return jsonify("Already upvoted"), 400
+
+
+
+# Revote vote from a ticket
+@app.delete("/api/tickets/<ticket_id>/revoke-vote")
+@jwt_required()
+def revoke_vote_from_ticket(ticket_id):
+    current_user_id = get_jwt_identity()
+
+    vote = db.session.query(Vote).filter(
+        Vote.ticket_id == ticket_id, Vote.user_id==current_user_id).first()
+
+    if vote:
+        db.session.delete(vote)
+        db.session.commit()
+
+        return jsonify("Vote revoked successfully"), 200
+    else:
+        return jsonify("No vote present to revoke"), 404
