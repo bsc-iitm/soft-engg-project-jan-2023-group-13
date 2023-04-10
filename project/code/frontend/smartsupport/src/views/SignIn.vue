@@ -69,7 +69,7 @@ export default {
           if (token) {
             localStorage.clear();
             localStorage.setItem("access_key", "Bearer " + token);
-            this.$router.push("/dashboard");
+            this.$router.push("/home");
           } else if (response.msg == "Bad username") {
             this.errors.error = true;
             this.errors.type = "Username";
