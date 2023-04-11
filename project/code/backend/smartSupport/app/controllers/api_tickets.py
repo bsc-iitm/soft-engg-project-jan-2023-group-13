@@ -13,7 +13,7 @@ from flask_jwt_extended import (
 )
 
 from app.data.db import db
-from app.data.models import Ticket, Vote, Faqs, Comment
+from app.data.models import Ticket, Vote, Faqs, Comment, Tag
 from app.data.schema import TicketSchema
 from app.utils.validation import *
 from app.utils.auth import Auth, NotAuthorized
@@ -53,6 +53,7 @@ def post_ticket():
 
     title = ticketdata['title']
     body = ticketdata['body']
+    tags = ticketdata['tags']
 
     Validation.is_valid_string_value(title, 'Title', alpha_only=False)
     Validation.is_valid_string_value(body, 'Ticket Body', alpha_only=False, allow_special_chars=True)
@@ -60,9 +61,16 @@ def post_ticket():
     body = Markup(body)
 
     new_ticket = Ticket(title=title, body=body, student_id=current_user_id)
+
+    for tagname in tags:
+        tag = db.session.query(Tag).filter(Tag.name == tagname).first()
+        if not tag:
+            return jsonify('Tag {} not found'.format(tagname))
+        new_ticket.tags.append(tag)
+        # print(tag)
+
     db.session.add(new_ticket)
     db.session.commit()
-
     return ticket_schema.jsonify(new_ticket), 200
 
 

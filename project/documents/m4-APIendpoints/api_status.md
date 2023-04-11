@@ -13,7 +13,7 @@
 
 # Ticket
 * ~~GET /ticekets~~
-* ~~POST /tickets~~    **** Attach Tags
+* ~~POST /tickets~~    ~~**** Attach Tags~~
 * ~~GET /tickets/user/{username}~~
 * ~~GET /tickets/{ticket_id}~~
 * ~~PUT /tickets/{ticket_id}~~    **** Attach or Remove Tags

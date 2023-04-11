@@ -946,9 +946,15 @@ components:
         body:
           type: string
           description: The body of the ticket
+        tags:
+          type: array
+          items:
+            type: string
+            description: A list of tags associated with the ticket
       example:
         title: "Need help with Python"
         body: "I'm having trouble understanding Python classes. Can someone help me?"
+        tags: ["SoftEng", "SoftTest", "PSM"]
     User:
       type: object
       properties:
