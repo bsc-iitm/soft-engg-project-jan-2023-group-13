@@ -28,17 +28,26 @@ tickets_schema = TicketSchema(many=True)
 # get all tickets
 @app.get("/api/tickets")
 def get_tickets():
-    page = int(request.args.get('page'))
-    per_page = int(request.args.get('per_page'))
+    page = int(request.args.get("page"))
+    per_page = int(request.args.get("per_page"))
 
-    vote_subquery = db.session.query(
-            Vote.ticket_id, func.count(Vote.vote_id).label('vote_count')
-        ).group_by(Vote.ticket_id).subquery()
+    vote_subquery = (
+        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+        .group_by(Vote.ticket_id)
+        .subquery()
+    )
 
-    sorted_tickets = Ticket.query.join(
-        vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id).order_by(
-        Ticket.status.asc(), Ticket.created_at.asc(), vote_subquery.c.vote_count.desc()
-        ).limit(per_page).offset(page*per_page).all()
+    sorted_tickets = (
+        Ticket.query.join(vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id)
+        .order_by(
+            Ticket.status.asc(),
+            Ticket.created_at.asc(),
+            vote_subquery.c.vote_count.desc(),
+        )
+        .limit(per_page)
+        .offset(page * per_page)
+        .all()
+    )
 
     result = tickets_schema.dump(sorted_tickets)
     return jsonify(result), 200
@@ -51,12 +60,14 @@ def post_ticket():
     current_user_id = get_jwt_identity()
     ticketdata = request.get_json()
 
-    title = ticketdata['title']
-    body = ticketdata['body']
-    tags = ticketdata['tags']
+    title = ticketdata["title"]
+    body = ticketdata["body"]
+    tags = ticketdata["tags"]
 
-    Validation.is_valid_string_value(title, 'Title', alpha_only=False)
-    Validation.is_valid_string_value(body, 'Ticket Body', alpha_only=False, allow_special_chars=True)
+    Validation.is_valid_string_value(title, "Title", alpha_only=False)
+    Validation.is_valid_string_value(
+        body, "Ticket Body", alpha_only=False, allow_special_chars=True
+    )
 
     body = Markup(body)
 
@@ -65,7 +76,7 @@ def post_ticket():
     for tagname in tags:
         tag = db.session.query(Tag).filter(Tag.name == tagname).first()
         if not tag:
-            return jsonify('Tag {} not found'.format(tagname))
+            return jsonify("Tag {} not found".format(tagname))
         new_ticket.tags.append(tag)
         # print(tag)
 
@@ -82,7 +93,7 @@ def get_ticket(ticket_id):
     if ticket:
         return ticket_schema.jsonify(ticket), 200
     else:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
 
 # edit a ticket
@@ -95,12 +106,13 @@ def put_ticket(ticket_id):
     if ticket:
         Auth.authorize(current_user_id, ticket.student_id)
         ticketdata = request.get_json()
-        title = ticketdata['title']
-        body = ticketdata['body']
+        title = ticketdata["title"]
+        body = ticketdata["body"]
 
-        Validation.is_valid_string_value(title, 'Title', alpha_only=False)
+        Validation.is_valid_string_value(title, "Title", alpha_only=False)
         Validation.is_valid_string_value(
-            body, 'Blog Body', alpha_only=False, allow_special_chars=True)
+            body, "Blog Body", alpha_only=False, allow_special_chars=True
+        )
 
         ticket.title = title
         ticket.body = Markup(body)
@@ -108,7 +120,7 @@ def put_ticket(ticket_id):
         db.session.commit()
         return ticket_schema.jsonify(ticket), 200
     else:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
 
 # delete a ticket
@@ -124,28 +136,75 @@ def delete_ticket(ticket_id):
     if ticket:
         db.session.delete(ticket)
         db.session.commit()
-        return jsonify('Ticket Deleted'), 204
+        return jsonify("Ticket Deleted"), 204
     else:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
 
 # get tickets of a given user by username
 @app.get("/api/tickets/user/<username>")
 def get_user_tickets(username):
-    page = int(request.args.get('page'))
-    per_page = int(request.args.get('per_page'))
+    page = int(request.args.get("page"))
+    per_page = int(request.args.get("per_page"))
 
     student = db.session.query(User).filter(User.username == username).first()
 
-    vote_subquery = db.session.query(
-            Vote.ticket_id, func.count(Vote.vote_id).label('vote_count')
-        ).group_by(Vote.ticket_id).subquery()
+    vote_subquery = (
+        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+        .group_by(Vote.ticket_id)
+        .subquery()
+    )
 
-    sorted_tickets = Ticket.query.join(
-        vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id,
-        ).filter(Ticket.student_id == student.user_id).order_by(
-        Ticket.status.asc(), Ticket.created_at.asc(), vote_subquery.c.vote_count.desc()
-        ).limit(per_page).offset(page*per_page).all()
+    sorted_tickets = (
+        Ticket.query.join(
+            vote_subquery,
+            Ticket.ticket_id == vote_subquery.c.ticket_id,
+        )
+        .filter(Ticket.student_id == student.user_id)
+        .order_by(
+            Ticket.status.asc(),
+            Ticket.created_at.asc(),
+            vote_subquery.c.vote_count.desc(),
+        )
+        .limit(per_page)
+        .offset(page * per_page)
+        .all()
+    )
+
+    result = tickets_schema.dump(sorted_tickets)
+    return jsonify(result), 200
+
+
+# get ticket for current logged in user ***Added Temporarily
+@app.get("/api/tickets/user")
+@jwt_required()
+def get_loggedin_user_tickets():
+    # page = int(request.args.get("page"))
+    # per_page = int(request.args.get("per_page"))
+
+    curr_userid = get_jwt_identity()
+
+    student = db.session.query(User).filter(User.user_id == curr_userid).first()
+
+    vote_subquery = (
+        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+        .group_by(Vote.ticket_id)
+        .subquery()
+    )
+
+    sorted_tickets = (
+        Ticket.query.join(
+            vote_subquery,
+            Ticket.ticket_id == vote_subquery.c.ticket_id,
+        )
+        .filter(Ticket.student_id == student.user_id)
+        .order_by(
+            Ticket.status.asc(),
+            Ticket.created_at.asc(),
+            vote_subquery.c.vote_count.desc(),
+        )
+        .all()
+    )
 
     result = tickets_schema.dump(sorted_tickets)
     return jsonify(result), 200
@@ -159,7 +218,7 @@ def close_ticket(ticket_id):
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
 
     if not Ticket:
-        raise NotFound(status_code=404, msg='Ticket not found')
+        raise NotFound(status_code=404, msg="Ticket not found")
 
     if ticket.status == "Resolved":
         return jsonify("Ticket already resolved"), 400
@@ -185,8 +244,11 @@ def ticket_to_faq(ticket_id):
     if ticket.status != "Resolved":
         return jsonify("Can convert unresolved ticket to FAQ"), 400
 
-    comment = db.session.query(Comment).filter(
-        Comment.ticket_id == ticket_id, Comment.solution==1).first()
+    comment = (
+        db.session.query(Comment)
+        .filter(Comment.ticket_id == ticket_id, Comment.solution == 1)
+        .first()
+    )
 
     if not comment:
         return jsonify("Solution comment not found"), 404
@@ -197,4 +259,3 @@ def ticket_to_faq(ticket_id):
     db.session.commit()
 
     return jsonify(f"Ticket converted to FAQ successfully with faq_id {new_faq.faq_id}")
-

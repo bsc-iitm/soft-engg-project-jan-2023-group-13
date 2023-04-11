@@ -42,6 +42,29 @@
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>My Tickets</h1>
+
+                    <!-- <li v-for="ticket in ticket_list">{{ ticket.title }}</li> -->
+                    <table class="table table-borderless table-group-divider">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Votes</th>
+                                <th>Created At</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ticket in ticket_list" :key="ticket.ticket_id">
+                                <td>{{ ticket.title }}</td>
+                                <td>{{ ticket.votes_count }}</td>
+                                <td>{{ ticket.created_at }}</td>
+                                <td>{{ ticket.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+
                 </div>
             </div>
             <div class="col">
@@ -73,7 +96,23 @@
 
 export default {
     name: "Home",
+    data() {
+        return {
+            ticket_list: [],
 
+        };
+    },
+
+    created() {
+        fetch("http://127.0.0.1:5000/api/tickets/user", {
+            headers: { Authorization: localStorage.getItem("access_key") },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                this.ticket_list = res
+
+            });
+    },
 };
 </script>
 
