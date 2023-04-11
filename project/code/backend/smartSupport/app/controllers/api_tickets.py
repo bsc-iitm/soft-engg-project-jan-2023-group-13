@@ -16,7 +16,7 @@ from app.data.db import db
 from app.data.models import Ticket, Vote
 from app.data.schema import TicketSchema
 from app.utils.validation import *
-from app.utils.auth import Auth
+from app.utils.auth import Auth, NotAuthorized
 
 # jwt = JWTManager(app)
 # salt = bcrypt.gensalt()
@@ -141,3 +141,25 @@ def get_user_tickets(username):
 
     result = tickets_schema.dump(sorted_tickets)
     return jsonify(result), 200
+
+
+# close a ticket
+@app.put("/api/tickets/<ticket_id>/close")
+@jwt_required()
+def close_ticket(ticket_id):
+    current_user_id = get_jwt_identity()
+    ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+
+    if not Ticket:
+        raise NotFound(status_code=404, msg='Ticket not found')
+
+    if ticket.status == "Resolved":
+        return jsonify("Ticket already resolved"), 400
+
+    if Auth.authorize_support(current_user_id) or Auth.authorize_admin(current_user_id):
+        ticket.status = "Closed"
+        db.session.add(ticket)
+        db.session.commit()
+        return ticket_schema.jsonify(ticket), 200
+    else:
+        raise NotAuthorized()
