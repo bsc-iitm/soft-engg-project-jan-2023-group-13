@@ -15,7 +15,7 @@
 
                     <router-link class="nav-link" to="/mytickets">My Tickets</router-link>
 
-                    <!-- <a class="nav-link">Search</a> -->
+
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -28,6 +28,45 @@
             </div>
         </div>
     </nav>
+
+    <!-- <div class="mt-4">
+        <div>
+            <h2 class="ms-5">My Tickets</h2>
+        </div>
+        <h3 class="text-right">Raise a New Ticket</h3>
+
+    </div> -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex flex-column justify-content-left align-items-left">
+                    <!-- First flexbox content goes here -->
+                    <h1>My Tickets</h1>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <!-- Second flexbox content goes here -->
+                    <h1>Raise a new Ticket</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="input1">Subject</label>
+                            <input type="text" class="form-control" id="input1">
+                        </div>
+                        <div class="form-group">
+                            <label for="input2">Tags</label>
+                            <input type="text" class="form-control" id="input2">
+                        </div>
+                        <div class="form-group">
+                            <label for="input3">body</label>
+                            <input type="text" class="form-control" id="input3">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -37,6 +76,12 @@ export default {
 
 };
 </script>
+
+<style>
+h3 {
+    float: right;
+}
+</style>
 
 
 <style></style>
