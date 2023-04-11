@@ -29,13 +29,6 @@
         </div>
     </nav>
 
-    <!-- <div class="mt-4">
-        <div>
-            <h2 class="ms-5">My Tickets</h2>
-        </div>
-        <h3 class="text-right">Raise a New Ticket</h3>
-
-    </div> -->
     <div class="container mt-4">
         <div class="row">
             <div class="col">
@@ -71,18 +64,34 @@
                 <div class="d-flex flex-column justify-content-center align-items-center">
                     <!-- Second flexbox content goes here -->
                     <h1>Raise a new Ticket</h1>
-                    <form>
+
+                    <form @submit.prevent="Createticket">
                         <div class="form-group">
-                            <label for="input1">Subject</label>
-                            <input type="text" class="form-control" id="input1">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" v-model="ticket_data.title" required>
                         </div>
+
                         <div class="form-group">
-                            <label for="input2">Tags</label>
-                            <input type="text" class="form-control" id="input2">
+
+                            <label for="tags">Select Tag</label>
+                            <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
+                                <!-- <option value="Tags" disabled selected> </option> -->
+                                <option v-for="tag in tag_list">{{ tag.name }}</option>
+                                <!-- <option value="SoftEng">Software Engineering</option>
+                                <option value="SoftTest">Software Testing</option>
+                                <option value="DeepLearn">Deep Learning</option>
+                                <option value="ArtInt">Artificial Intelligence</option>
+                                <option value="FinFor">Financial Forecasting</option>
+                                <option value="Ops">Operations Management</option>
+                                <option value="Clarification">Clarification Request</option>
+                                <option value="Assignment">Assignment Submission</option>
+                                <option value="PSM">Project Scope Management</option> -->
+                            </select>
                         </div>
+
                         <div class="form-group">
-                            <label for="input3">body</label>
-                            <input type="text" class="form-control" id="input3">
+                            <label for="body">Body</label>
+                            <input type="text" class="form-control" id="body" v-model="ticket_data.body" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -99,17 +108,55 @@ export default {
     data() {
         return {
             ticket_list: [],
+            ticket_data: {
+                title: "",
+                tags: "",
+                body: ""
+            },
+            tag_list: []
 
         };
     },
+    methods: {
+        Createticket() {
+            console.log("clicked on create ticket")
+            console.log(JSON.stringify(this.ticket_data))
 
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key"),
+                },
+                body: JSON.stringify(this.ticket_data)
+            };
+
+            fetch('http://127.0.0.1:5000/api/tickets', options)
+                .then(response => response.json())
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        }
+    },
     created() {
+        // Get list of tickets
         fetch("http://127.0.0.1:5000/api/tickets/user", {
             headers: { Authorization: localStorage.getItem("access_key") },
         })
             .then((res) => res.json())
             .then((res) => {
                 this.ticket_list = res
+
+            });
+
+        //Get list of tags
+
+        fetch("http://127.0.0.1:5000/api/tags", {
+            headers: { Authorization: localStorage.getItem("access_key") },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                this.tag_list = res
 
             });
     },
