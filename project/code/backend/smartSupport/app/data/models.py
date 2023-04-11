@@ -95,6 +95,13 @@ class Ticket(db.Model):
         return self.votes.count()
 
 
+class TicketSearch(db.Model):
+    __tablename__ = 'ticket_search'
+    ticket_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    body = db.Column(db.String)
+
+
 class Comment(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey("ticket.ticket_id"), nullable=False)

@@ -13,8 +13,8 @@ from flask_jwt_extended import (
 )
 
 from app.data.db import db
-from app.data.models import Ticket, Vote, Faqs, Comment, Tag
-from app.data.schema import TicketSchema
+from app.data.models import Ticket, Vote, Faqs, Comment, Tag, TicketSearch
+from app.data.schema import TicketSchema, TicketSearchSchema
 from app.utils.validation import *
 from app.utils.auth import Auth, NotAuthorized
 
@@ -23,6 +23,7 @@ from app.utils.auth import Auth, NotAuthorized
 
 ticket_schema = TicketSchema()
 tickets_schema = TicketSchema(many=True)
+tickets_search_schema = TicketSearchSchema(many=True)
 
 
 # get all tickets
@@ -254,8 +255,20 @@ def ticket_to_faq(ticket_id):
         return jsonify("Solution comment not found"), 404
 
     new_faq = Faqs(query=ticket.body, answer=comment.body)
-
     db.session.add(new_faq)
     db.session.commit()
-
     return jsonify(f"Ticket converted to FAQ successfully with faq_id {new_faq.faq_id}")
+
+
+# search ticket
+@app.get("/api/tickets/search")
+@jwt_required()
+def search_ticket():
+    q = request.args.get("q")
+
+    tickets = TicketSearch.query.filter(TicketSearch.body.op("MATCH")(q)).all()
+    results = tickets_search_schema.dump(tickets)
+
+    return jsonify(results), 200
+
+

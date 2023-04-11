@@ -36,6 +36,15 @@ class TicketSchema(ma.Schema):
     student = ma.Nested(UserSchema)
 
 
+class TicketSearchSchema(ma.Schema):
+    class Meta:
+        fields = (
+            "ticket_id",
+            "title",
+            "body",
+        )
+
+
 class CommentSchema(ma.Schema):
     class Meta:
         # model = Comment

@@ -21,7 +21,7 @@
 * ~~GET /tickets/{ticket_id}/comments~~
 * ~~POST /tickets/{ticket_id}/comments~~
 * ~~GET /tickets/{ticket_id}/comments~~
-* GET /tickets/search
+* ~~GET /tickets/search~~
 * ~~PUT /tickets/{ticket_id}/close~~
 * POST /tickets/{ticket_id}/notify
 * ~~POST /tickets/{ticket_id}/faqs~~
