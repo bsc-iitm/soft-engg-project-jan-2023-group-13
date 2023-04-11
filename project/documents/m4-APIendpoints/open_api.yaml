@@ -815,17 +815,17 @@ paths:
           description: ID of the ticket to convert to FAQ
           schema:
             type: integer
-      requestBody:
-        description: Request body containing information about the ticket to be converted
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TicketToFAQRequest'
-            example:
-              ticket_id: 1
-              question: What is the return policy?
-              answer: We accept returns within 30 days of purchase.
+      # requestBody:
+      #   description: Request body containing information about the ticket to be converted
+      #   required: true
+        # content:
+        #   application/json:
+        #     schema:
+        #       $ref: '#/components/schemas/TicketToFAQRequest'
+        #     example:
+        #       ticket_id: 1
+        #       question: What is the return policy?
+        #       answer: We accept returns within 30 days of purchase.
       responses:
         '201':
           description: FAQ created successfully from the ticket

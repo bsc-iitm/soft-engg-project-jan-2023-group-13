@@ -13,7 +13,7 @@ from flask_jwt_extended import (
 )
 
 from app.data.db import db
-from app.data.models import Ticket, Vote
+from app.data.models import Ticket, Vote, Faqs, Comment
 from app.data.schema import TicketSchema
 from app.utils.validation import *
 from app.utils.auth import Auth, NotAuthorized
@@ -163,3 +163,30 @@ def close_ticket(ticket_id):
         return ticket_schema.jsonify(ticket), 200
     else:
         raise NotAuthorized()
+
+
+# convert a resolved ticket to a FAQ
+@app.post("/api/tickets/<ticket_id>/faqs")
+@jwt_required()
+def ticket_to_faq(ticket_id):
+    current_user_id = get_jwt_identity()
+    if not Auth.authorize_admin(current_user_id):
+        raise NotAuthorized()
+
+    ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+    if ticket.status != "Resolved":
+        return jsonify("Can convert unresolved ticket to FAQ"), 400
+
+    comment = db.session.query(Comment).filter(
+        Comment.ticket_id == ticket_id, Comment.solution==1).first()
+
+    if not comment:
+        return jsonify("Solution comment not found"), 404
+
+    new_faq = Faqs(query=ticket.body, answer=comment.body)
+
+    db.session.add(new_faq)
+    db.session.commit()
+
+    return jsonify(f"Ticket converted to FAQ successfully with faq_id {new_faq.faq_id}")
+
