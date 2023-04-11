@@ -25,6 +25,7 @@ ticket_schema = TicketSchema()
 tickets_schema = TicketSchema(many=True)
 
 
+# get all tickets
 @app.get("/api/tickets")
 def get_tickets():
     page = int(request.args.get('page'))
@@ -43,6 +44,7 @@ def get_tickets():
     return jsonify(result), 200
 
 
+# raise a new ticket
 @app.post("/api/tickets")
 @jwt_required()
 def post_ticket():
@@ -64,6 +66,7 @@ def post_ticket():
     return ticket_schema.jsonify(new_ticket), 200
 
 
+# get a ticket by its itcket_id
 @app.get("/api/tickets/<ticket_id>")
 @jwt_required()
 def get_ticket(ticket_id):
@@ -74,6 +77,7 @@ def get_ticket(ticket_id):
         raise NotFound(status_code=404, msg='Ticket not found')
 
 
+# edit a ticket
 @app.put("/api/tickets/<ticket_id>")
 @jwt_required()
 def put_ticket(ticket_id):
@@ -99,6 +103,7 @@ def put_ticket(ticket_id):
         raise NotFound(status_code=404, msg='Ticket not found')
 
 
+# delete a ticket
 @app.delete("/api/tickets/<ticket_id>")
 @jwt_required()
 def delete_ticket(ticket_id):
@@ -115,3 +120,24 @@ def delete_ticket(ticket_id):
     else:
         raise NotFound(status_code=404, msg='Ticket not found')
 
+
+# get tickets of a given user by username
+@app.get("/api/tickets/user/<username>")
+def get_user_tickets(username):
+    page = int(request.args.get('page'))
+    per_page = int(request.args.get('per_page'))
+
+    student = db.session.query(User).filter(User.username == username).first()
+
+    vote_subquery = db.session.query(
+            Vote.ticket_id, func.count(Vote.vote_id).label('vote_count')
+        ).group_by(Vote.ticket_id).subquery()
+
+    sorted_tickets = Ticket.query.join(
+        vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id,
+        ).filter(Ticket.student_id == student.user_id).order_by(
+        Ticket.status.asc(), Ticket.created_at.asc(), vote_subquery.c.vote_count.desc()
+        ).limit(per_page).offset(page*per_page).all()
+
+    result = tickets_schema.dump(sorted_tickets)
+    return jsonify(result), 200
