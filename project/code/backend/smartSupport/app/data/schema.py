@@ -8,6 +8,11 @@ from app.data.models import Faqs, Tag
 ma = Marshmallow(app)
 
 
+class TagSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Tag
+
+
 class RoleSchema(ma.Schema):
     class Meta:
         fileds = ("role_id", "name")
@@ -29,11 +34,13 @@ class TicketSchema(ma.Schema):
             "status",
             "votes_count",
             "student",
+            "tags",
             "created_at",
             "updated_at",
         )
 
     student = ma.Nested(UserSchema)
+    tags = ma.Nested(TagSchema, many=True)
 
 
 class TicketSearchSchema(ma.Schema):
@@ -65,6 +72,3 @@ class FaqsSchema(ma.SQLAlchemyAutoSchema):
         model = Faqs
 
 
-class TagSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Tag

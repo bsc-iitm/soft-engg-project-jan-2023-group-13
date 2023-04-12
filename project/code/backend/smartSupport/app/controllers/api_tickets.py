@@ -103,25 +103,42 @@ def get_ticket(ticket_id):
 def put_ticket(ticket_id):
     current_user_id = get_jwt_identity()
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+    old_tags = ticket.tags
 
-    if ticket:
-        Auth.authorize(current_user_id, ticket.student_id)
-        ticketdata = request.get_json()
-        title = ticketdata["title"]
-        body = ticketdata["body"]
-
-        Validation.is_valid_string_value(title, "Title", alpha_only=False)
-        Validation.is_valid_string_value(
-            body, "Blog Body", alpha_only=False, allow_special_chars=True
-        )
-
-        ticket.title = title
-        ticket.body = Markup(body)
-        db.session.add(ticket)
-        db.session.commit()
-        return ticket_schema.jsonify(ticket), 200
-    else:
+    if not ticket:
         raise NotFound(status_code=404, msg="Ticket not found")
+
+    for tag in old_tags:
+        ticket.tags.remove(tag)
+        print('-------', tag)
+
+    Auth.authorize(current_user_id, ticket.student_id)
+    ticketdata = request.get_json()
+    title = ticketdata["title"]
+    body = ticketdata["body"]
+    new_tags = ticketdata["tags"]
+
+    Validation.is_valid_string_value(title, "Title", alpha_only=False)
+    Validation.is_valid_string_value(
+        body, "Blog Body", alpha_only=False, allow_special_chars=True
+    )
+
+    ticket.title = title
+    ticket.body = Markup(body)
+    db.session.add(ticket)
+    db.session.commit()
+
+    ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
+    for tagname in new_tags:
+        tag = db.session.query(Tag).filter(Tag.name == tagname).first()
+        if not tag:
+            return jsonify("Tag {} not found".format(tagname))
+        ticket.tags.append(tag)
+    db.session.add(ticket)
+    db.session.commit()
+
+    return ticket_schema.jsonify(ticket), 200
+
 
 
 # delete a ticket

@@ -16,7 +16,7 @@
 * ~~POST /tickets~~    ~~**** Attach Tags~~
 * ~~GET /tickets/user/{username}~~
 * ~~GET /tickets/{ticket_id}~~
-* ~~PUT /tickets/{ticket_id}~~    **** Attach or Remove Tags
+* ~~PUT /tickets/{ticket_id}~~    ~~**** Attach or Remove Tags~~
 * ~~DELETE /tickets/{ticket_id}~~
 * ~~GET /tickets/{ticket_id}/comments~~
 * ~~POST /tickets/{ticket_id}/comments~~
