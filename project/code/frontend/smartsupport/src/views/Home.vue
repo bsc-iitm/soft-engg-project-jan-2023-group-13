@@ -16,6 +16,8 @@
                     <router-link class="nav-link" to="/mytickets">My Tickets</router-link>
 
 
+
+
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -48,7 +50,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in ticket_list" :key="ticket.ticket_id">
-                                <td>{{ ticket.title }}</td>
+                                <td><router-link :to="'/ticket/' + ticket.ticket_id">{{ ticket.title }}</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
                                 <td>{{ ticket.created_at }}</td>
                                 <td>{{ ticket.status }}</td>
@@ -60,7 +62,7 @@
 
                 </div>
             </div>
-            <div class="col">
+            <div class=" col">
                 <div class="d-flex flex-column justify-content-center align-items-center">
                     <!-- Second flexbox content goes here -->
                     <h1>Raise a new Ticket</h1>

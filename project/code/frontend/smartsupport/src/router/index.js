@@ -5,6 +5,8 @@ import SignUp from '../views/SignUp.vue'
 import Home from '../views/Home.vue'
 import Profile from '../views/Profile.vue'
 import MyTickets from '../views/MyTickets.vue'
+import Ticket from '../views/Ticket.vue'
+
 
 
 
@@ -28,6 +30,10 @@ const routes = [
   {
     path: "/mytickets",
     component: MyTickets,
+  },
+  {
+    path: "/ticket/:tid",
+    component: Ticket,
   }
 
 ]
