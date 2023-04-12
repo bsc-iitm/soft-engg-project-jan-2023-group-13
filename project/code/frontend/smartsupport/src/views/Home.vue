@@ -79,15 +79,7 @@
                             <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
                                 <!-- <option value="Tags" disabled selected> </option> -->
                                 <option v-for="tag in tag_list">{{ tag.name }}</option>
-                                <!-- <option value="SoftEng">Software Engineering</option>
-                                <option value="SoftTest">Software Testing</option>
-                                <option value="DeepLearn">Deep Learning</option>
-                                <option value="ArtInt">Artificial Intelligence</option>
-                                <option value="FinFor">Financial Forecasting</option>
-                                <option value="Ops">Operations Management</option>
-                                <option value="Clarification">Clarification Request</option>
-                                <option value="Assignment">Assignment Submission</option>
-                                <option value="PSM">Project Scope Management</option> -->
+
                             </select>
                         </div>
 

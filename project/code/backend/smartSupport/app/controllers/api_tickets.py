@@ -86,7 +86,7 @@ def post_ticket():
     return ticket_schema.jsonify(new_ticket), 200
 
 
-# get a ticket by its itcket_id
+# get a ticket by its ticket_id
 @app.get("/api/tickets/<ticket_id>")
 @jwt_required()
 def get_ticket(ticket_id):
@@ -110,7 +110,7 @@ def put_ticket(ticket_id):
 
     for tag in old_tags:
         ticket.tags.remove(tag)
-        print('-------', tag)
+        print("-------", tag)
 
     Auth.authorize(current_user_id, ticket.student_id)
     ticketdata = request.get_json()
@@ -138,7 +138,6 @@ def put_ticket(ticket_id):
     db.session.commit()
 
     return ticket_schema.jsonify(ticket), 200
-
 
 
 # delete a ticket
@@ -204,22 +203,34 @@ def get_loggedin_user_tickets():
 
     student = db.session.query(User).filter(User.user_id == curr_userid).first()
 
-    vote_subquery = (
-        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
-        .group_by(Vote.ticket_id)
-        .subquery()
-    )
+    # vote_subquery = (
+    #     db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+    #     .group_by(Vote.ticket_id)
+    #     .subquery()
+    # )
+    # print(vote_subquery)
+
+    # sorted_tickets = (
+    #     Ticket.query.join(
+    #         vote_subquery,
+    #         Ticket.ticket_id == vote_subquery.c.ticket_id,
+    #     )
+    #     .filter(Ticket.student_id == student.user_id)
+    #     .order_by(
+    #         Ticket.status.asc(),
+    #         Ticket.created_at.asc(),
+    #         vote_subquery.c.vote_count.desc(),
+    #     )
+    #     .all()
+    # )
+    # print(sorted_tickets)
 
     sorted_tickets = (
-        Ticket.query.join(
-            vote_subquery,
-            Ticket.ticket_id == vote_subquery.c.ticket_id,
-        )
-        .filter(Ticket.student_id == student.user_id)
+        db.session.query(Ticket)
+        .filter(Ticket.student_id == curr_userid)
         .order_by(
             Ticket.status.asc(),
             Ticket.created_at.asc(),
-            vote_subquery.c.vote_count.desc(),
         )
         .all()
     )
@@ -287,5 +298,3 @@ def search_ticket():
     results = tickets_search_schema.dump(tickets)
 
     return jsonify(results), 200
-
-

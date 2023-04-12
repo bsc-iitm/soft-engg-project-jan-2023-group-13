@@ -42,7 +42,7 @@
                         <!-- <span class="badge bg-info rounded-pill me-2">Badge 1</span> -->
                     </div>
 
-                    <button type="button" class="btn btn-primary mt-3" style="width: 20%;">
+                    <button @click="upvote" type="button" class="btn btn-primary mt-3" style="width: 20%;">
                         Votes <span class="badge text-bg-secondary">{{ ticket.votes_count }}</span>
                     </button>
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
@@ -86,6 +86,28 @@ export default {
         return {
             ticket_id: '',
             ticket: {}
+        }
+    },
+    methods: {
+        upvote() {
+            console.log('clicked on upvote')
+            const options = {
+                method: 'POST',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/upvote`, options)
+                .then(response => {
+                    if (response.status === 200) {
+                        this.ticket.votes_count++;
+                    }
+                    return response.json();
+                })
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
         }
     },
     created() {
