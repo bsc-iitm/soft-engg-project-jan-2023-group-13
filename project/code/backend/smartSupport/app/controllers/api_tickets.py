@@ -1,4 +1,4 @@
-import bcrypt, uuid
+import requests
 from datetime import datetime
 from werkzeug.exceptions import Unauthorized
 
@@ -17,6 +17,7 @@ from app.data.models import Ticket, Vote, Faqs, Comment, Tag, TicketSearch
 from app.data.schema import TicketSchema, TicketSearchSchema
 from app.utils.validation import *
 from app.utils.auth import Auth, NotAuthorized
+import app.utils.email as email
 
 # jwt = JWTManager(app)
 # salt = bcrypt.gensalt()
@@ -203,10 +204,23 @@ def close_ticket(ticket_id):
     if ticket.status == "Resolved":
         return jsonify("Ticket already resolved"), 400
 
+    if ticket.status == "Closed":
+        return jsonify("Ticket already closed"), 400
+
     if Auth.authorize_support(current_user_id) or Auth.authorize_admin(current_user_id):
         ticket.status = "Closed"
         db.session.add(ticket)
         db.session.commit()
+
+        student = db.session.query(User).filter(User.user_id == ticket.student_id).first()
+        email.send_email(
+            "Ticket closure notification",
+            '''You ticket with title: '{}' has been closed.
+Please write to admin@smartTicket.edu in case you want to reopen it.
+'''.format(ticket.title),
+            student.email
+        )
+
         return ticket_schema.jsonify(ticket), 200
     else:
         raise NotAuthorized()
@@ -249,3 +263,31 @@ def search_ticket():
     results = tickets_search_schema.dump(tickets)
 
     return jsonify(results), 200
+
+
+
+# send notification
+@app.post("/api/tickets/notify")
+@jwt_required()
+def notify():
+    current_user_id = get_jwt_identity()
+    is_support = Auth.authorize_support(current_user_id)
+    is_admin = Auth.authorize_admin(current_user_id)
+    if not is_admin and not is_support:
+        raise NotAuthorized()
+
+    mail_data = request.get_json()
+    recipient_email = mail_data["recipient_email"]
+    message = mail_data["message"]
+
+    Validation.is_valid_email(recipient_email, new_user=False)
+    Validation.is_valid_string_value(
+        message, "Email Body", alpha_only=False, allow_special_chars=True
+    )
+
+    email.send_email("Notification", message, recipient_email)
+
+    return jsonify("Notification succesfully sent to email of the user"), 200
+
+
+
