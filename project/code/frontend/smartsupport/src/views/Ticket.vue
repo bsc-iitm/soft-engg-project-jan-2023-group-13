@@ -32,7 +32,7 @@
     </nav>
     <div class="container mt-4">
         <div class="row">
-            <div class="col " style="min-width: 50%;">
+            <div class="col-auto" style="max-width: 50%;">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>{{ ticket.title }}
@@ -151,9 +151,7 @@ export default {
                 .then(response => {
                     response.json();
                 })
-                .then(response => {
-                    this.$router.push('/home')
-                })
+                .then(response => console.log(response))
                 .catch(err => console.error(err));
         },
 
@@ -166,8 +164,7 @@ export default {
                 }
             };
 
-            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id
-                } / comments`, options)
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/comments`, options)
                 .then(response => response.json())
                 .then(response => { this.comments = response; })
                 .catch(err => console.error(err));

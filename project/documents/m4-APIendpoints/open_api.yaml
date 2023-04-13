@@ -774,18 +774,11 @@ paths:
           description: Ticket resolved successfully
         '404':
           $ref: '#/components/responses/NotFound'
-  /tickets/{ticket_id}/notify:
+  /tickets/notify:
     post:
       summary: Send email notification to student about resolved ticket
       tags:
         - Ticket
-      parameters:
-        - name: ticket_id
-          in: path
-          required: true
-          description: ID of the ticket to send notification about
-          schema:
-            type: integer
       requestBody:
         description: Email notification request body
         required: true
