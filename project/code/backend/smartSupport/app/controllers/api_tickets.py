@@ -151,6 +151,9 @@ def delete_ticket(ticket_id):
         return jsonify("Not Authorized"), 401
 
     if ticket:
+        votes = db.session.query(Vote).filter(Vote.ticket_id == ticket_id).all()
+        for vote in votes:
+            db.session.delete(vote)
         db.session.delete(ticket)
         db.session.commit()
         return jsonify("Ticket Deleted"), 204

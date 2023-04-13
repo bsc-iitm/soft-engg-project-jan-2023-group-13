@@ -50,7 +50,7 @@ class User(db.Model):
         cascade="delete",
     )
     # One-to-many relationship with Votes
-    votes = db.relationship("Vote", backref="voter", lazy=True)
+    votes = db.relationship("Vote", backref="voter", lazy=True, cascade='delete')
     # Many-to-many relationship with Tags
     tags = db.relationship("Tag", secondary="user_tags", backref="users", lazy=True)
     # Many-to-many relationship with Roles
@@ -116,7 +116,7 @@ class Comment(db.Model):
 
 class Vote(db.Model):
     vote_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ticket_id = db.Column(db.Integer, db.ForeignKey("ticket.ticket_id"), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey("ticket.ticket_id"), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
