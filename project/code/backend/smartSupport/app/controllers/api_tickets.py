@@ -147,17 +147,19 @@ def delete_ticket(ticket_id):
     current_user_id = get_jwt_identity()
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
 
-    if str(ticket.student_id) != str(current_user_id):
-        return jsonify("Not Authorized"), 401
-
     if ticket:
+        if str(ticket.student_id) != str(current_user_id):
+            return jsonify("Not Authorized"), 401
+
         votes = db.session.query(Vote).filter(Vote.ticket_id == ticket_id).all()
         for vote in votes:
             db.session.delete(vote)
 
-        comments = db.session.query(Comment).filter(Comment.ticket_id == ticket_id).all()
+        comments = (
+            db.session.query(Comment).filter(Comment.ticket_id == ticket_id).all()
+        )
         for comment in comments:
-           db.session.delete(comment)
+            db.session.delete(comment)
 
         db.session.delete(ticket)
         db.session.commit()
@@ -166,8 +168,7 @@ def delete_ticket(ticket_id):
         raise NotFound(status_code=404, msg="Ticket not found")
 
 
-
-# get ticket for current logged in user ***Added Temporarily
+# get ticket for current logged in user
 @app.get("/api/tickets/user")
 @jwt_required()
 def get_loggedin_user_tickets():
