@@ -32,7 +32,7 @@
     </nav>
     <div class="container mt-4">
         <div class="row">
-            <div class="col">
+            <div class="col-auto" style="max-width: 50%;">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>{{ ticket.title }}
@@ -45,6 +45,8 @@
                     <button @click="upvote" type="button" class="btn btn-primary mt-3" style="width: 20%;">
                         Votes <span class="badge text-bg-secondary">{{ ticket.votes_count }}</span>
                     </button>
+
+                    <button class="btn btn-danger mt-2" @click="deleteticket" style="width: 20%;">Delete Ticket</button>
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
                 </div>
             </div>
@@ -53,6 +55,28 @@
                 <div class="d-flex flex-column justify-content-center align-items-center">
                     <!-- Second flexbox content goes here -->
                     <h1>Comments</h1>
+                    <div class="container">
+                        <div class="d-flex flex-column">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Comments</h5>
+
+                                    <div class="media justify-content-end" v-for="(comment, index) in comments"
+                                        :key="index">
+                                        <hr>
+                                        <div class="media-body text-right">
+                                            <h5 class="mt-0">{{ comment.commentor.first_name }} {{
+                                                comment.commentor.last_name }}
+                                            </h5>
+                                            <p>{{ comment.body }}</p>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -85,10 +109,13 @@ export default {
     data() {
         return {
             ticket_id: '',
-            ticket: {}
+            ticket: {},
+            comments: [],
+
         }
     },
     methods: {
+
         upvote() {
             console.log('clicked on upvote')
             const options = {
@@ -108,11 +135,48 @@ export default {
                 })
                 .then(response => console.log(response))
                 .catch(err => console.error(err));
+        },
+
+
+        deleteticket() {
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
+                .then(response => {
+                    response.json();
+                })
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        },
+
+
+        get_comments() {
+            const options = {
+                method: 'GET',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/comments`, options)
+                .then(response => response.json())
+                .then(response => { this.comments = response; })
+                .catch(err => console.error(err));
         }
     },
     created() {
         this.ticket_id = this.$route.params.tid;
 
+        //Get comments
+        this.get_comments();
+
+        // Get ticket details
         const options = {
             method: 'GET',
             headers: {
@@ -125,6 +189,7 @@ export default {
             .then(response => { this.ticket = response })
             .catch(err => console.error(err));
     }
+
 
 };
 

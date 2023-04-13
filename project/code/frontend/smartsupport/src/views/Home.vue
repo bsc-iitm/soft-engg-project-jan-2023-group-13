@@ -104,7 +104,7 @@ export default {
             ticket_list: [],
             ticket_data: {
                 title: "",
-                tags: "",
+                tags: [],
                 body: ""
             },
             tag_list: []
@@ -128,21 +128,27 @@ export default {
 
             fetch('http://127.0.0.1:5000/api/tickets', options)
                 .then(response => response.json())
-                .then(response => console.log(response))
+                .then(response => this.Get_Ticket_list())
                 .catch(err => console.error(err));
+
+
+        },
+        Get_Ticket_list() {
+            // Get list of tickets
+            fetch("http://127.0.0.1:5000/api/tickets/user", {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    this.ticket_list = res
+                    console.log("got ticket list")
+
+
+                });
         }
     },
     created() {
-        // Get list of tickets
-        fetch("http://127.0.0.1:5000/api/tickets/user", {
-            headers: { Authorization: localStorage.getItem("access_key") },
-        })
-            .then((res) => res.json())
-            .then((res) => {
-                this.ticket_list = res
-
-            });
-
+        this.Get_Ticket_list()
         //Get list of tags
 
         fetch("http://127.0.0.1:5000/api/tags", {
