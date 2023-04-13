@@ -154,45 +154,17 @@ def delete_ticket(ticket_id):
         votes = db.session.query(Vote).filter(Vote.ticket_id == ticket_id).all()
         for vote in votes:
             db.session.delete(vote)
+
+        comments = db.session.query(Comment).filter(Comment.ticket_id == ticket_id).all()
+        for comment in comments:
+           db.session.delete(comment)
+
         db.session.delete(ticket)
         db.session.commit()
         return jsonify("Ticket Deleted"), 204
     else:
         raise NotFound(status_code=404, msg="Ticket not found")
 
-
-# get tickets of a given user by username
-@app.get("/api/tickets/user/<username>")
-def get_user_tickets(username):
-    page = int(request.args.get("page"))
-    per_page = int(request.args.get("per_page"))
-
-    student = db.session.query(User).filter(User.username == username).first()
-
-    vote_subquery = (
-        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
-        .group_by(Vote.ticket_id)
-        .subquery()
-    )
-
-    sorted_tickets = (
-        Ticket.query.join(
-            vote_subquery,
-            Ticket.ticket_id == vote_subquery.c.ticket_id,
-        )
-        .filter(Ticket.student_id == student.user_id)
-        .order_by(
-            Ticket.status.asc(),
-            Ticket.created_at.asc(),
-            vote_subquery.c.vote_count.desc(),
-        )
-        .limit(per_page)
-        .offset(page * per_page)
-        .all()
-    )
-
-    result = tickets_schema.dump(sorted_tickets)
-    return jsonify(result), 200
 
 
 # get ticket for current logged in user ***Added Temporarily
@@ -203,30 +175,6 @@ def get_loggedin_user_tickets():
     # per_page = int(request.args.get("per_page"))
 
     curr_userid = get_jwt_identity()
-
-    student = db.session.query(User).filter(User.user_id == curr_userid).first()
-
-    # vote_subquery = (
-    #     db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
-    #     .group_by(Vote.ticket_id)
-    #     .subquery()
-    # )
-    # print(vote_subquery)
-
-    # sorted_tickets = (
-    #     Ticket.query.join(
-    #         vote_subquery,
-    #         Ticket.ticket_id == vote_subquery.c.ticket_id,
-    #     )
-    #     .filter(Ticket.student_id == student.user_id)
-    #     .order_by(
-    #         Ticket.status.asc(),
-    #         Ticket.created_at.asc(),
-    #         vote_subquery.c.vote_count.desc(),
-    #     )
-    #     .all()
-    # )
-    # print(sorted_tickets)
 
     sorted_tickets = (
         db.session.query(Ticket)

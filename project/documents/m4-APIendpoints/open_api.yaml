@@ -272,7 +272,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Ticket'
 
-  /tickets/user/{username}:
+  /tickets/user:
     get:
       summary: Get all tickets raised by a given user
       parameters:
