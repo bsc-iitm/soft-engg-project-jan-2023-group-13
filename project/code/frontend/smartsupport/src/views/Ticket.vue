@@ -151,7 +151,9 @@ export default {
                 .then(response => {
                     response.json();
                 })
-                .then(response => console.log(response))
+                .then(response => {
+                    this.$router.push('/home')
+                })
                 .catch(err => console.error(err));
         },
 
