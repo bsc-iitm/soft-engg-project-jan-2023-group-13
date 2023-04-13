@@ -32,7 +32,7 @@
     </nav>
     <div class="container mt-4">
         <div class="row">
-            <div class="col-auto" style="max-width: 50%;">
+            <div class="col-auto" style="min-width: 50%;">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>{{ ticket.title }}
