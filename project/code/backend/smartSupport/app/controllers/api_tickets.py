@@ -259,7 +259,7 @@ def ticket_to_faq(ticket_id):
 def search_ticket():
     q = request.args.get("q")
 
-    tickets = TicketSearch.query.filter(TicketSearch.body.op("MATCH")(q)).all()
+    tickets = TicketSearch.query.filter(TicketSearch.body.op("MATCH")(q)).limit(5).all()
     results = tickets_search_schema.dump(tickets)
 
     return jsonify(results), 200
