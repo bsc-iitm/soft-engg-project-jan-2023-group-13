@@ -14,6 +14,7 @@
                     <router-link class="nav-link" to="/profile">Profile</router-link>
 
                     <router-link class="nav-link" to="/mytickets">My Tickets</router-link>
+                    <router-link class="nav-link" to="/faqs">FAQs</router-link>
 
 
                     <form class="d-flex" role="search">
@@ -40,7 +41,7 @@
                             <tr>
                                 <th>Title</th>
                                 <th>Votes</th>
-                                <th>Created At</th>
+                                <th>Date</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -48,7 +49,7 @@
                             <tr v-for="ticket in ticket_list" :key="ticket.ticket_id">
                                 <td><router-link :to="'/ticket/' + ticket.ticket_id">{{ ticket.title }}</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
-                                <td>{{ ticket.created_at }}</td>
+                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td>{{ ticket.status }}</td>
                             </tr>
                         </tbody>
@@ -111,8 +112,14 @@
                     <div class="col align-self-end text-end">
                         <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link>
                     </div>
+
                 </div>
                 <hr>
+            </div>
+            <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only"></span>
+                </div>
             </div>
         </div>
         </div>
@@ -122,6 +129,7 @@
 
 <script>
 import { ref, reactive, watch } from 'vue';
+import config from "@/config.js";
 
 export default {
     name: "Home",
@@ -159,6 +167,7 @@ export default {
             },
             tag_list: [],
             searched_ticket_list: [],
+            show_search_spinner: true,
         };
     },
     methods: {
@@ -176,7 +185,7 @@ export default {
                 body: JSON.stringify(this.ticket_data)
             };
 
-            fetch('http://127.0.0.1:5000/api/tickets', options)
+            fetch(`${config.BASE_API_URL}/tickets`, options)
                 .then(response => response.json())
                 .then(response => this.Get_Ticket_list())
                 .catch(err => console.error(err));
@@ -185,7 +194,7 @@ export default {
         },
         Get_Ticket_list() {
             // Get list of tickets
-            fetch("http://127.0.0.1:5000/api/tickets/user", {
+            fetch(`${config.BASE_API_URL}/tickets/user`, {
                 headers: { Authorization: localStorage.getItem("access_key") },
             })
                 .then((res) => res.json())
@@ -197,9 +206,10 @@ export default {
                 });
         },
         search_tickets(){
+            this.show_search_spinner = true
             if (this.ticket_data.title.length > 3){
                 this.openOffcanvas()
-                fetch("http://127.0.0.1:5000/api/tickets/search?q="+this.ticket_data.title, {
+                fetch(`${config.BASE_API_URL}/tickets/search?q=${this.ticket_data.title}`, {
                     headers: { Authorization: localStorage.getItem("access_key") },
                 })
                 .then((res) => res.json())
@@ -207,7 +217,7 @@ export default {
                     this.searched_ticket_list = res
                     console.log("got searched ticket list")
                     console.log(this.searched_ticket_list)
-
+                    this.show_search_spinner = false
                 });
             }
 
@@ -218,7 +228,7 @@ export default {
         this.Get_Ticket_list()
         //Get list of tags
 
-        fetch("http://127.0.0.1:5000/api/tags", {
+        fetch(`${config.BASE_API_URL}/tags`, {
             headers: { Authorization: localStorage.getItem("access_key") },
         })
             .then((res) => res.json())
