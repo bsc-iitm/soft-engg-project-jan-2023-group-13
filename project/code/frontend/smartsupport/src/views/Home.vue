@@ -20,8 +20,6 @@
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="ticket_data.title" @keyup="search_tickets">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
-
-
                     <router-link to="/" class="nav-link">Logout</router-link>
 
                 </div>
@@ -60,32 +58,35 @@
 
                 </div>
             </div>
-            <div class=" col">
-                <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="col">
+                <div class="d-flex flex-column justify-content-center ">
                     <!-- Second flexbox content goes here -->
-                    <h1>Raise a new Ticket</h1>
+                        <h1>Raise a new Ticket</h1>
+                    <div class="card border-light">
+                        <div class="card-body">
+                            <form @submit.prevent="Createticket">
+                                <div class="form-group mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" v-model="ticket_data.title"  @keyup="search_tickets"  required>
+                                </div>
+                                <div class="form-group mb-3">
 
-                    <form @submit.prevent="Createticket">
-                        <div class="form-group">
-                            <label for="title">Title</label>
-                            <input type="text" class="form-control" id="title" v-model="ticket_data.title"  @keyup="search_tickets"  required>
+                                    <label for="tags">Select Tag(s)</label>
+                                    <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
+                                        <!-- <option value="Tags" disabled selected> </option> -->
+                                        <option v-for="tag in tag_list">{{ tag.name }}</option>
+
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="body">Body</label>
+                                    <textarea type="text" class="form-control" id="body" v-model="ticket_data.body" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
                         </div>
-                        <div class="form-group">
-
-                            <label for="tags">Select Tag(s)</label>
-                            <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
-                                <!-- <option value="Tags" disabled selected> </option> -->
-                                <option v-for="tag in tag_list">{{ tag.name }}</option>
-
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="body">Body</label>
-                            <input type="text" class="form-control" id="body" v-model="ticket_data.body" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
