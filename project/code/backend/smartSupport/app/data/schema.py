@@ -3,7 +3,7 @@ from flask import current_app as app
 # from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
-from app.data.models import Faqs, Tag
+from app.data.models import Faqs, Tag, Role
 
 ma = Marshmallow(app)
 
@@ -13,16 +13,17 @@ class TagSchema(ma.SQLAlchemyAutoSchema):
         model = Tag
 
 
-class RoleSchema(ma.Schema):
+class RoleSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        fileds = ("role_id", "name")
+        # fileds = ("role_id", "name")
+        model = Role
 
 
 class UserSchema(ma.Schema):
-    roles = ma.Nested(RoleSchema, many=True)
-
     class Meta:
         fields = ("user_id", "username", "email", "first_name", "last_name", "roles")
+
+    roles = ma.Nested(RoleSchema, many=True)
 
 
 class TicketSchema(ma.Schema):

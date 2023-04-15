@@ -47,7 +47,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in ticket_list" :key="ticket.ticket_id">
-                                <td><router-link :to="'/ticket/' + ticket.ticket_id">{{ ticket.title }}</router-link></td>
+                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title }}</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td>{{ ticket.status }}</td>
@@ -103,6 +103,7 @@
             <!-- offcanvas content -->
             <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list"
                 :key="index">
+                <router-link :to="'/ticket/' + s_ticket.ticket_id" class="text-decoration-none text-secondary">
                 <div class="media-body text-right">
                     <h5 class="mt-0">{{ s_ticket.title }}
                     </h5>
@@ -110,10 +111,10 @@
                         {{ s_ticket.body.substring(0, 100) + "..." }}
                     </p>
                     <div class="col align-self-end text-end">
-                        <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link>
+                        <!-- <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link> -->
                     </div>
 
-                </div>
+                </div></router-link>
                 <hr>
             </div>
             <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
