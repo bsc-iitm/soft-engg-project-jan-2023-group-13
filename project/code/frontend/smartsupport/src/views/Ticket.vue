@@ -64,11 +64,22 @@
                                     <div class="media justify-content-end" v-for="(comment, index) in comments"
                                         :key="index">
                                         <hr>
-                                        <div class="media-body text-right">
+                                        <div class="media-body text-right" :class="{ 'bg-success': comment.solution }">
+
                                             <h5 class="mt-0">{{ comment.commentor.first_name }} {{
                                                 comment.commentor.last_name }}
                                             </h5>
-                                            <p>{{ comment.body }}</p>
+
+                                            <p>{{ comment.body }}<span v-if="comment.solution"
+                                                    class="badge rounded-pill text-bg-success m-1 ">Solution</span>
+                                            </p>
+
+                                            <button class="btn btn-success m-1"
+                                                v-if="ticket.student.user_id === currentUser_id && !comment.solution"
+                                                @click="mark_solution(comment.comment_id)">
+                                                Mark as solution
+                                            </button>
+
                                             <button class="btn btn-danger"
                                                 v-if="comment.commentor.user_id === currentUser_id"
                                                 @click="deleteComment(comment.comment_id)">
@@ -123,6 +134,22 @@ export default {
         }
     },
     methods: {
+
+        mark_solution(comment_id) {
+            console.log("marked sol")
+            const options = {
+                method: 'PUT',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/comments/${comment_id}/solution`, options)
+                .then(response => response.json())
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        },
         deleteComment(comment_id) {
             console.log(comment_id)
             const options = {
@@ -244,3 +271,11 @@ export default {
 };
 
 </script>
+
+
+<style>
+.bg-success {
+    --bs-bg-opacity: .6;
+    background-color: rgba(var(--bs-success-rgb), var(--bs-bg-opacity)) !important;
+}
+</style>

@@ -113,7 +113,7 @@ def mark_comment_as_solution(comment_id):
 
     is_support = Auth.authorize_support(current_user_id)
     is_admin = Auth.authorize_admin(current_user_id)
-    is_owner = Auth.authorize_owner(current_user_id, ticket.user_id)
+    is_owner = Auth.authorize_owner(current_user_id, ticket.student_id)
 
     if not comment:
         raise NotFound(status_code=404, msg="Comment not found")
@@ -132,7 +132,7 @@ def mark_comment_as_solution(comment_id):
             print(is_admin, is_support, is_owner, ticket.status)
             return comment_schema.jsonify(comment), 200
         else:
-            return "Ticket already resolved", 400
+            return jsonify("Ticket already resolved"), 400
     else:
         raise NotAuthorized()
 
