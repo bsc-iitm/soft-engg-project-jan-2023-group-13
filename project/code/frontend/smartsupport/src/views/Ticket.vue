@@ -69,6 +69,11 @@
                                                 comment.commentor.last_name }}
                                             </h5>
                                             <p>{{ comment.body }}</p>
+                                            <button class="btn btn-danger"
+                                                v-if="comment.commentor.user_id === currentUser_id"
+                                                @click="deleteComment(comment.comment_id)">
+                                                Delete
+                                            </button>
                                         </div>
 
                                     </div>
@@ -112,12 +117,27 @@ export default {
             ticket_id: '',
             ticket: {},
             comments: [],
-            new_comment: ''
+            new_comment: '',
+            currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id
 
         }
     },
     methods: {
+        deleteComment(comment_id) {
+            console.log(comment_id)
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
 
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/comments/${comment_id}`, options)
+                .then(response => response.json())
+                .then(response => { this.get_comments() })
+                .catch(err => console.error(err));
+        },
 
         upvote() {
             console.log('clicked on upvote')

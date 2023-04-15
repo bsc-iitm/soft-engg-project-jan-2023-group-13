@@ -97,7 +97,7 @@ def delete_comment(comment_id):
         Auth.authorize(current_user_id, comment.user_id)
         db.session.delete(comment)
         db.session.commit()
-        return jsonify("Comment Deleted"), 204
+        return jsonify("Comment Deleted")
     else:
         raise NotFound(status_code=404, msg="Comment not found")
 
