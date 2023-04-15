@@ -19,7 +19,27 @@
 
                     <button class="btn btn-danger mt-2" @click="deleteticket" style="width: 20%;">Delete Ticket</button>
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
-                    <div id="postcomment" class="mt-5">
+
+                    <!-- Solution box below title -->
+                    <div class="card mb-3" v-if="sol.body">
+                        <div class="card-body">
+                            <h5 class="card-title">Solution</h5>
+                            <div class="media justify-content-end">
+                                <div class="media-body text-right bg-success-bck">
+
+
+                                    <h5 class="mt-0">{{ sol.commentor.first_name }} {{
+                                        sol.commentor.last_name }}
+                                    </h5>
+                                    <p v-if="sol.body">{{ sol.body }}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="postcomment" class="mt-1">
 
                         <h1>Post comments</h1>
                         <form>
@@ -57,7 +77,10 @@
                                                 comment.commentor.last_name }}
                                             </h5>
 
-                                            <p>{{ comment.body }}<span v-if="comment.solution"
+                                            <!-- <p>{{ comment.body }}<span v-if="comment.solution"
+                                                    class="badge rounded-pill text-bg-success m-1 ">Solution</span>
+                                            </p> -->
+                                            <p>{{ comment.body }}<span v-if="is_solution(comment)"
                                                     class="badge rounded-pill text-bg-success m-1 ">Solution</span>
                                             </p>
 
@@ -69,7 +92,7 @@
 
                                             <button class="btn btn-danger"
                                                 v-if="comment.commentor.user_id === currentUser_id"
-                                                @click="deleteComment(comment.comment_id)">
+                                                @click="deleteComment(comment)">
                                                 Delete
                                             </button>
                                         </div>
@@ -109,7 +132,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue';
-
+import swal from 'sweetalert';
 export default {
     components: {
         NavBar,
@@ -121,11 +144,23 @@ export default {
             ticket: {},
             comments: [],
             new_comment: '',
-            currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id
+            currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id,
+            sol: '',
+
+
 
         }
     },
     methods: {
+
+        is_solution(comment) {
+
+            if (comment.solution) {
+                this.sol = comment
+                return true
+            }
+            return false
+        },
 
         mark_solution(comment_id) {
             console.log("marked sol")
@@ -142,8 +177,11 @@ export default {
                 .then(response => { this.get_comments(); this.get_ticket(); })
                 .catch(err => console.error(err));
         },
-        deleteComment(comment_id) {
-            console.log(comment_id)
+
+        deleteComment(comment) {
+            if (comment.solution) {
+                this.sol.body = false
+            }
             const options = {
                 method: 'DELETE',
                 headers: {
@@ -152,7 +190,7 @@ export default {
                 }
             };
 
-            fetch(`http://127.0.0.1:5000/api/comments/${comment_id}`, options)
+            fetch(`http://127.0.0.1:5000/api/comments/${comment.comment_id}`, options)
                 .then(response => response.json())
                 .then(response => { this.get_comments() })
                 .catch(err => console.error(err));
@@ -172,6 +210,16 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         this.ticket.votes_count++;
+                    } else if (response.status === 400) {
+                        swal({
+                            title: 'Already voted. Revoke vote ?',
+                            buttons: true,
+                        }).then((revoke) => {
+                            if (revoke) {
+                                this.revoke_vote()
+
+                            }
+                        });
                     }
                     return response.json();
                 })
@@ -179,8 +227,7 @@ export default {
                 .catch(err => console.error(err));
         },
 
-
-        deleteticket() {
+        revoke_vote() {
             const options = {
                 method: 'DELETE',
                 headers: {
@@ -189,14 +236,49 @@ export default {
                 }
             };
 
-            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/revoke-vote`, options)
                 .then(response => {
-                    response.json();
+                    if (response.status === 200) {
+                        this.ticket.votes_count--;
+                    }
                 })
-                .then(response => {
-                    this.$router.push('/home')
-                })
+                .then(response => console.log(response))
                 .catch(err => console.error(err));
+        },
+
+        deleteticket() {
+
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this ticket!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        const options = {
+                            method: 'DELETE',
+                            headers: {
+                                Authorization: localStorage.getItem("access_key")
+
+                            }
+                        };
+
+                        fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
+                            .then(response => {
+                                response.json();
+                            })
+                            .then(response => {
+                                this.$router.push('/home')
+                            })
+                            .catch(err => console.error(err));
+
+                    } else {
+                        swal("Your ticket is safe!");
+                    }
+                });
+
         },
 
 
