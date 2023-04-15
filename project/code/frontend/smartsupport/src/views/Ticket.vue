@@ -139,7 +139,7 @@ export default {
 
             fetch(`http://127.0.0.1:5000/api/comments/${comment_id}/solution`, options)
                 .then(response => response.json())
-                .then(response => { this.get_comments(); this.get_ticket() })
+                .then(response => { this.get_comments(); this.get_ticket(); })
                 .catch(err => console.error(err));
         },
         deleteComment(comment_id) {
