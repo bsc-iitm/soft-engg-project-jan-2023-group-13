@@ -192,6 +192,7 @@ export default {
                 .then(response => response.json())
                 .then(response => {
                     this.get_comments();
+                    this.new_comment = ''
 
                 })
                 .catch(err => console.error(err));
