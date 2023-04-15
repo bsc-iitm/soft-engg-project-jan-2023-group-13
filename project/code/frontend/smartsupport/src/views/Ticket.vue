@@ -87,14 +87,14 @@
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- Third flexbox content goes here -->
                     <h1>Post comments</h1>
-                    <form @click.prevent="post_comment">
+                    <form>
                         <div class="form-group form-floating " style="width: 50%;">
                             <textarea v-model="new_comment" class="form-control" placeholder=""
                                 id="floatingTextarea"></textarea>
                             <label for="floatingTextarea">Leave a comment here</label>
 
                         </div>
-                        <button type="submit" class="btn btn-primary">Post comment</button>
+                        <button @click.prevent="post_comment" type="submit" class="btn btn-primary">Post comment</button>
                     </form>
 
                 </div>
@@ -190,7 +190,10 @@ export default {
 
             fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/comments`, options)
                 .then(response => response.json())
-                .then(response => { this.get_comments() })
+                .then(response => {
+                    this.get_comments();
+
+                })
                 .catch(err => console.error(err));
         }
 
