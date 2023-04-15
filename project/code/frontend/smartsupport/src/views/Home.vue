@@ -48,7 +48,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in ticket_list" :key="ticket.ticket_id">
-                                <td><router-link :to="'/ticket/' + ticket.ticket_id">{{ ticket.title }}</router-link></td>
+                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title }}</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td>{{ ticket.status }}</td>
@@ -116,17 +116,17 @@
                                 <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link>
                             </div>
 
-                        </div>
-                        <hr>
-                    </div>
-                    <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only"></span>
-                        </div>
-                    </div>
+                </div>
+                <hr>
+            </div>
+            <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only"></span>
                 </div>
             </div>
         </div>
+        </div>
+    </div>
     </div>
 </template>
 
