@@ -14,7 +14,11 @@
                 <h2 class="h5">User Information</h2>
                 <p><strong>User ID:</strong> {{ user_details.user_id }}</p>
                 <p><strong>Username:</strong> {{ user_details.username }}</p>
-                <!-- <p><strong>Roles:</strong> Web Developer, UX Designer</p> -->
+                <p><strong>Roles:</strong> </p>
+                <ul>
+                    <li v-for="role in user_details.roles">{{ role.name }}</li>
+
+                </ul>
             </div>
         </div>
     </div>
