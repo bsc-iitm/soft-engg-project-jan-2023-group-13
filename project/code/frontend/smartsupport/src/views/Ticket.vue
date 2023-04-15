@@ -64,7 +64,7 @@
                                     <div class="media justify-content-end" v-for="(comment, index) in comments"
                                         :key="index">
                                         <hr>
-                                        <div class="media-body text-right" :class="{ 'bg-success': comment.solution }">
+                                        <div class="media-body text-right" :class="{ 'bg-success-bck': comment.solution }">
 
                                             <h5 class="mt-0">{{ comment.commentor.first_name }} {{
                                                 comment.commentor.last_name }}
@@ -147,7 +147,7 @@ export default {
 
             fetch(`http://127.0.0.1:5000/api/comments/${comment_id}/solution`, options)
                 .then(response => response.json())
-                .then(response => console.log(response))
+                .then(response => this.get_comments())
                 .catch(err => console.error(err));
         },
         deleteComment(comment_id) {
@@ -274,7 +274,7 @@ export default {
 
 
 <style>
-.bg-success {
+.bg-success-bck {
     --bs-bg-opacity: .6;
     background-color: rgba(var(--bs-success-rgb), var(--bs-bg-opacity)) !important;
 }
