@@ -131,7 +131,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue';
-
+import swal from 'sweetalert';
 export default {
     components: {
         NavBar,
@@ -213,22 +213,38 @@ export default {
 
 
         deleteticket() {
-            const options = {
-                method: 'DELETE',
-                headers: {
-                    Authorization: localStorage.getItem("access_key")
 
-                }
-            };
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this ticket!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        const options = {
+                            method: 'DELETE',
+                            headers: {
+                                Authorization: localStorage.getItem("access_key")
 
-            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
-                .then(response => {
-                    response.json();
-                })
-                .then(response => {
-                    this.$router.push('/home')
-                })
-                .catch(err => console.error(err));
+                            }
+                        };
+
+                        fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
+                            .then(response => {
+                                response.json();
+                            })
+                            .then(response => {
+                                this.$router.push('/home')
+                            })
+                            .catch(err => console.error(err));
+
+                    } else {
+                        swal("Your ticket is safe!");
+                    }
+                });
+
         },
 
 
