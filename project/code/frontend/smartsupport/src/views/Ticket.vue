@@ -1,35 +1,6 @@
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <span class="navbar-brand">Smart Support</span>
+    <NavBar></NavBar>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <router-link class="nav-link active" aria-current="page" to="/home">Home</router-link>
-                    <router-link class="nav-link" to="/profile">Profile</router-link>
-
-                    <router-link class="nav-link" to="/mytickets">My Tickets</router-link>
-
-
-
-
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-
-
-                    <router-link to="/" class="nav-link">Logout</router-link>
-
-                </div>
-            </div>
-        </div>
-    </nav>
     <div class="container mt-4">
         <div class="row">
             <div class="col" style="min-width: 50%; max-width: 51%; max-height:50%;">
@@ -121,7 +92,12 @@
 
 
 <script>
+import NavBar from '@/components/NavBar.vue';
+
 export default {
+    components: {
+        NavBar,
+    },
     name: "Ticket",
     data() {
         return {
