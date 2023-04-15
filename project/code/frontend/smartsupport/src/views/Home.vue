@@ -18,7 +18,8 @@
 
 
                     <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="ticket_data.title" @keyup="search_tickets">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                            v-model="ticket_data.title" @keyup="search_tickets">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
                     <router-link to="/" class="nav-link">Logout</router-link>
@@ -62,13 +63,14 @@
             <div class="col">
                 <div class="d-flex flex-column justify-content-center ">
                     <!-- Second flexbox content goes here -->
-                        <h1>Raise a new Ticket</h1>
+                    <h1>Raise a new Ticket</h1>
                     <div class="card border-light">
                         <div class="card-body">
                             <form @submit.prevent="Createticket">
                                 <div class="form-group mb-3">
                                     <label for="title" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="title" v-model="ticket_data.title"  @keyup="search_tickets"  required>
+                                    <input type="text" class="form-control" id="title" v-model="ticket_data.title"
+                                        @keyup="search_tickets" required>
                                 </div>
                                 <div class="form-group mb-3">
 
@@ -82,7 +84,8 @@
 
                                 <div class="form-group mb-3">
                                     <label for="body">Body</label>
-                                    <textarea type="text" class="form-control" id="body" v-model="ticket_data.body" required></textarea>
+                                    <textarea type="text" class="form-control" id="body" v-model="ticket_data.body"
+                                        required></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
@@ -92,29 +95,28 @@
             </div>
         </div>
         <div>
-        <!-- <button @click="openOffcanvas">Open Offcanvas</button> -->
-        <div class="offcanvas offcanvas-start" tabindex="-1" ref="offcanvas" :class="{ show: offcanvasState.show }"
-            @hidden.bs.offcanvas="offcanvasState.show = false">
-        <div class="offcanvas-header">
-            <h3 class="offcanvas-title" id="offcanvasExampleLabel">Existing Tickets</h3>
-            <button @click="closeOffcanvas" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <!-- offcanvas content -->
-            <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list"
-                :key="index">
-                <router-link :to="'/ticket/' + s_ticket.ticket_id" class="text-decoration-none text-secondary">
-                <div class="media-body text-right">
-                    <h5 class="mt-0">{{ s_ticket.title }}
-                    </h5>
-                    <p>
-                        {{ s_ticket.body.substring(0, 100) + "..." }}
-                    </p>
-                    <div class="col align-self-end text-end">
-                        <!-- <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link> -->
-                    </div>
+            <!-- <button @click="openOffcanvas">Open Offcanvas</button> -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" ref="offcanvas" :class="{ show: offcanvasState.show }"
+                @hidden.bs.offcanvas="offcanvasState.show = false">
+                <div class="offcanvas-header">
+                    <h3 class="offcanvas-title" id="offcanvasExampleLabel">Existing Tickets</h3>
+                    <button @click="closeOffcanvas" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <!-- offcanvas content -->
+                    <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
+                        <div class="media-body text-right">
+                            <h5 class="mt-0">{{ s_ticket.title }}
+                            </h5>
+                            <p>
+                                {{ s_ticket.body.substring(0, 100) + "..." }}
+                            </p>
+                            <div class="col align-self-end text-end">
+                                <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link>
+                            </div>
 
-                </div></router-link>
+                </div>
                 <hr>
             </div>
             <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
@@ -206,20 +208,20 @@ export default {
 
                 });
         },
-        search_tickets(){
+        search_tickets() {
             this.show_search_spinner = true
-            if (this.ticket_data.title.length > 3){
+            if (this.ticket_data.title.length > 3) {
                 this.openOffcanvas()
                 fetch(`${config.BASE_API_URL}/tickets/search?q=${this.ticket_data.title}`, {
                     headers: { Authorization: localStorage.getItem("access_key") },
                 })
-                .then((res) => res.json())
-                .then((res) => {
-                    this.searched_ticket_list = res
-                    console.log("got searched ticket list")
-                    console.log(this.searched_ticket_list)
-                    this.show_search_spinner = false
-                });
+                    .then((res) => res.json())
+                    .then((res) => {
+                        this.searched_ticket_list = res
+                        console.log("got searched ticket list")
+                        console.log(this.searched_ticket_list)
+                        this.show_search_spinner = false
+                    });
             }
 
         }
@@ -237,6 +239,20 @@ export default {
                 this.tag_list = res
 
             });
+
+
+        //Store user details in localstorage
+        const options = {
+            method: 'GET',
+            headers: {
+                Authorization: localStorage.getItem("access_key")
+            }
+        };
+
+        fetch('http://127.0.0.1:5000/api/user', options)
+            .then(response => response.json())
+            .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+            .catch(err => console.error(err));
     },
 };
 </script>

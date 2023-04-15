@@ -32,7 +32,7 @@
     </nav>
     <div class="container mt-4">
         <div class="row">
-            <div class="col-auto" style="min-width: 50%;">
+            <div class="col" style="min-width: 50%; max-width: 51%; max-height:50%;">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>{{ ticket.title }}
@@ -64,11 +64,27 @@
                                     <div class="media justify-content-end" v-for="(comment, index) in comments"
                                         :key="index">
                                         <hr>
-                                        <div class="media-body text-right">
+                                        <div class="media-body text-right" :class="{ 'bg-success': comment.solution }">
+
                                             <h5 class="mt-0">{{ comment.commentor.first_name }} {{
                                                 comment.commentor.last_name }}
                                             </h5>
-                                            <p>{{ comment.body }}</p>
+
+                                            <p>{{ comment.body }}<span v-if="comment.solution"
+                                                    class="badge rounded-pill text-bg-success m-1 ">Solution</span>
+                                            </p>
+
+                                            <button class="btn btn-success m-1"
+                                                v-if="ticket.student.user_id === currentUser_id && !comment.solution"
+                                                @click="mark_solution(comment.comment_id)">
+                                                Mark as solution
+                                            </button>
+
+                                            <button class="btn btn-danger"
+                                                v-if="comment.commentor.user_id === currentUser_id"
+                                                @click="deleteComment(comment.comment_id)">
+                                                Delete
+                                            </button>
                                         </div>
 
                                     </div>
@@ -81,9 +97,7 @@
                 </div>
             </div>
         </div>
-        <br>
-        <br>
-        <br>
+
         <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-left align-items-left">
@@ -91,11 +105,14 @@
                     <h1>Post comments</h1>
                     <form>
                         <div class="form-group form-floating " style="width: 50%;">
-                            <textarea class="form-control" placeholder="" id="floatingTextarea"></textarea>
+                            <textarea v-model="new_comment" class="form-control" placeholder=""
+                                id="floatingTextarea"></textarea>
                             <label for="floatingTextarea">Leave a comment here</label>
 
                         </div>
+                        <button @click.prevent="post_comment" type="submit" class="btn btn-primary">Post comment</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -111,10 +128,43 @@ export default {
             ticket_id: '',
             ticket: {},
             comments: [],
+            new_comment: '',
+            currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id
 
         }
     },
     methods: {
+
+        mark_solution(comment_id) {
+            console.log("marked sol")
+            const options = {
+                method: 'PUT',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/comments/${comment_id}/solution`, options)
+                .then(response => response.json())
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        },
+        deleteComment(comment_id) {
+            console.log(comment_id)
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/comments/${comment_id}`, options)
+                .then(response => response.json())
+                .then(response => { this.get_comments() })
+                .catch(err => console.error(err));
+        },
 
         upvote() {
             console.log('clicked on upvote')
@@ -159,6 +209,7 @@ export default {
 
 
         get_comments() {
+            console.log("getting comments")
             const options = {
                 method: 'GET',
                 headers: {
@@ -170,7 +221,30 @@ export default {
                 .then(response => response.json())
                 .then(response => { this.comments = response; })
                 .catch(err => console.error(err));
+        },
+
+        post_comment() {
+            console.log("clicked post comment")
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key")
+
+                },
+                body: `{"body":"${this.new_comment}"}`
+            };
+
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/comments`, options)
+                .then(response => response.json())
+                .then(response => {
+                    this.get_comments();
+                    this.new_comment = ''
+
+                })
+                .catch(err => console.error(err));
         }
+
     },
     created() {
         this.ticket_id = this.$route.params.tid;
@@ -190,9 +264,18 @@ export default {
             .then(response => response.json())
             .then(response => { this.ticket = response })
             .catch(err => console.error(err));
-    }
+    },
+
 
 
 };
 
 </script>
+
+
+<style>
+.bg-success {
+    --bs-bg-opacity: .6;
+    background-color: rgba(var(--bs-success-rgb), var(--bs-bg-opacity)) !important;
+}
+</style>
