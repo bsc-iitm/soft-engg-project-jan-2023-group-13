@@ -19,7 +19,26 @@
 
                     <button class="btn btn-danger mt-2" @click="deleteticket" style="width: 20%;">Delete Ticket</button>
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
-                    <div id="postcomment" class="mt-5">
+
+                    <div class="card mb-3" v-if="sol.body">
+                        <div class="card-body">
+                            <h5 class="card-title">Solution</h5>
+                            <div class="media justify-content-end">
+                                <div class="media-body text-right bg-success-bck">
+
+
+                                    <h5 class="mt-0">{{ sol.commentor.first_name }} {{
+                                        sol.commentor.last_name }}
+                                    </h5>
+                                    <p v-if="sol.body">{{ sol.body }}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="postcomment" class="mt-1">
 
                         <h1>Post comments</h1>
                         <form>
@@ -57,7 +76,10 @@
                                                 comment.commentor.last_name }}
                                             </h5>
 
-                                            <p>{{ comment.body }}<span v-if="comment.solution"
+                                            <!-- <p>{{ comment.body }}<span v-if="comment.solution"
+                                                    class="badge rounded-pill text-bg-success m-1 ">Solution</span>
+                                            </p> -->
+                                            <p>{{ comment.body }}<span v-if="is_solution(comment)"
                                                     class="badge rounded-pill text-bg-success m-1 ">Solution</span>
                                             </p>
 
@@ -121,11 +143,21 @@ export default {
             ticket: {},
             comments: [],
             new_comment: '',
-            currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id
+            currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id,
+            sol: ''
 
         }
     },
     methods: {
+
+        is_solution(comment) {
+
+            if (comment.solution) {
+                this.sol = comment
+                return true
+            }
+            return false
+        },
 
         mark_solution(comment_id) {
             console.log("marked sol")
