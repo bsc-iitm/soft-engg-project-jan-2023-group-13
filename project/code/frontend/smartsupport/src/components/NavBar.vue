@@ -25,7 +25,7 @@
 
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                            v-model="ticket_data.title" @keyup="search_tickets" />
+                            v-model="search_string_local" @keyup="search_tickets" />
                         <button class="btn btn-outline-success" type="submit">
                             Search
                         </button>
@@ -37,25 +37,117 @@
             </div>
         </div>
     </nav>
-</template>
-  
 
-  
+    <div>
+        <!-- <button @click="openOffcanvas">Open Offcanvas</button> -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" ref="offcanvas" :class="{ show: offcanvasState.show }"
+            @hidden.bs.offcanvas="offcanvasState.show = false">
+            <div class="offcanvas-header">
+                <h3 class="offcanvas-title" id="offcanvasExampleLabel">Existing Tickets</h3>
+                <button @click="closeOffcanvas" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <!-- offcanvas content -->
+                <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
+                    <router-link :to="'/ticket/' + s_ticket.ticket_id"  class="text-decoration-none text-dark">
+                        <div class="media-body text-right">
+                            <h5 class="mt-0 text-dark">{{ s_ticket.title }}
+                            </h5>
+                            <p>
+                                {{ s_ticket.body.substring(0, 100) + "..." }}
+                            </p>
+                            <div class="col align-self-end text-end">
+                                <!-- <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link> -->
+                            </div>
+                        </div>
+                    </router-link>
+                    <hr>
+                </div>
+                <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+
 
 <script>
+import { ref, reactive, watch } from 'vue';
+import * as search from '../utilities/search.js'
+// import config from "@/config.js";
+
+
 export default {
     name: "Navbar",
+    setup() {
+        const offcanvasRef = ref(null);
+        const offcanvasState = reactive({
+            show: false
+        });
+
+        const openOffcanvas = () => {
+            offcanvasState.show = true;
+            document.body.classList.add('offcanvas-open');
+        }
+
+        const closeOffcanvas = () => {
+            offcanvasState.show = false;
+            document.body.classList.remove('offcanvas-open');
+        }
+
+        return {
+            offcanvasRef,
+            offcanvasState,
+            openOffcanvas,
+            closeOffcanvas,
+        }
+    },
     data() {
         return {
             ticket_data: {
                 title: "",
             },
+            search_string_local: "",
+            searched_ticket_list: [],
+            show_search_spinner: true,
         };
     },
+    props: {
+        search_string: String,
+    },
     methods: {
-        search_tickets() {
-            // add your search_tickets function here
+        updateLocalSearchString(event) {
+            this.search_string_local = event.target.value;
+            this.$emit('update:propValue', this.search_string_local);
         },
+
+        search_tickets() {
+            search.search_tickets(this.search_string_local, this)
+        },
+
+        // search_tickets() {
+        //     this.show_search_spinner = true
+        //     if (this.search_string_local.length > 3) {
+        //         this.openOffcanvas()
+        //         fetch(`${config.BASE_API_URL}/tickets/search?q=${this.search_string_local}`, {
+        //             headers: { Authorization: localStorage.getItem("access_key") },
+        //         })
+        //             .then((res) => res.json())
+        //             .then((res) => {
+        //                 this.searched_ticket_list = res
+        //                 console.log("got searched ticket list")
+        //                 console.log(this.searched_ticket_list)
+        //                 this.show_search_spinner = false
+        //             });
+        //     }
+
+        // }
     },
 };
 </script>

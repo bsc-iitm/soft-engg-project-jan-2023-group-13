@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <span class="navbar-brand">Smart Support</span>
 
@@ -27,7 +27,8 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </nav> -->
+    <NavBar></NavBar>
 
     <div class="container mt-4">
         <div class="row">
@@ -106,36 +107,42 @@
                 <div class="offcanvas-body">
                     <!-- offcanvas content -->
                     <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
-                        <div class="media-body text-right">
-                            <h5 class="mt-0">{{ s_ticket.title }}
-                            </h5>
-                            <p>
-                                {{ s_ticket.body.substring(0, 100) + "..." }}
-                            </p>
-                            <div class="col align-self-end text-end">
-                                <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link>
+                        <router-link :to="'/ticket/' + s_ticket.ticket_id"  class="text-decoration-none text-dark">
+                            <div class="media-body text-right">
+                                <h5 class="mt-0 text-dark">{{ s_ticket.title }}
+                                </h5>
+                                <p>
+                                    {{ s_ticket.body.substring(0, 100) + "..." }}
+                                </p>
+                                <div class="col align-self-end text-end">
+                                    <!-- <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link> -->
+                                </div>
                             </div>
-
-                </div>
-                <hr>
-            </div>
-            <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only"></span>
+                        </router-link>
+                        <hr>
+                    </div>
+                    <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
-    </div>
     </div>
 </template>
 
 <script>
 import { ref, reactive, watch } from 'vue';
 import config from "@/config.js";
+import NavBar from '@/components/NavBar.vue';
+
 
 export default {
     name: "Home",
+    components: {
+        NavBar,
+    },
     setup() {
         const offcanvasRef = ref(null);
         const offcanvasState = reactive({
@@ -249,7 +256,7 @@ export default {
             }
         };
 
-        fetch('http://127.0.0.1:5000/api/user', options)
+        fetch(`${config.BASE_API_URL}/user`, options)
             .then(response => response.json())
             .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
             .catch(err => console.error(err));
