@@ -32,7 +32,7 @@
     </nav>
     <div class="container mt-4">
         <div class="row">
-            <div class="col-auto" style="min-width: 50%;">
+            <div class="col" style="min-width: 50%; max-width: 51%; max-height:50%;">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>{{ ticket.title }}
@@ -81,21 +81,22 @@
                 </div>
             </div>
         </div>
-        <br>
-        <br>
-        <br>
+
         <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- Third flexbox content goes here -->
                     <h1>Post comments</h1>
-                    <form>
+                    <form @click.prevent="post_comment">
                         <div class="form-group form-floating " style="width: 50%;">
-                            <textarea class="form-control" placeholder="" id="floatingTextarea"></textarea>
+                            <textarea v-model="new_comment" class="form-control" placeholder=""
+                                id="floatingTextarea"></textarea>
                             <label for="floatingTextarea">Leave a comment here</label>
 
                         </div>
+                        <button type="submit" class="btn btn-primary">Post comment</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -111,10 +112,12 @@ export default {
             ticket_id: '',
             ticket: {},
             comments: [],
+            new_comment: ''
 
         }
     },
     methods: {
+
 
         upvote() {
             console.log('clicked on upvote')
@@ -159,6 +162,7 @@ export default {
 
 
         get_comments() {
+            console.log("getting comments")
             const options = {
                 method: 'GET',
                 headers: {
@@ -170,7 +174,26 @@ export default {
                 .then(response => response.json())
                 .then(response => { this.comments = response; })
                 .catch(err => console.error(err));
+        },
+
+        post_comment() {
+            console.log("clicked post comment")
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key")
+
+                },
+                body: `{"body":"${this.new_comment}"}`
+            };
+
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/comments`, options)
+                .then(response => response.json())
+                .then(response => { this.get_comments() })
+                .catch(err => console.error(err));
         }
+
     },
     created() {
         this.ticket_id = this.$route.params.tid;
@@ -190,7 +213,8 @@ export default {
             .then(response => response.json())
             .then(response => { this.ticket = response })
             .catch(err => console.error(err));
-    }
+    },
+
 
 
 };
