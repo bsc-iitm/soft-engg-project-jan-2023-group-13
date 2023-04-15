@@ -1,34 +1,39 @@
 <template>
-    <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <span class="navbar-brand">Smart Support</span>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <router-link class="nav-link active" aria-current="page" to="/home">Home</router-link>
-                    <router-link class="nav-link" to="/profile">Profile</router-link>
-
-                    <router-link class="nav-link" to="/mytickets">My Tickets</router-link>
-                    <router-link class="nav-link" to="/faqs">FAQs</router-link>
-
-
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                            v-model="ticket_data.title" @keyup="search_tickets">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                    <router-link to="/" class="nav-link">Logout</router-link>
-
+    <NavBar></NavBar>
+    <div class="offcanvas">
+        <!-- <button @click="openOffcanvas">Open Offcanvas</button> -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" ref="offcanvas" :class="{ show: offcanvasState.show }"
+            @hidden.bs.offcanvas="offcanvasState.show = false">
+            <div class="offcanvas-header">
+                <h3 class="offcanvas-title" id="offcanvasExampleLabel">Existing Tickets</h3>
+                <button @click="closeOffcanvas" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <!-- offcanvas content -->
+                <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
+                    <router-link :to="'/ticket/' + s_ticket.ticket_id"  class="text-decoration-none text-dark">
+                        <div class="media-body text-right">
+                            <h5 class="mt-0 text-dark">{{ s_ticket.title }}
+                            </h5>
+                            <p>
+                                {{ s_ticket.body.substring(0, 100) + "..." }}
+                            </p>
+                            <div class="col align-self-end text-end">
+                                <!-- <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link> -->
+                            </div>
+                        </div>
+                    </router-link>
+                    <hr>
+                </div>
+                <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav> -->
-    <NavBar></NavBar>
+    </div>
 
     <div class="container mt-4">
         <div class="row">
@@ -95,47 +100,17 @@
                 </div>
             </div>
         </div>
-        <div>
-            <!-- <button @click="openOffcanvas">Open Offcanvas</button> -->
-            <div class="offcanvas offcanvas-start" tabindex="-1" ref="offcanvas" :class="{ show: offcanvasState.show }"
-                @hidden.bs.offcanvas="offcanvasState.show = false">
-                <div class="offcanvas-header">
-                    <h3 class="offcanvas-title" id="offcanvasExampleLabel">Existing Tickets</h3>
-                    <button @click="closeOffcanvas" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                        aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <!-- offcanvas content -->
-                    <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
-                        <router-link :to="'/ticket/' + s_ticket.ticket_id"  class="text-decoration-none text-dark">
-                            <div class="media-body text-right">
-                                <h5 class="mt-0 text-dark">{{ s_ticket.title }}
-                                </h5>
-                                <p>
-                                    {{ s_ticket.body.substring(0, 100) + "..." }}
-                                </p>
-                                <div class="col align-self-end text-end">
-                                    <!-- <router-link :to="'/ticket/' + s_ticket.ticket_id">Read more... </router-link> -->
-                                </div>
-                            </div>
-                        </router-link>
-                        <hr>
-                    </div>
-                    <div v-if="show_search_spinner" class="d-flex text-primary justify-content-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 </template>
 
 <script>
 import { ref, reactive, watch } from 'vue';
+import * as search from '../utilities/search.js';
 import config from "@/config.js";
 import NavBar from '@/components/NavBar.vue';
+
+
 
 
 export default {
@@ -169,6 +144,7 @@ export default {
     },
     data() {
         return {
+            user_details: {},
             ticket_list: [],
             ticket_data: {
                 title: "",
@@ -178,6 +154,9 @@ export default {
             tag_list: [],
             searched_ticket_list: [],
             show_search_spinner: true,
+            is_admin: false,
+            is_support: false,
+            is_student: false,
         };
     },
     methods: {
@@ -216,21 +195,15 @@ export default {
                 });
         },
         search_tickets() {
-            this.show_search_spinner = true
-            if (this.ticket_data.title.length > 3) {
-                this.openOffcanvas()
-                fetch(`${config.BASE_API_URL}/tickets/search?q=${this.ticket_data.title}`, {
-                    headers: { Authorization: localStorage.getItem("access_key") },
-                })
-                    .then((res) => res.json())
-                    .then((res) => {
-                        this.searched_ticket_list = res
-                        console.log("got searched ticket list")
-                        console.log(this.searched_ticket_list)
-                        this.show_search_spinner = false
-                    });
-            }
-
+            search.search_tickets(this.ticket_data.title, this)
+        },
+        user_roles(){
+            this.user_details.roles.forEach((item) => {
+                console.log(item.name);
+                if (item.name === "Student") {this.is_student = true;}
+                if (item.name === "Admin") {this.is_admin = true;}
+                if (item.name === "Support") {this.is_support = true;}
+            })
         }
     },
 
@@ -241,11 +214,11 @@ export default {
         fetch(`${config.BASE_API_URL}/tags`, {
             headers: { Authorization: localStorage.getItem("access_key") },
         })
-            .then((res) => res.json())
-            .then((res) => {
-                this.tag_list = res
+        .then((res) => res.json())
+        .then((res) => {
+            this.tag_list = res
 
-            });
+        });
 
 
         //Store user details in localstorage
@@ -259,8 +232,14 @@ export default {
         fetch(`${config.BASE_API_URL}/user`, options)
             .then(response => response.json())
             .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+            .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
             .catch(err => console.error(err));
+
+
     },
+    mounted(){
+        this.user_roles()
+    }
 };
 </script>
 
