@@ -3,7 +3,7 @@
 
     <div class="container mt-4">
         <div class="row">
-            <div class="col" style="min-width: 50%; max-width: 51%; max-height:50%;">
+            <div class="col" style="min-width: 50%; max-width: 51%; ">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
                     <h1>{{ ticket.title }}
@@ -19,7 +19,23 @@
 
                     <button class="btn btn-danger mt-2" @click="deleteticket" style="width: 20%;">Delete Ticket</button>
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
+                    <div id="postcomment" class="mt-5">
+
+                        <h1>Post comments</h1>
+                        <form>
+                            <div class="form-group form-floating " style="width: 50%;">
+                                <textarea v-model="new_comment" class="form-control" placeholder=""
+                                    id="floatingTextarea"></textarea>
+                                <label for="floatingTextarea">Leave a comment here</label>
+
+                            </div>
+                            <button @click.prevent="post_comment" type="submit" class="btn btn-primary">Post
+                                comment</button>
+                        </form>
+
+                    </div>
                 </div>
+
             </div>
 
             <div class="col">
@@ -46,7 +62,7 @@
                                             </p>
 
                                             <button class="btn btn-success m-1"
-                                                v-if="ticket.student.user_id === currentUser_id && !comment.solution"
+                                                v-if="ticket.student.user_id === currentUser_id && ticket.status == 'Open'"
                                                 @click="mark_solution(comment.comment_id)">
                                                 Mark as solution
                                             </button>
@@ -69,10 +85,10 @@
             </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-left align-items-left">
-                    <!-- Third flexbox content goes here -->
+                    Third flexbox content goes here 
                     <h1>Post comments</h1>
                     <form>
                         <div class="form-group form-floating " style="width: 50%;">
@@ -86,7 +102,7 @@
 
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -123,7 +139,7 @@ export default {
 
             fetch(`http://127.0.0.1:5000/api/comments/${comment_id}/solution`, options)
                 .then(response => response.json())
-                .then(response => this.get_comments())
+                .then(response => { this.get_comments(); this.get_ticket() })
                 .catch(err => console.error(err));
         },
         deleteComment(comment_id) {
@@ -219,6 +235,20 @@ export default {
 
                 })
                 .catch(err => console.error(err));
+        },
+
+        get_ticket() {
+            const options = {
+                method: 'GET',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+                }
+            };
+
+            fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
+                .then(response => response.json())
+                .then(response => { this.ticket = response })
+                .catch(err => console.error(err));
         }
 
     },
@@ -229,17 +259,7 @@ export default {
         this.get_comments();
 
         // Get ticket details
-        const options = {
-            method: 'GET',
-            headers: {
-                Authorization: localStorage.getItem("access_key")
-            }
-        };
-
-        fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}`, options)
-            .then(response => response.json())
-            .then(response => { this.ticket = response })
-            .catch(err => console.error(err));
+        this.get_ticket()
     },
 
 
