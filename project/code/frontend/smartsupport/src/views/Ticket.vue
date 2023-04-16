@@ -111,7 +111,7 @@
         <!-- <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-left align-items-left">
-                    Third flexbox content goes here 
+                    Third flexbox content goes here
                     <h1>Post comments</h1>
                     <form>
                         <div class="form-group form-floating " style="width: 50%;">
@@ -320,6 +320,7 @@ export default {
         },
 
         get_ticket() {
+            console.log('Ticket', this.ticket_id)
             const options = {
                 method: 'GET',
                 headers: {

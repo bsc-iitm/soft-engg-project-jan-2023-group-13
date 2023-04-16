@@ -55,6 +55,61 @@ def get_tickets():
     return jsonify(result), 200
 
 
+# get all open tickets
+@app.get("/api/tickets/open")
+def get_open_tickets():
+    page = int(request.args.get("page"))
+    per_page = int(request.args.get("per_page"))
+
+    vote_subquery = (
+        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+        .group_by(Vote.ticket_id)
+        .subquery()
+    )
+
+    sorted_tickets = (
+        Ticket.query.join(vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id)
+        .filter(Ticket.status == "Open")
+        .order_by(
+            vote_subquery.c.vote_count.desc(),
+            Ticket.created_at.desc(),
+        )
+        .limit(per_page)
+        .offset(page * per_page)
+        .all()
+    )
+
+    result = tickets_schema.dump(sorted_tickets)
+    return jsonify(result), 200
+
+# get all resolved or closed tickets
+@app.get("/api/tickets/resolved-or-closed")
+def get_resolved_closed_tickets():
+    page = int(request.args.get("page"))
+    per_page = int(request.args.get("per_page"))
+
+    vote_subquery = (
+        db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+        .group_by(Vote.ticket_id)
+        .subquery()
+    )
+
+    sorted_tickets = (
+        Ticket.query.join(vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id)
+        .filter((Ticket.status == 'Resolved') | (Ticket.status == 'Closed'))
+        .order_by(
+            vote_subquery.c.vote_count.desc(),
+            Ticket.created_at.desc(),
+        )
+        .limit(per_page)
+        .offset(page * per_page)
+        .all()
+    )
+
+    result = tickets_schema.dump(sorted_tickets)
+    return jsonify(result), 200
+
+
 # raise a new ticket
 @app.post("/api/tickets")
 @jwt_required()
@@ -85,6 +140,8 @@ def post_ticket():
     db.session.add(new_ticket)
     db.session.commit()
     return ticket_schema.jsonify(new_ticket), 200
+
+
 
 
 # get a ticket by its ticket_id

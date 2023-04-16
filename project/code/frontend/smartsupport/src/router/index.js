@@ -5,6 +5,7 @@ import SignUp from '../views/SignUp.vue'
 import Home from '../views/Home.vue'
 import Profile from '../views/Profile.vue'
 import MyTickets from '../views/MyTickets.vue'
+import AllTickets from '../views/AllTickets.vue'
 import Ticket from '../views/Ticket.vue'
 import FAQs from '../views/FAQs.vue'
 
@@ -31,6 +32,10 @@ const routes = [
   {
     path: "/mytickets",
     component: MyTickets,
+  },
+  {
+    path: "/alltickets",
+    component: AllTickets,
   },
   {
     path: "/faqs",

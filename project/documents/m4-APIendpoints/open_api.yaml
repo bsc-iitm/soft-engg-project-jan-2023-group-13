@@ -271,7 +271,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ticket'
-
+  /tickets/open:
+    get:
+      summary: Get all open tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /tickets/resolved-or-closed:
+    get:
+      summary: Get all reolved or closed tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
   /tickets/user:
     get:
       summary: Get all tickets raised by a given user

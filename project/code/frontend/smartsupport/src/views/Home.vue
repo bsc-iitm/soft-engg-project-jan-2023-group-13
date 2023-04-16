@@ -35,14 +35,73 @@
         </div>
     </div>
 
+
     <div class="container mt-4">
-        <div class="row">
+        <div v-if="is_admin" id="adminDashboard" class="row">
+            <h1 class="text-secondary">Admin Dashboard</h1>
+            <div class="col">
+                <div class="d-flex flex-column justify-content-left align-items-left">
+                    <h2><span class="text-danger">Open</span> Tickets</h2>
+                    <table class="table table-borderless table-group-divider">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Votes</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ticket in admin_open_ticket_list" :key="ticket.ticket_id">
+                                <td class="">{{ ticket.title }}</td>
+                                <td><small>{{ ticket.votes_count }}</small></td>
+                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                <td><small>
+                                    <router-link :to="'/ticket/' + ticket.ticket_id" class="">Respond</router-link>
+                                    / Assign
+                                </small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex flex-column justify-content-right align-items-left">
+                    <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2>
+                    <table class="table table-borderless table-group-divider">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Votes</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ticket in admin_resolved_closed_ticket_list" :key="ticket.ticket_id">
+                                <td>
+                                    <router-link
+                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title }}</router-link>
+                                </td>
+                                <td><small>{{ ticket.votes_count }}</small></td>
+                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                <td><small>Add to FAQs</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="is_student" id="studentDashboard" class="row">
+            <h1 class="text-secondary">Student Dashboard</h1>
             <div class="col">
                 <div class="d-flex flex-column justify-content-left align-items-left">
                     <!-- First flexbox content goes here -->
-                    <h1>My Tickets</h1>
+                    <h2>My Tickets</h2>
 
-                    <!-- <li v-for="ticket in ticket_list">{{ ticket.title }}</li> -->
+                    <!-- <li v-for="ticket in student_ticket_list">{{ ticket.title }}</li> -->
                     <table class="table table-borderless table-group-divider">
                         <thead>
                             <tr>
@@ -53,23 +112,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="ticket in ticket_list" :key="ticket.ticket_id">
+                            <tr v-for="ticket in student_ticket_list" :key="ticket.ticket_id">
                                 <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title }}</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td>{{ ticket.status }}</td>
+                                <td v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"><strong>{{ ticket.status }}</strong></td>
                             </tr>
                         </tbody>
                     </table>
-
-
-
                 </div>
             </div>
             <div class="col">
                 <div class="d-flex flex-column justify-content-center ">
                     <!-- Second flexbox content goes here -->
-                    <h1>Raise a new Ticket</h1>
+                    <h2>Raise a new Ticket</h2>
                     <div class="card border-light">
                         <div class="card-body">
                             <form @submit.prevent="Createticket">
@@ -107,6 +163,7 @@
 <script>
 import { ref, reactive, watch } from 'vue';
 import * as search from '../utilities/search.js';
+import * as auth from '../utilities/auth.js';
 import config from "@/config.js";
 import NavBar from '@/components/NavBar.vue';
 
@@ -145,7 +202,9 @@ export default {
     data() {
         return {
             user_details: {},
-            ticket_list: [],
+            student_ticket_list: [],
+            admin_open_ticket_list: [],
+            admin_resolved_closed_ticket_list: [],
             ticket_data: {
                 title: "",
                 tags: [],
@@ -176,39 +235,53 @@ export default {
 
             fetch(`${config.BASE_API_URL}/tickets`, options)
                 .then(response => response.json())
-                .then(response => this.Get_Ticket_list())
+                .then(response => this.Get_Student_Ticket_list())
                 .catch(err => console.error(err));
 
 
         },
-        Get_Ticket_list() {
+        Get_Student_Ticket_list() {
             // Get list of tickets
             fetch(`${config.BASE_API_URL}/tickets/user`, {
                 headers: { Authorization: localStorage.getItem("access_key") },
             })
                 .then((res) => res.json())
                 .then((res) => {
-                    this.ticket_list = res
+                    this.student_ticket_list = res
                     console.log("got ticket list")
-
-
+                });
+        },
+        Get_Admin_Open_Ticket_list() {
+            // Get list of tickets
+            fetch(`${config.BASE_API_URL}/tickets/open?page=0&per_page=5`, {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    this.admin_open_ticket_list = res
+                    console.log("got amin open ticket list")
+                });
+        },
+        Get_Admin_Resolved_Closed_Ticket_list() {
+            // Get list of tickets
+            fetch(`${config.BASE_API_URL}/tickets/resolved-or-closed?page=0&per_page=5`, {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    this.admin_resolved_closed_ticket_list = res
+                    console.log("got amin resolved or closed ticket list")
                 });
         },
         search_tickets() {
             search.search_tickets(this.ticket_data.title, this)
         },
-        user_roles(){
-            this.user_details.roles.forEach((item) => {
-                console.log(item.name);
-                if (item.name === "Student") {this.is_student = true;}
-                if (item.name === "Admin") {this.is_admin = true;}
-                if (item.name === "Support") {this.is_support = true;}
-            })
-        }
     },
 
     created() {
-        this.Get_Ticket_list()
+        this.Get_Student_Ticket_list()
+        this.Get_Admin_Open_Ticket_list()
+        this.Get_Admin_Resolved_Closed_Ticket_list()
         //Get list of tags
 
         fetch(`${config.BASE_API_URL}/tags`, {
@@ -238,7 +311,7 @@ export default {
 
     },
     mounted(){
-        this.user_roles()
+        auth.user_roles(this)
     }
 };
 </script>

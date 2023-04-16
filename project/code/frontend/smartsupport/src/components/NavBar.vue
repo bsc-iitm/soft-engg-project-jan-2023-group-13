@@ -16,8 +16,11 @@
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/profile' }" to="/profile">
                         Profile
                     </router-link>
-                    <router-link :class="{ 'nav-link': true, active: $route.path === '/mytickets' }" to="/mytickets">
+                    <router-link v-if="is_student" :class="{ 'nav-link': true, active: $route.path === '/mytickets' }" to="/mytickets">
                         My Tickets
+                    </router-link>
+                    <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/alltickets' }" to="/alltickets">
+                        All Tickets
                     </router-link>
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/faqs' }" to="/faqs">
                         FAQs
@@ -80,6 +83,8 @@
 <script>
 import { ref, reactive, watch } from 'vue';
 import * as search from '../utilities/search.js'
+import * as auth from '../utilities/auth.js';
+
 // import config from "@/config.js";
 
 
@@ -116,6 +121,10 @@ export default {
             search_string_local: "",
             searched_ticket_list: [],
             show_search_spinner: true,
+            user_details: {},
+            is_admin: false,
+            is_support: false,
+            is_student: false,
         };
     },
     props: {
@@ -149,5 +158,13 @@ export default {
 
         // }
     },
+
+    created(){
+        this.user_details = JSON.parse(localStorage.getItem("user_details"))
+    },
+
+    mounted(){
+        auth.user_roles(this)
+    }
 };
 </script>
