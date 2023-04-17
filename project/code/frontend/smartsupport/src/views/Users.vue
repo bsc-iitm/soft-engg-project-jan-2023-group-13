@@ -76,23 +76,24 @@ export default {
                     "name": "Admin",
                     "role_id": 1
                 },
+
+                {
+                    "description": null,
+                    "name": "Support",
+                    "role_id": 2
+                },
                 {
                     "description": null,
                     "name": "Student",
                     "role_id": 3
                 },
-                {
-                    "description": null,
-                    "name": "Support",
-                    "role_id": 2
-                }
             ],
             userRole: {},
             editing: false,
             selectedUser: null,
             user_object: {
                 username: '',
-                role: []
+                roles: []
             }
 
 
@@ -110,12 +111,33 @@ export default {
             }
         },
         updateUser() {
+
+
+
             console.log('update user')
             // console.log(JSON.stringify(this.selectedUser))
             this.user_object.username = this.selectedUser.username
-            this.user_object.role = this.selectedUser.roles.map(role => role.name);
+            this.user_object.roles = this.selectedUser.roles.map(role => role.name);
             console.log(JSON.stringify(this.user_object))
+            const options = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key")
 
+                },
+                body: JSON.stringify(this.user_object)
+            };
+
+            fetch('http://127.0.0.1:5000/api/user/roles', options)
+                .then(response => {
+                    if (response.status == 200) {
+
+                        this.editing = false
+                    }
+                })
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
 
         }
     },

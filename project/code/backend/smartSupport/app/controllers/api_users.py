@@ -146,24 +146,28 @@ def add_role():
     current_user_id = get_jwt_identity()
     if not Auth.authorize_admin(current_user_id):
         raise NotAuthorized()
+    userdata = request.json
+    username = userdata["username"]
+    roles = userdata["roles"]
 
-    userdata = request.get_json()
     user = User.query.filter(User.username == userdata["username"]).first()
-    role = Role.query.filter(Role.name == userdata["role"]).first()
     if not user:
         raise NotFound(status_code=404, msg="User not found")
-    if not role:
-        raise NotFound(status_code=404, msg="Role not found")
 
-    if role not in user.roles:
-        user.roles.append(role)
+    found_roles = Role.query.filter(Role.name.in_(roles)).all()
+    if len(found_roles) != len(roles):
+        not_found_roles = set(roles) - set([role.name for role in found_roles])
+        raise NotFound(status_code=404, msg=f"Roles not found: {not_found_roles}")
 
-        db.session.add(user)
-        db.session.commit()
-        user_schema = UserSchema()
-        return user_schema.jsonify(user)
-    else:
-        return jsonify("Role already exists for the user"), 400
+    for role in found_roles:
+        if role not in user.roles:
+            user.roles.append(role)
+
+    db.session.add(user)
+    db.session.commit()
+    user_schema = UserSchema()
+
+    return user_schema.jsonify(user)
 
 
 # remove roles from a user
@@ -191,7 +195,6 @@ def delete_role():
         return jsonify("Role doesn't exist for user"), 400
 
 
-
 # Assign a tag to a user
 @app.post("/api/user/tags")
 @jwt_required()
@@ -216,7 +219,6 @@ def add_usertag():
         return user_schema.jsonify(user)
     else:
         return jsonify("Tag already exists for the user"), 400
-
 
 
 # Remove a tag from a user
