@@ -352,3 +352,19 @@ def notify():
 
 
 
+# assign ticket to user
+@app.post("/api/tickets/assign")
+@jwt_required()
+def assign_ticket():
+    ticket_data = request.get_json()
+
+    ticket_id = ticket_data['ticket_id']
+    username_to_assign_to = ticket_data['username']
+
+    assignee = db.session.query(User).filter(User.username == username_to_assign_to).first()
+
+    message = "Please look into the issues mentioned in the Ticket identified by ticket_id: {} and provide neccessary resolution.".format(ticket_id)
+    email.send_email("Ticket Assignment", message, assignee.email)
+
+    return jsonify("Ticket assignment done successfully"), 200
+

@@ -90,8 +90,7 @@
 import { ref, reactive, watch } from 'vue';
 import * as search from '../utilities/search.js'
 import * as auth from '../utilities/auth.js';
-
-// import config from "@/config.js";
+import config from "@/config.js";
 
 
 export default {
@@ -166,7 +165,22 @@ export default {
     },
 
     created() {
-        this.user_details = JSON.parse(localStorage.getItem("user_details"))
+        // this.user_details = JSON.parse(localStorage.getItem("user_details"))
+        // auth.user_roles(this)
+
+        const options = {
+            method: 'GET',
+            headers: {
+                Authorization: localStorage.getItem("access_key")
+            }
+        };
+
+        fetch(`${config.BASE_API_URL}/user`, options)
+            .then(response => response.json())
+            .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+            .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
+            .then(auth.user_roles(this))
+            .catch(err => console.error(err));
     },
 
     mounted() {

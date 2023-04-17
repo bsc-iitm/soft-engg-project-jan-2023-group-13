@@ -48,7 +48,7 @@
             <ul class="list-group list-group-flush">
                 <span v-for="user in admin_and_support_user_list" :key="user.id">
                     <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Support')">
-                        <span type="button" class="badge text-bg-warning list-inline-item">Assign to</span>
+                        <span type="button"  @click="assign_ticket_to_user(user.username)" class="badge text-bg-warning list-inline-item">Assign to</span>
                         {{ user.username }}
                     </li>
                 </span>
@@ -57,7 +57,7 @@
             <ul class="list-group list-group-flush">
                 <span v-for="user in admin_and_support_user_list" :key="user.id">
                     <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Admin')">
-                        <span type="button" class="badge text-bg-danger list-inline-item">Assign to</span>
+                        <span type="button" @click="assign_ticket_to_user(user.username)" class="badge text-bg-danger list-inline-item">Assign to</span>
                         {{ user.username }}
                     </li>
                 </span>
@@ -101,7 +101,7 @@
                                     <router-link :to="'/ticket/' + ticket.ticket_id"  class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
                                     <!-- &nbsp; -->
                                     <!-- <span type="button" class="badge text-bg-warning list-inline-item">Assign</span> -->
-                                    <span type="button" @click="get_admin_and_support_user" class="badge text-bg-warning list-inline-item" data-bs-toggle="modal" data-bs-target="#ticketAssignmentModel">
+                                    <span type="button" @click="get_admin_and_support_user(ticket.ticket_id)" class="badge text-bg-warning list-inline-item" data-bs-toggle="modal" data-bs-target="#ticketAssignmentModel">
                                         Assign
                                     </span>
                                     <!-- / Assign -->
@@ -200,7 +200,7 @@
                                     <textarea type="text" class="form-control" id="body" v-model="ticket_data.body"
                                         required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -264,6 +264,7 @@ export default {
             is_admin: false,
             is_support: false,
             is_student: false,
+            ticket_id_to_assign: "",
         };
     },
     methods: {
@@ -285,8 +286,6 @@ export default {
                 .then(response => response.json())
                 .then(response => this.Get_Student_Ticket_list())
                 .catch(err => console.error(err));
-
-
         },
         Get_Student_Ticket_list() {
             // Get list of tickets
@@ -362,29 +361,50 @@ export default {
                     }
                 });
         },
-        get_admin_and_support_user() {
-            if(this.admin_and_support_user_list.length === 0){
-                console.log('gettng users')
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        Authorization: localStorage.getItem("access_key")
+        get_admin_and_support_user(ticket_id) {
+            this.ticket_id_to_assign = ticket_id
+            console.log(this.ticket_id_to_assign)
+            console.log('gettng users')
+            const options = {
+                method: 'GET',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
 
-                    }
-                };
+                }
+            };
 
-                fetch(`${config.BASE_API_URL}/user/admin-and-support`, options)
-                .then(response => response.json())
-                .then(response => this.admin_and_support_user_list = response)
-                .then(response => console.log(this.admin_and_support_user_list))
-                .catch(err => console.error(err));
+            fetch(`${config.BASE_API_URL}/user/admin-and-support`, options)
+            .then(response => response.json())
+            .then(response => this.admin_and_support_user_list = response)
+            .then(response => console.log(this.admin_and_support_user_list))
+            .catch(err => console.error(err));
+        },
+        assign_ticket_to_user(username){
+            console.log(this.ticket_id_to_assign, username)
+            let assignment_data = {
+                ticket_id: this.ticket_id_to_assign,
+                username: username
             }
-        },
-        is_admin(user){
-            return user.roles.some((role) => role.name === "Admin")
-        },
-        is_support(user){
-            return user.roles.some((role) => role.name === "Support")
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key"),
+                },
+                body: JSON.stringify(assignment_data)
+            };
+
+            fetch(`${config.BASE_API_URL}/tickets/assign`, options)
+                .then(response => response.json())
+                .then(
+                    swal({
+                        title: "Success",
+                        text: "Ticket with ticket_id - " + this.ticket_id_to_assign + " assigned to user - " + username + " successfully",
+                        icon: "success",
+                        button: "Okay"
+                    }))
+                .catch(err => console.error(err));
         },
         search_tickets() {
             search.search_tickets(this.ticket_data.title, this)
@@ -392,9 +412,9 @@ export default {
     },
 
     created() {
-        this.Get_Student_Ticket_list()
-        this.Get_Admin_Open_Ticket_list()
-        this.Get_Admin_Resolved_Closed_Ticket_list()
+        // this.Get_Student_Ticket_list()
+        // this.Get_Admin_Open_Ticket_list()
+        // this.Get_Admin_Resolved_Closed_Ticket_list()
         //Get list of tags
 
         fetch(`${config.BASE_API_URL}/tags`, {
@@ -418,12 +438,14 @@ export default {
             .then(response => response.json())
             .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
             .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
+            .then(auth.user_roles(this))
             .catch(err => console.error(err));
-
-
     },
     mounted(){
-        auth.user_roles(this)
+        // auth.user_roles(this)
+        this.Get_Student_Ticket_list()
+        this.Get_Admin_Open_Ticket_list()
+        this.Get_Admin_Resolved_Closed_Ticket_list()
     }
 };
 </script>
