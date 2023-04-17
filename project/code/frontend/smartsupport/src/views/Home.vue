@@ -56,14 +56,18 @@
                                 <td class="" :title="ticket.title">
                                     <router-link
                                     v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 15) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td><small>
-                                    <router-link :to="'/ticket/' + ticket.ticket_id" class="">Respond</router-link>
-                                    / Assign
-                                </small></td>
+                                <td ><div class="list-inline">
+                                    <!-- <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-success">Respond</button></router-link>
+                                    <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-secondary">Assign</button></router-link> -->
+                                    <router-link :to="'/ticket/' + ticket.ticket_id"  class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
+                                    <!-- &nbsp; -->
+                                    <span type="button" class="badge text-bg-warning list-inline-item">Assign</span>
+                                    <!-- / Assign -->
+                                </div></td>
                             </tr>
                         </tbody>
                     </table>
@@ -93,7 +97,7 @@
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td>
                                     <small v-if="ticket.status === 'Resolved'">
-                                        Add to FAQs
+                                        <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs" class="btn badge btn-sm btn-primary mt-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+ FAQs</button>
                                     </small>
                                 </td>
                             </tr>
@@ -175,9 +179,7 @@ import * as search from '../utilities/search.js';
 import * as auth from '../utilities/auth.js';
 import config from "@/config.js";
 import NavBar from '@/components/NavBar.vue';
-
-
-
+import swal from 'sweetalert';
 
 export default {
     name: "Home",
@@ -283,9 +285,45 @@ export default {
                 });
         },
         Convert_to_faq(ticket_id){
-            fetch(`${config.BASE_API_URL}/tickets/${ticket_id}/faqs`, {
-                headers: { Authorization: localStorage.getItem("access_key") },
+            swal({
+                title: "Convert Ticket to FAQ",
+                text: "Do you want to go ahead with this option?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
             })
+                .then((toFAQ) => {
+                    if (toFAQ) {
+                        const options = {
+                            method: 'POST',
+                            headers: {
+                                Authorization: localStorage.getItem("access_key")
+
+                            }
+                        };
+
+                        fetch(`http://127.0.0.1:5000/api/tickets/${ticket_id}/faqs`, options)
+                            .then(response => {
+                                if (!response.ok) {
+                                    if (response.status === 400) {
+                                        throw new Error('Bad Request');
+                                    }
+                                }
+                                return response.json();
+                            }).then(
+                                swal({
+                                    title: "Success",
+                                    text: "Ticket converted to a FAQ successfully",
+                                    icon: "success",
+                                    button: "Okay"
+                                })
+                            )
+                            .catch(err => console.error(err));
+
+                    } else {
+                        swal("Ticket not converted to a FAQ");
+                    }
+                });
         },
         search_tickets() {
             search.search_tickets(this.ticket_data.title, this)
@@ -304,7 +342,6 @@ export default {
         .then((res) => res.json())
         .then((res) => {
             this.tag_list = res
-
         });
 
 

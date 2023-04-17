@@ -293,7 +293,11 @@ def ticket_to_faq(ticket_id):
 
     ticket = db.session.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
     if ticket.status != "Resolved":
-        return jsonify("Can convert unresolved ticket to FAQ"), 400
+        return jsonify("Can not convert unresolved ticket to FAQ"), 400
+
+    faq = db.session.query(Faqs).filter(Faqs.query == ticket.body).first()
+    if faq:
+        return jsonify("FAQ already exists"), 400
 
     comment = (
         db.session.query(Comment)
