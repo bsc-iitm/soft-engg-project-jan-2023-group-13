@@ -53,7 +53,11 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in admin_open_ticket_list" :key="ticket.ticket_id">
-                                <td class="">{{ ticket.title }}</td>
+                                <td class="" :title="ticket.title">
+                                    <router-link
+                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td><small>
@@ -79,14 +83,19 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in admin_resolved_closed_ticket_list" :key="ticket.ticket_id">
-                                <td>
+                                <td class="" :title="ticket.title">
+
                                     <router-link
                                     v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title }}</router-link>
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td><small>Add to FAQs</small></td>
+                                <td>
+                                    <small v-if="ticket.status === 'Resolved'">
+                                        Add to FAQs
+                                    </small>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -253,7 +262,7 @@ export default {
         },
         Get_Admin_Open_Ticket_list() {
             // Get list of tickets
-            fetch(`${config.BASE_API_URL}/tickets/open?page=0&per_page=5`, {
+            fetch(`${config.BASE_API_URL}/tickets/open?page=0&per_page=10`, {
                 headers: { Authorization: localStorage.getItem("access_key") },
             })
                 .then((res) => res.json())
@@ -264,7 +273,7 @@ export default {
         },
         Get_Admin_Resolved_Closed_Ticket_list() {
             // Get list of tickets
-            fetch(`${config.BASE_API_URL}/tickets/resolved-or-closed?page=0&per_page=5`, {
+            fetch(`${config.BASE_API_URL}/tickets/resolved-or-closed?page=0&per_page=10`, {
                 headers: { Authorization: localStorage.getItem("access_key") },
             })
                 .then((res) => res.json())
@@ -272,6 +281,11 @@ export default {
                     this.admin_resolved_closed_ticket_list = res
                     console.log("got amin resolved or closed ticket list")
                 });
+        },
+        Convert_to_faq(ticket_id){
+            fetch(`${config.BASE_API_URL}/tickets/${ticket_id}/faqs`, {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
         },
         search_tickets() {
             search.search_tickets(this.ticket_data.title, this)
