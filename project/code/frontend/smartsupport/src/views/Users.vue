@@ -1,4 +1,5 @@
 <template>
+    <NavBar></NavBar>
     <div class="container mt-4">
         <div class="row">
             <div class="col">
@@ -60,7 +61,12 @@
 </template>
 
 <script>
+import NavBar from '@/components/NavBar.vue';
+
 export default {
+    components: {
+        NavBar,
+    },
     data() {
         return {
             // roles: [
@@ -133,28 +139,32 @@ export default {
                 .then(response => {
                     if (response.status == 200) {
 
-                        this.editing = false
+                        this.editing = false;
+                        this.get_users()
                     }
                 })
                 .then(response => console.log(response))
                 .catch(err => console.error(err));
 
+        },
+        get_users() {
+            console.log('gettng users')
+            const options = {
+                method: 'GET',
+                headers: {
+                    Authorization: localStorage.getItem("access_key")
+
+                }
+            };
+
+            fetch('http://127.0.0.1:5000/api/user/all', options)
+                .then(response => response.json())
+                .then(response => this.user_list = response)
+                .catch(err => console.error(err));
         }
     },
     created() {
-        console.log('gettng users')
-        const options = {
-            method: 'GET',
-            headers: {
-                Authorization: localStorage.getItem("access_key")
-
-            }
-        };
-
-        fetch('http://127.0.0.1:5000/api/user/all', options)
-            .then(response => response.json())
-            .then(response => this.user_list = response)
-            .catch(err => console.error(err));
+        this.get_users()
     },
 
 }

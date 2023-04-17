@@ -158,12 +158,18 @@ def add_role():
     if len(found_roles) != len(roles):
         not_found_roles = set(roles) - set([role.name for role in found_roles])
         raise NotFound(status_code=404, msg=f"Roles not found: {not_found_roles}")
+    # print(user.roles)
+    # for role in found_roles:
+    #     if role not in user.roles:
+    #         print("appended", role)
+    #         user.roles.append(role)
+    #     elif role in user.roles:
+    #         print("removed", role)
 
-    for role in found_roles:
-        if role not in user.roles:
-            user.roles.append(role)
+    #         user.roles.remove(role)
 
-    db.session.add(user)
+    # db.session.add(user)
+    user.roles = found_roles
     db.session.commit()
     user_schema = UserSchema()
 

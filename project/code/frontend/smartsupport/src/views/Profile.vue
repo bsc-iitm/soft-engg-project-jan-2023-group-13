@@ -33,9 +33,22 @@ export default {
     name: "Profile",
     data() {
         return {
-            user_details: JSON.parse(localStorage.getItem("user_details")),
+            user_details: '',
             url: `https://api.dicebear.com/6.x/big-ears/svg?size=200&seed=${JSON.parse(localStorage.getItem("user_details")).username}`
         }
+    },
+    created() {
+        const options = {
+            method: 'GET',
+            headers: {
+                Authorization: localStorage.getItem("access_key")
+            }
+        };
+
+        fetch(`http://127.0.0.1:5000/api/user`, options)
+            .then(response => response.json())
+            .then(response => { this.user_details = response })
+            .catch(err => console.error(err));
     },
     components: {
         NavBar,
