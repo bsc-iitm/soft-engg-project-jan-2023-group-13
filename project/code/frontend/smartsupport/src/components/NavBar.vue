@@ -24,7 +24,8 @@
                         to="/alltickets">
                         All Tickets
                     </router-link>
-                    <router-link :class="{ 'nav-link': true, active: $route.path === '/users' }" to="/users">
+                    <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/users' }"
+                        to="/users">
                         Users
                     </router-link>
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/faqs' }" to="/faqs">
