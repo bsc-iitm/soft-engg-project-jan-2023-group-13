@@ -87,6 +87,15 @@ def get_users():
     return jsonify(output)
 
 
+# get admin and support users
+@app.get("/api/user/admin-and-support")
+def get_admin__and_support_users():
+    user_list = User.query.join(User.roles).filter(Role.name.in_(['Admin', 'Support'])).all()
+    user_schema = UserSchema(many=True)
+    output = user_schema.dump(user_list)
+    return jsonify(output)
+
+
 # Get a single user by JWT token
 @app.get("/api/user")
 @jwt_required()

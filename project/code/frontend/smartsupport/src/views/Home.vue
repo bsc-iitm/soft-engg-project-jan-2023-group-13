@@ -35,6 +35,41 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="ticketAssignmentModel" tabindex="-1" aria-labelledby="ticketAssignmentModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ticketAssignmentModelLabel">Assign to...</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <strong>Support</strong>
+            <ul class="list-group list-group-flush">
+                <span v-for="user in admin_and_support_user_list" :key="user.id">
+                    <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Support')">
+                        <span type="button" class="badge text-bg-warning list-inline-item">Assign to</span>
+                        {{ user.username }}
+                    </li>
+                </span>
+            </ul>
+            <strong>Admin</strong>
+            <ul class="list-group list-group-flush">
+                <span v-for="user in admin_and_support_user_list" :key="user.id">
+                    <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Admin')">
+                        <span type="button" class="badge text-bg-danger list-inline-item">Assign to</span>
+                        {{ user.username }}
+                    </li>
+                </span>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+        </div>
+    </div>
+    </div>
 
     <div class="container mt-4">
         <div v-if="is_admin" id="adminDashboard" class="row">
@@ -56,7 +91,7 @@
                                 <td class="" :title="ticket.title">
                                     <router-link
                                     v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 15) }}...</router-link>
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
@@ -65,7 +100,10 @@
                                     <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-secondary">Assign</button></router-link> -->
                                     <router-link :to="'/ticket/' + ticket.ticket_id"  class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
                                     <!-- &nbsp; -->
-                                    <span type="button" class="badge text-bg-warning list-inline-item">Assign</span>
+                                    <!-- <span type="button" class="badge text-bg-warning list-inline-item">Assign</span> -->
+                                    <span type="button" @click="get_admin_and_support_user" class="badge text-bg-warning list-inline-item" data-bs-toggle="modal" data-bs-target="#ticketAssignmentModel">
+                                        Assign
+                                    </span>
                                     <!-- / Assign -->
                                 </div></td>
                             </tr>
@@ -201,8 +239,6 @@ export default {
             offcanvasState.show = false;
             document.body.classList.remove('offcanvas-open');
         }
-
-
         return {
             offcanvasRef,
             offcanvasState,
@@ -212,6 +248,7 @@ export default {
     },
     data() {
         return {
+            admin_and_support_user_list: [],
             user_details: {},
             student_ticket_list: [],
             admin_open_ticket_list: [],
@@ -302,7 +339,7 @@ export default {
                             }
                         };
 
-                        fetch(`http://127.0.0.1:5000/api/tickets/${ticket_id}/faqs`, options)
+                        fetch(`${config.BASE_API_URL}/tickets/${ticket_id}/faqs`, options)
                             .then(response => {
                                 if (!response.ok) {
                                     if (response.status === 400) {
@@ -324,6 +361,30 @@ export default {
                         swal("Ticket not converted to a FAQ");
                     }
                 });
+        },
+        get_admin_and_support_user() {
+            if(this.admin_and_support_user_list.length === 0){
+                console.log('gettng users')
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: localStorage.getItem("access_key")
+
+                    }
+                };
+
+                fetch(`${config.BASE_API_URL}/user/admin-and-support`, options)
+                .then(response => response.json())
+                .then(response => this.admin_and_support_user_list = response)
+                .then(response => console.log(this.admin_and_support_user_list))
+                .catch(err => console.error(err));
+            }
+        },
+        is_admin(user){
+            return user.roles.some((role) => role.name === "Admin")
+        },
+        is_support(user){
+            return user.roles.some((role) => role.name === "Support")
         },
         search_tickets() {
             search.search_tickets(this.ticket_data.title, this)
