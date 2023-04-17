@@ -16,11 +16,16 @@
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/profile' }" to="/profile">
                         Profile
                     </router-link>
-                    <router-link v-if="is_student" :class="{ 'nav-link': true, active: $route.path === '/mytickets' }" to="/mytickets">
+                    <router-link v-if="is_student" :class="{ 'nav-link': true, active: $route.path === '/mytickets' }"
+                        to="/mytickets">
                         My Tickets
                     </router-link>
-                    <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/alltickets' }" to="/alltickets">
+                    <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/alltickets' }"
+                        to="/alltickets">
                         All Tickets
+                    </router-link>
+                    <router-link :class="{ 'nav-link': true, active: $route.path === '/users' }" to="/users">
+                        Users
                     </router-link>
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/faqs' }" to="/faqs">
                         FAQs
@@ -53,7 +58,7 @@
             <div class="offcanvas-body">
                 <!-- offcanvas content -->
                 <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
-                    <router-link :to="'/ticket/' + s_ticket.ticket_id"  class="text-decoration-none text-dark">
+                    <router-link :to="'/ticket/' + s_ticket.ticket_id" class="text-decoration-none text-dark">
                         <div class="media-body text-right">
                             <h5 class="mt-0 text-dark">{{ s_ticket.title }}
                             </h5>
@@ -159,11 +164,11 @@ export default {
         // }
     },
 
-    created(){
+    created() {
         this.user_details = JSON.parse(localStorage.getItem("user_details"))
     },
 
-    mounted(){
+    mounted() {
         auth.user_roles(this)
     }
 };

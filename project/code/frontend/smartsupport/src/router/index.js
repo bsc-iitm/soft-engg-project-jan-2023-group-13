@@ -7,6 +7,7 @@ import Profile from '../views/Profile.vue'
 import MyTickets from '../views/MyTickets.vue'
 import AllTickets from '../views/AllTickets.vue'
 import Ticket from '../views/Ticket.vue'
+import Users from '../views/Users.vue'
 import FAQs from '../views/FAQs.vue'
 
 
@@ -44,6 +45,10 @@ const routes = [
   {
     path: "/ticket/:tid",
     component: Ticket,
+  },
+  {
+    path: "/users",
+    component: Users,
   }
 
 ]
