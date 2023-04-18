@@ -72,8 +72,8 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tagsModalLabel">Tags for User X</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="tagsModalLabel">Tags</h5>
+                    <button type="button" class="btn-close" id="close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -204,7 +204,12 @@ export default {
             };
 
             fetch('http://127.0.0.1:5000/api/user/tags', options)
-                .then(response => response.json())
+                .then(response => {
+                    if (response.status == 200) {
+                        document.getElementById('close').click();
+                        this.$router.go()
+                    }
+                })
                 .then(response => console.log(response))
                 .catch(err => console.error(err));
         },
