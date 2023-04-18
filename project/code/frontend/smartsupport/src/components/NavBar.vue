@@ -47,6 +47,9 @@
                     </router-link>
                 </div>
             </div>
+            <span class="navbar-text lead">
+                Welcome, {{ user_details.first_name }} {{ user_details.last_name }}
+            </span>
         </div>
     </nav>
 
@@ -129,7 +132,7 @@ export default {
             search_string_local: "",
             searched_ticket_list: [],
             show_search_spinner: true,
-            // user_details: {},
+            user_details: {},
             is_admin: false,
             is_support: false,
             is_student: false,
@@ -147,46 +150,13 @@ export default {
         search_tickets() {
             search.search_tickets(this.search_string_local, this)
         },
-
-        // search_tickets() {
-        //     this.show_search_spinner = true
-        //     if (this.search_string_local.length > 3) {
-        //         this.openOffcanvas()
-        //         fetch(`${config.BASE_API_URL}/tickets/search?q=${this.search_string_local}`, {
-        //             headers: { Authorization: localStorage.getItem("access_key") },
-        //         })
-        //             .then((res) => res.json())
-        //             .then((res) => {
-        //                 this.searched_ticket_list = res
-        //                 console.log("got searched ticket list")
-        //                 console.log(this.searched_ticket_list)
-        //                 this.show_search_spinner = false
-        //             });
-        //     }
-
-        // }
     },
 
     created() {
-        // this.user_details = JSON.parse(localStorage.getItem("user_details"))
-        // auth.user_roles(this)
-
-        // const options = {
-        //     method: 'GET',
-        //     headers: {
-        //         Authorization: localStorage.getItem("access_key")
-        //     }
-        // };
-
-        // fetch(`${config.BASE_API_URL}/user`, options)
-        //     .then(response => response.json())
-        //     .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
-        //     .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
-        //     .then(auth.user_roles(this))
-        //     .catch(err => console.error(err));
         this.is_admin = localStorage.getItem("is_admin");
         this.is_support = localStorage.getItem("is_support");
         this.is_student = localStorage.getItem("is_student");
+        this.user_details = JSON.parse(localStorage.getItem("user_details"));
     },
 
     mounted() {
