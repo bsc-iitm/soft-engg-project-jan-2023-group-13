@@ -13,12 +13,13 @@
                         <!-- <span class="badge bg-info rounded-pill me-2">Badge 1</span> -->
                     </div>
 
-                    <div class="row " >
+                    <div class="row ">
                         <button @click="upvote" type="button" class="btn btn-sm btn-primary mt-3" style="width: 20%;">
-                        Votes <span class="badge text-bg-secondary">{{ ticket.votes_count }}</span>
+                            Votes <span class="badge text-bg-secondary">{{ ticket.votes_count }}</span>
                         </button> &nbsp;
 
-                        <button type="button" class="btn btn-sm btn-danger mt-3" @click="deleteticket" style="width: 20%;">Delete Ticket</button>
+                        <button type="button" class="btn btn-sm btn-danger mt-3" @click="deleteticket"
+                            style="width: 20%;">Delete Ticket</button>
                     </div>
 
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
@@ -44,14 +45,14 @@
                     <div id="postcomment" class="justify-content-center">
 
                         <h2>Post comments</h2>
-                        <form class=" " >
+                        <form class=" ">
                             <div class="form-group form-floating mb-3" style="width: 100%;">
                                 <textarea v-model="new_comment" class="form-control w-100" placeholder=""
                                     id="floatingTextarea"></textarea>
                                 <label for="floatingTextarea">Leave a comment here</label>
 
                             </div>
-                            <button @click.prevent="post_comment" type="submit" class="btn btn-primary btn-sm col-12" >Post
+                            <button @click.prevent="post_comment" type="submit" class="btn btn-primary btn-sm col-12">Post
                                 comment</button>
                         </form>
 
@@ -338,6 +339,8 @@ export default {
 
     },
     created() {
+
+        console.log("created tocket page")
         this.ticket_id = this.$route.params.tid;
 
         //Get comments

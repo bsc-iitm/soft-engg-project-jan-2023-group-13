@@ -80,21 +80,28 @@
     <div class="container mt-4">
         <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
             <li v-if="is_admin" class="nav-item" role="presentation">
-                <button class="nav-link" :class="is_admin ? 'active' : ''" id="adminDashboard-tab" data-bs-toggle="pill" data-bs-target="#adminDashboard" type="button" role="tab" aria-controls="adminDashboard" aria-selected="true">
+                <button class="nav-link" :class="is_admin ? 'active' : ''" id="adminDashboard-tab" data-bs-toggle="pill"
+                    data-bs-target="#adminDashboard" type="button" role="tab" aria-controls="adminDashboard"
+                    aria-selected="true">
                     Admin Dashboard</button>
             </li>
-            <li v-if="is_support"  class="nav-item" role="presentation">
-                <button class="nav-link" :class="{'active': !is_admin && is_support}" id="supportDashboard-tab" data-bs-toggle="pill" data-bs-target="#supportDashboard" type="button" role="tab" aria-controls="supportDashboard" aria-selected="false">
+            <li v-if="is_support" class="nav-item" role="presentation">
+                <button class="nav-link" :class="{ 'active': !is_admin && is_support }" id="supportDashboard-tab"
+                    data-bs-toggle="pill" data-bs-target="#supportDashboard" type="button" role="tab"
+                    aria-controls="supportDashboard" aria-selected="false">
                     Support Dashboard</button>
             </li>
             <li v-if="is_student" class="nav-item" role="presentation">
-                <button class="nav-link" :class="{'active': !is_admin && !is_support && is_student}" id="studentDashboard-tab" data-bs-toggle="pill" data-bs-target="#studentDashboard" type="button" role="tab" aria-controls="studentDashboard" aria-selected="false">
+                <button class="nav-link" :class="{ 'active': !is_admin && !is_support && is_student }"
+                    id="studentDashboard-tab" data-bs-toggle="pill" data-bs-target="#studentDashboard" type="button"
+                    role="tab" aria-controls="studentDashboard" aria-selected="false">
                     Student Dashboard</button>
             </li>
         </ul>
 
         <div class="tab-content" id="tab-tabContent">
-            <div v-if="is_admin" id="adminDashboard" class="row tab-pane " :class="{'active': is_admin, 'show': is_admin}" role="tabpanel" aria-labelledby="adminDashboard-tab" tabindex="0">
+            <div v-if="is_admin" id="adminDashboard" class="row tab-pane " :class="{ 'active': is_admin, 'show': is_admin }"
+                role="tabpanel" aria-labelledby="adminDashboard-tab" tabindex="0">
                 <!-- <h1 class="text-secondary">Admin Dashboard</h1> -->
 
                 <div class="row">
@@ -143,7 +150,12 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="d-flex flex-column justify-content-right align-items-left">
+<<<<<<< HEAD
                             <div><h2 class="d-inline"><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2> (Top 10)</div>
+=======
+                            <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
+                                Tickets</h2>
+>>>>>>> b144ff17a3f31a0cf7759afe75e67d4c9f4e02dd
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -180,7 +192,9 @@
                 </div>
             </div>
 
-            <div v-if="is_support" id="supportDashboard" class="row tab-pane " :class="{'active': !is_admin && is_support, 'show': !is_admin && is_support}" role="tabpanel" aria-labelledby="supportDashboard-tab" tabindex="0">
+            <div v-if="is_support" id="supportDashboard" class="row tab-pane "
+                :class="{ 'active': !is_admin && is_support, 'show': !is_admin && is_support }" role="tabpanel"
+                aria-labelledby="supportDashboard-tab" tabindex="0">
                 <!-- <h1 class="text-secondary">Support Dashboard</h1> -->
 
                 <div class="row">
@@ -219,7 +233,12 @@
                     </div>
                     <div class="col">
                         <div class="d-flex flex-column justify-content-right align-items-left">
+<<<<<<< HEAD
                             <div><h2 class="d-inline"><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2> (Top 10)</div>
+=======
+                            <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
+                                Tickets</h2>
+>>>>>>> b144ff17a3f31a0cf7759afe75e67d4c9f4e02dd
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -254,7 +273,9 @@
 
             </div>
 
-            <div v-if="is_student" id="studentDashboard" class="row tab-pane " :class="{'active': !is_admin && !is_support && is_student, 'show': !is_admin && !is_support  && is_student}" role="tabpanel" aria-labelledby="studentDashboard-tab" tabindex="0">
+            <div v-if="is_student" id="studentDashboard" class="row tab-pane "
+                :class="{ 'active': !is_admin && !is_support && is_student, 'show': !is_admin && !is_support && is_student }"
+                role="tabpanel" aria-labelledby="studentDashboard-tab" tabindex="0">
                 <!-- <h1 class="text-secondary">Student Dashboard</h1> -->
 
                 <div class="row">
@@ -275,8 +296,9 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="ticket in student_ticket_list" :key="ticket.ticket_id">
-                                        <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title.substring(0,
-                                            30) }}...</router-link></td>
+                                        <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{
+                                            ticket.title.substring(0,
+                                                30) }}...</router-link></td>
                                         <td>{{ ticket.votes_count }}</td>
                                         <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                         <td
@@ -306,7 +328,8 @@
                                         <div class="form-group mb-3">
 
                                             <label for="tags">Select Tag(s)</label>
-                                            <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
+                                            <select class="form-control" id="tags" required v-model="ticket_data.tags"
+                                                multiple>
                                                 <!-- <option value="Tags" disabled selected> </option> -->
                                                 <option v-for="tag in tag_list">{{ tag.name }}</option>
 
@@ -571,11 +594,9 @@ export default {
 };
 </script>
 
-<style>
-h3 {
+<style>h3 {
     float: right;
-}
-</style>
+}</style>
 
 
 <style></style>
