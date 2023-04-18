@@ -208,10 +208,14 @@ export default {
                 .then(response => {
                     if (response.status == 200) {
                         document.getElementById('close').click();
-                        this.$router.go()
+                        this.get_users()
+                        this.get_tags()
+                        this.seleted_tag = ''
+                        this.selectedUser = ''
+                        // this.$router.go()
                     }
                 })
-                .then(response => console.log(response))
+                .then(response => { })
                 .catch(err => console.error(err));
         },
 
@@ -287,7 +291,12 @@ export default {
                 .then(response => {
                     if (response.status == 200) {
                         document.getElementById('close').click();
-                        this.$router.go()
+                        // this.$router.go()
+                        this.get_users()
+                        this.get_tags()
+                        this.seleted_tag = ''
+                        this.selectedUser = ''
+                        this.new_tag = ''
                     }
                 })
                 .then(response => console.log(response))
