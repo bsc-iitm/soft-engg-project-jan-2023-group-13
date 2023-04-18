@@ -51,6 +51,7 @@ export default {
         error: false,
         type: "",
       },
+      user_details: {},
     };
   },
   methods: {
@@ -70,8 +71,9 @@ export default {
             localStorage.clear();
             localStorage.setItem("access_key", "Bearer " + token);
 
+
             this.store_user()
-            this.$router.push("/home");
+
 
           } else if (response.msg == "Bad username") {
             this.errors.error = true;
@@ -84,6 +86,8 @@ export default {
         .catch((err) => console.error(err));
     },
     store_user() {
+
+
       const options = {
         method: 'GET',
         headers: {
@@ -93,9 +97,27 @@ export default {
 
       fetch(`http://127.0.0.1:5000/api/user`, options)
         .then(response => response.json())
-        .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+        .then(response => {
+          localStorage.setItem("user_details", JSON.stringify(response));
+          this.user_details = response
+          this.store_roles()
+
+        })
         .catch(err => console.error(err));
+    },
+    store_roles() {
+
+      this.user_details.roles.forEach((item) => {
+        console.log(item.name);
+        if (item.name === "Student") {
+          localStorage.setItem("is_student", true)
+        }
+        if (item.name === "Admin") { localStorage.setItem("is_admin", true); }
+        if (item.name === "Support") { localStorage.setItem("is_support", true) }
+      })
+      this.$router.push("/home");
     }
+
   },
   created() {
     localStorage.clear();

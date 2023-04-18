@@ -1,5 +1,6 @@
 <template>
     <NavBar></NavBar>
+
     <div class="offcanvas">
         <!-- <button @click="openOffcanvas">Open Offcanvas</button> -->
         <div class="offcanvas offcanvas-start" tabindex="-1" ref="offcanvas" :class="{ show: offcanvasState.show }"
@@ -252,7 +253,8 @@
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td
                                     v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }">
-                                    <strong>{{ ticket.status }}</strong></td>
+                                    <strong>{{ ticket.status }}</strong>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -354,6 +356,8 @@ export default {
             ticket_id_to_assign: "",
         };
     },
+
+
     methods: {
         Createticket() {
             console.log("clicked on create ticket")
@@ -549,21 +553,31 @@ export default {
         //     .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
         //     .then(auth.user_roles(this))
         //     .catch(err => console.error(err));
+
+        this.user_details = localStorage.getItem("user_details");
+        this.is_admin = localStorage.getItem("is_admin");
+        this.is_support = localStorage.getItem("is_support");
+        this.is_student = localStorage.getItem("is_student");
+
     },
     mounted() {
         // auth.user_roles(this)
+
         this.Get_Student_Ticket_list()
         this.Get_Admin_Open_Ticket_list()
         this.Get_Admin_Resolved_Closed_Ticket_list()
         this.Get_Support_Open_Ticket_list()
         this.Get_Support_Resolved_Closed_Ticket_list()
-    }
+    },
+
 };
 </script>
 
-<style>h3 {
+<style>
+h3 {
     float: right;
-}</style>
+}
+</style>
 
 
 <style></style>

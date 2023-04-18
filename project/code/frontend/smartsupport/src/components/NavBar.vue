@@ -20,8 +20,8 @@
                         to="/mytickets">
                         My Tickets
                     </router-link>
-                    <router-link v-if="is_admin | is_support" :class="{ 'nav-link': true, active: $route.path === '/alltickets' }"
-                        to="/alltickets">
+                    <router-link v-if="is_admin || is_support"
+                        :class="{ 'nav-link': true, active: $route.path === '/alltickets' }" to="/alltickets">
                         All Tickets
                     </router-link>
                     <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/users' }"
@@ -126,7 +126,7 @@ export default {
             search_string_local: "",
             searched_ticket_list: [],
             show_search_spinner: true,
-            user_details: {},
+            // user_details: {},
             is_admin: false,
             is_support: false,
             is_student: false,
@@ -168,19 +168,22 @@ export default {
         // this.user_details = JSON.parse(localStorage.getItem("user_details"))
         // auth.user_roles(this)
 
-        const options = {
-            method: 'GET',
-            headers: {
-                Authorization: localStorage.getItem("access_key")
-            }
-        };
+        // const options = {
+        //     method: 'GET',
+        //     headers: {
+        //         Authorization: localStorage.getItem("access_key")
+        //     }
+        // };
 
-        fetch(`${config.BASE_API_URL}/user`, options)
-            .then(response => response.json())
-            .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
-            .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
-            .then(auth.user_roles(this))
-            .catch(err => console.error(err));
+        // fetch(`${config.BASE_API_URL}/user`, options)
+        //     .then(response => response.json())
+        //     .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+        //     .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
+        //     .then(auth.user_roles(this))
+        //     .catch(err => console.error(err));
+        this.is_admin = localStorage.getItem("is_admin");
+        this.is_support = localStorage.getItem("is_support");
+        this.is_student = localStorage.getItem("is_student");
     },
 
     mounted() {
