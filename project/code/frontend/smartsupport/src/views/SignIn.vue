@@ -69,7 +69,10 @@ export default {
           if (token) {
             localStorage.clear();
             localStorage.setItem("access_key", "Bearer " + token);
+
+            this.store_user()
             this.$router.push("/home");
+
           } else if (response.msg == "Bad username") {
             this.errors.error = true;
             this.errors.type = "Username";
@@ -80,9 +83,23 @@ export default {
         })
         .catch((err) => console.error(err));
     },
+    store_user() {
+      const options = {
+        method: 'GET',
+        headers: {
+          Authorization: localStorage.getItem("access_key")
+        }
+      };
+
+      fetch(`http://127.0.0.1:5000/api/user`, options)
+        .then(response => response.json())
+        .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+        .catch(err => console.error(err));
+    }
   },
   created() {
     localStorage.clear();
+
   },
 };
 </script>

@@ -12,7 +12,7 @@
             <div class="offcanvas-body">
                 <!-- offcanvas content -->
                 <div class="media justify-content-end" v-for="(s_ticket, index) in searched_ticket_list" :key="index">
-                    <router-link :to="'/ticket/' + s_ticket.ticket_id"  class="text-decoration-none text-dark">
+                    <router-link :to="'/ticket/' + s_ticket.ticket_id" class="text-decoration-none text-dark">
                         <div class="media-body text-right">
                             <h5 class="mt-0 text-dark">{{ s_ticket.title }}
                             </h5>
@@ -36,39 +36,42 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="ticketAssignmentModel" tabindex="-1" aria-labelledby="ticketAssignmentModelLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="ticketAssignmentModelLabel">Assign to...</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="ticketAssignmentModel" tabindex="-1" aria-labelledby="ticketAssignmentModelLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="ticketAssignmentModelLabel">Assign to...</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <strong>Support</strong>
+                    <ul class="list-group list-group-flush">
+                        <span v-for="user in admin_and_support_user_list" :key="user.id">
+                            <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Support')">
+                                <span type="button" @click="assign_ticket_to_user(user.username)"
+                                    class="badge text-bg-warning list-inline-item">Assign to</span>
+                                {{ user.username }}
+                            </li>
+                        </span>
+                    </ul>
+                    <strong>Admin</strong>
+                    <ul class="list-group list-group-flush">
+                        <span v-for="user in admin_and_support_user_list" :key="user.id">
+                            <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Admin')">
+                                <span type="button" @click="assign_ticket_to_user(user.username)"
+                                    class="badge text-bg-danger list-inline-item">Assign to</span>
+                                {{ user.username }}
+                            </li>
+                        </span>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <strong>Support</strong>
-            <ul class="list-group list-group-flush">
-                <span v-for="user in admin_and_support_user_list" :key="user.id">
-                    <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Support')">
-                        <span type="button"  @click="assign_ticket_to_user(user.username)" class="badge text-bg-warning list-inline-item">Assign to</span>
-                        {{ user.username }}
-                    </li>
-                </span>
-            </ul>
-            <strong>Admin</strong>
-            <ul class="list-group list-group-flush">
-                <span v-for="user in admin_and_support_user_list" :key="user.id">
-                    <li class="list-group-item" v-if="user.roles.some((role) => role.name === 'Admin')">
-                        <span type="button" @click="assign_ticket_to_user(user.username)" class="badge text-bg-danger list-inline-item">Assign to</span>
-                        {{ user.username }}
-                    </li>
-                </span>
-            </ul>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-        </div>
-        </div>
-    </div>
     </div>
 
     <div class="container mt-4">
@@ -90,22 +93,28 @@
                             <tr v-for="ticket in admin_open_ticket_list" :key="ticket.ticket_id">
                                 <td class="" :title="ticket.title">
                                     <router-link
-                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                            ticket.title.substring(0, 30) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td ><div class="list-inline">
-                                    <!-- <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-success">Respond</button></router-link>
+                                <td>
+                                    <div class="list-inline">
+                                        <!-- <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-success">Respond</button></router-link>
                                     <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-secondary">Assign</button></router-link> -->
-                                    <router-link :to="'/ticket/' + ticket.ticket_id"  class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
-                                    <!-- &nbsp; -->
-                                    <!-- <span type="button" class="badge text-bg-warning list-inline-item">Assign</span> -->
-                                    <span type="button" @click="get_admin_and_support_user(ticket.ticket_id)" class="badge text-bg-warning list-inline-item" data-bs-toggle="modal" data-bs-target="#ticketAssignmentModel">
-                                        Assign
-                                    </span>
-                                    <!-- / Assign -->
-                                </div></td>
+                                        <router-link :to="'/ticket/' + ticket.ticket_id"
+                                            class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
+                                        <!-- &nbsp; -->
+                                        <!-- <span type="button" class="badge text-bg-warning list-inline-item">Assign</span> -->
+                                        <span type="button" @click="get_admin_and_support_user(ticket.ticket_id)"
+                                            class="badge text-bg-warning list-inline-item" data-bs-toggle="modal"
+                                            data-bs-target="#ticketAssignmentModel">
+                                            Assign
+                                        </span>
+                                        <!-- / Assign -->
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -128,14 +137,18 @@
                                 <td class="" :title="ticket.title">
 
                                     <router-link
-                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                            ticket.title.substring(0, 30) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td>
                                     <small v-if="ticket.status === 'Resolved'">
-                                        <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs" class="btn badge btn-sm btn-primary mt-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+ FAQs</button>
+                                        <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs"
+                                            class="btn badge btn-sm btn-primary mt-0"
+                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+
+                                            FAQs</button>
                                     </small>
                                 </td>
                             </tr>
@@ -163,14 +176,18 @@
                             <tr v-for="ticket in support_open_ticket_list" :key="ticket.ticket_id">
                                 <td class="" :title="ticket.title">
                                     <router-link
-                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                            ticket.title.substring(0, 30) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td ><div class="list-inline">
-                                    <router-link :to="'/ticket/' + ticket.ticket_id"  class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
-                                </div></td>
+                                <td>
+                                    <div class="list-inline">
+                                        <router-link :to="'/ticket/' + ticket.ticket_id"
+                                            class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -193,7 +210,8 @@
                                 <td class="" :title="ticket.title">
                                     <router-link
                                         v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                            ticket.title.substring(0, 30) }}...</router-link>
                                 </td>
                                 <td><small>{{ ticket.votes_count }}</small></td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
@@ -228,10 +246,13 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in student_ticket_list" :key="ticket.ticket_id">
-                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title.substring(0, 30) }}...</router-link></td>
+                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title.substring(0,
+                                    30) }}...</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"><strong>{{ ticket.status }}</strong></td>
+                                <td
+                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }">
+                                    <strong>{{ ticket.status }}</strong></td>
                             </tr>
                         </tbody>
                     </table>
@@ -408,7 +429,7 @@ export default {
                     console.log("got Support resolved or closed ticket list")
                 });
         },
-        Convert_to_faq(ticket_id){
+        Convert_to_faq(ticket_id) {
             swal({
                 title: "Convert Ticket to FAQ",
                 text: "Do you want to go ahead with this option?",
@@ -462,12 +483,12 @@ export default {
             };
 
             fetch(`${config.BASE_API_URL}/user/admin-and-support`, options)
-            .then(response => response.json())
-            .then(response => this.admin_and_support_user_list = response)
-            .then(response => console.log(this.admin_and_support_user_list))
-            .catch(err => console.error(err));
+                .then(response => response.json())
+                .then(response => this.admin_and_support_user_list = response)
+                .then(response => console.log(this.admin_and_support_user_list))
+                .catch(err => console.error(err));
         },
-        assign_ticket_to_user(username){
+        assign_ticket_to_user(username) {
             console.log(this.ticket_id_to_assign, username)
             let assignment_data = {
                 ticket_id: this.ticket_id_to_assign,
@@ -508,28 +529,28 @@ export default {
         fetch(`${config.BASE_API_URL}/tags`, {
             headers: { Authorization: localStorage.getItem("access_key") },
         })
-        .then((res) => res.json())
-        .then((res) => {
-            this.tag_list = res
-        });
+            .then((res) => res.json())
+            .then((res) => {
+                this.tag_list = res
+            });
 
 
         //Store user details in localstorage
-        const options = {
-            method: 'GET',
-            headers: {
-                Authorization: localStorage.getItem("access_key")
-            }
-        };
+        // const options = {
+        //     method: 'GET',
+        //     headers: {
+        //         Authorization: localStorage.getItem("access_key")
+        //     }
+        // };
 
-        fetch(`${config.BASE_API_URL}/user`, options)
-            .then(response => response.json())
-            .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
-            .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
-            .then(auth.user_roles(this))
-            .catch(err => console.error(err));
+        // fetch(`${config.BASE_API_URL}/user`, options)
+        //     .then(response => response.json())
+        //     .then(response => { localStorage.setItem("user_details", JSON.stringify(response)) })
+        //     .then(this.user_details = JSON.parse(localStorage.getItem("user_details")))
+        //     .then(auth.user_roles(this))
+        //     .catch(err => console.error(err));
     },
-    mounted(){
+    mounted() {
         // auth.user_roles(this)
         this.Get_Student_Ticket_list()
         this.Get_Admin_Open_Ticket_list()
@@ -540,11 +561,9 @@ export default {
 };
 </script>
 
-<style>
-h3 {
+<style>h3 {
     float: right;
-}
-</style>
+}</style>
 
 
 <style></style>
