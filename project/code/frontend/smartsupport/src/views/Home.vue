@@ -93,7 +93,7 @@
             </li>
         </ul>
 
-        <div class="tab-content" id="pills-tabContent">
+        <div class="tab-content" id="tab-tabContent">
             <div v-if="is_admin" id="adminDashboard" class="row tab-pane " :class="{'active': is_admin, 'show': is_admin}" role="tabpanel" aria-labelledby="adminDashboard-tab" tabindex="0">
                 <!-- <h1 class="text-secondary">Admin Dashboard</h1> -->
 
