@@ -55,8 +55,54 @@ def get_tickets():
     return jsonify(result), 200
 
 
+# get open tickets for a support user
+@app.get("/api/tickets/support/open")
+@jwt_required()
+def get_support_open_tickets():
+    current_user_id = get_jwt_identity()
+    user = db.session.query(User).filter(User.user_id==current_user_id).first()
+    tag_list = user.tags
+
+    page = int(request.args.get("page"))
+    per_page = int(request.args.get("per_page"))
+
+    # vote_subquery = (
+    #     db.session.query(Vote.ticket_id, func.count(Vote.vote_id).label("vote_count"))
+    #     .group_by(Vote.ticket_id)
+    #     .subquery()
+    # )
+
+    # query = Ticket.query.join(Tag).filter(Tag.tag_id.in_([tag.tag_id for tag in tag_list]))
+    # query = query.outerjoin(vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id)
+    # query = query.add_columns(vote_subquery.c.vote_count)
+
+    # sorted_tickets = (
+    #     # Ticket.query.join(vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id)
+    #     query
+    #     .order_by(
+    #         Ticket.status.asc(),
+    #         Ticket.created_at.asc(),
+    #         vote_subquery.c.vote_count.desc(),
+    #     )
+    #     .limit(per_page)
+    #     .offset(page * per_page)
+    #     .all()
+    # )
+    tag_ids = [tag.tag_id for tag in user.tags]
+
+    tickets = Ticket.query.join(Ticket.tags).filter(Tag.tag_id.in_(tag_ids), Ticket.status=="Open") \
+        .limit(per_page) \
+        .offset(page * per_page) \
+        .all()
+    tickets_sorted = sorted(tickets, key=lambda t: t.votes_count, reverse=True)
+
+    result = tickets_schema.dump(tickets_sorted)
+    return jsonify(result), 200
+
+
 # get all open tickets
 @app.get("/api/tickets/open")
+@jwt_required()
 def get_open_tickets():
     page = int(request.args.get("page"))
     per_page = int(request.args.get("per_page"))
@@ -84,6 +130,7 @@ def get_open_tickets():
 
 # get all resolved or closed tickets
 @app.get("/api/tickets/resolved-or-closed")
+@jwt_required()
 def get_resolved_closed_tickets():
     page = int(request.args.get("page"))
     per_page = int(request.args.get("per_page"))

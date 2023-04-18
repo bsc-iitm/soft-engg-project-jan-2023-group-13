@@ -83,7 +83,7 @@
                                 <th>Title</th>
                                 <th>Votes</th>
                                 <th>Date</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,7 +120,7 @@
                                 <th>Title</th>
                                 <th>Votes</th>
                                 <th>Date</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -138,6 +138,70 @@
                                         <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs" class="btn badge btn-sm btn-primary mt-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+ FAQs</button>
                                     </small>
                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="is_support" id="supportDashboard" class="row">
+            <h1 class="text-secondary">Support Dashboard</h1>
+            <div class="col">
+                <div class="d-flex flex-column justify-content-left align-items-left">
+                    <h2><span class="text-danger">Open</span> Tickets</h2>
+                    <table class="table table-borderless table-group-divider">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Votes</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ticket in support_open_ticket_list" :key="ticket.ticket_id">
+                                <td class="" :title="ticket.title">
+                                    <router-link
+                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                </td>
+                                <td><small>{{ ticket.votes_count }}</small></td>
+                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                <td ><div class="list-inline">
+                                    <router-link :to="'/ticket/' + ticket.ticket_id"  class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
+                                </div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex flex-column justify-content-right align-items-left">
+                    <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2>
+                    <table class="table table-borderless table-group-divider">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Votes</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ticket in admin_resolved_closed_ticket_list" :key="ticket.ticket_id">
+                                <!-- <td class="" :title="ticket.title">
+                                    <router-link
+                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
+                                </td>
+                                <td><small>{{ ticket.votes_count }}</small></td>
+                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                <td>
+                                    <small v-if="ticket.status === 'Resolved'">
+                                        <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs" class="btn badge btn-sm btn-primary mt-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+ FAQs</button>
+                                    </small>
+                                </td> -->
                             </tr>
                         </tbody>
                     </table>
@@ -164,7 +228,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="ticket in student_ticket_list" :key="ticket.ticket_id">
-                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title }}</router-link></td>
+                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title.substring(0, 30) }}...</router-link></td>
                                 <td>{{ ticket.votes_count }}</td>
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"><strong>{{ ticket.status }}</strong></td>
@@ -253,6 +317,8 @@ export default {
             student_ticket_list: [],
             admin_open_ticket_list: [],
             admin_resolved_closed_ticket_list: [],
+            support_open_ticket_list: [],
+            support_resolved_closed_ticket_list: [],
             ticket_data: {
                 title: "",
                 tags: [],
@@ -318,6 +384,17 @@ export default {
                 .then((res) => {
                     this.admin_resolved_closed_ticket_list = res
                     console.log("got amin resolved or closed ticket list")
+                });
+        },
+        Get_Support_Open_Ticket_list() {
+            // Get list of tickets
+            fetch(`${config.BASE_API_URL}/tickets/support/open?page=0&per_page=10`, {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    this.support_open_ticket_list = res
+                    console.log("got Support open ticket list")
                 });
         },
         Convert_to_faq(ticket_id){
@@ -400,7 +477,7 @@ export default {
                 .then(
                     swal({
                         title: "Success",
-                        text: "Ticket with ticket_id - " + this.ticket_id_to_assign + " assigned to user - " + username + " successfully",
+                        text: "Ticket with ticket_id - " + this.ticket_id_to_assign + " assigned to user - " + username + " successfully via Email.",
                         icon: "success",
                         button: "Okay"
                     }))
@@ -446,6 +523,7 @@ export default {
         this.Get_Student_Ticket_list()
         this.Get_Admin_Open_Ticket_list()
         this.Get_Admin_Resolved_Closed_Ticket_list()
+        this.Get_Support_Open_Ticket_list()
     }
 };
 </script>

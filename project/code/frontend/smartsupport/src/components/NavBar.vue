@@ -20,7 +20,7 @@
                         to="/mytickets">
                         My Tickets
                     </router-link>
-                    <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/alltickets' }"
+                    <router-link v-if="is_admin | is_support" :class="{ 'nav-link': true, active: $route.path === '/alltickets' }"
                         to="/alltickets">
                         All Tickets
                     </router-link>

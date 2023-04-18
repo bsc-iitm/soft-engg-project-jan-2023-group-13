@@ -21,9 +21,10 @@ class RoleSchema(ma.SQLAlchemyAutoSchema):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("user_id", "username", "email", "first_name", "last_name", "roles")
+        fields = ("user_id", "username", "email", "first_name", "last_name", "roles", "tags")
 
     roles = ma.Nested(RoleSchema, many=True)
+    tags = ma.Nested(TagSchema, many=True)
 
 
 class TicketSchema(ma.Schema):
