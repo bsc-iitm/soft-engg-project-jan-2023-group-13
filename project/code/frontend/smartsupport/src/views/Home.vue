@@ -75,225 +75,258 @@
         </div>
     </div>
 
+
+
     <div class="container mt-4">
-        <div v-if="is_admin" id="adminDashboard" class="row">
-            <h1 class="text-secondary">Admin Dashboard</h1>
-            <div class="col">
-                <div class="d-flex flex-column justify-content-left align-items-left">
-                    <h2><span class="text-danger">Open</span> Tickets</h2>
-                    <table class="table table-borderless table-group-divider">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Votes</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="ticket in admin_open_ticket_list" :key="ticket.ticket_id">
-                                <td class="" :title="ticket.title">
-                                    <router-link
-                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
-                                            ticket.title.substring(0, 30) }}...</router-link>
-                                </td>
-                                <td><small>{{ ticket.votes_count }}</small></td>
-                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td>
-                                    <div class="list-inline">
-                                        <!-- <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-success">Respond</button></router-link>
-                                    <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-secondary">Assign</button></router-link> -->
-                                        <router-link :to="'/ticket/' + ticket.ticket_id"
-                                            class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
-                                        <!-- &nbsp; -->
-                                        <!-- <span type="button" class="badge text-bg-warning list-inline-item">Assign</span> -->
-                                        <span type="button" @click="get_admin_and_support_user(ticket.ticket_id)"
-                                            class="badge text-bg-warning list-inline-item" data-bs-toggle="modal"
-                                            data-bs-target="#ticketAssignmentModel">
-                                            Assign
-                                        </span>
-                                        <!-- / Assign -->
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col">
-                <div class="d-flex flex-column justify-content-right align-items-left">
-                    <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2>
-                    <table class="table table-borderless table-group-divider">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Votes</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="ticket in admin_resolved_closed_ticket_list" :key="ticket.ticket_id">
-                                <td class="" :title="ticket.title">
+        <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+            <li v-if="is_admin" class="nav-item" role="presentation">
+                <button class="nav-link" :class="is_admin ? 'active' : ''" id="adminDashboard-tab" data-bs-toggle="pill" data-bs-target="#adminDashboard" type="button" role="tab" aria-controls="adminDashboard" aria-selected="true">
+                    Admin Dashboard</button>
+            </li>
+            <li v-if="is_support"  class="nav-item" role="presentation">
+                <button class="nav-link" :class="{'active': !is_admin && is_support}" id="supportDashboard-tab" data-bs-toggle="pill" data-bs-target="#supportDashboard" type="button" role="tab" aria-controls="supportDashboard" aria-selected="false">
+                    Support Dashboard</button>
+            </li>
+            <li v-if="is_student" class="nav-item" role="presentation">
+                <button class="nav-link" :class="{'active': !is_admin && !is_support && is_student}" id="studentDashboard-tab" data-bs-toggle="pill" data-bs-target="#studentDashboard" type="button" role="tab" aria-controls="studentDashboard" aria-selected="false">
+                    Student Dashboard</button>
+            </li>
+        </ul>
 
-                                    <router-link
-                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
-                                            ticket.title.substring(0, 30) }}...</router-link>
-                                </td>
-                                <td><small>{{ ticket.votes_count }}</small></td>
-                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td>
-                                    <small v-if="ticket.status === 'Resolved'">
-                                        <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs"
-                                            class="btn badge btn-sm btn-primary mt-0"
-                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+
-                                            FAQs</button>
-                                    </small>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <div class="tab-content" id="pills-tabContent">
+            <div v-if="is_admin" id="adminDashboard" class="row tab-pane " :class="{'active': is_admin, 'show': is_admin}" role="tabpanel" aria-labelledby="adminDashboard-tab" tabindex="0">
+                <!-- <h1 class="text-secondary">Admin Dashboard</h1> -->
 
-        <div v-if="is_support" id="supportDashboard" class="row">
-            <h1 class="text-secondary">Support Dashboard</h1>
-            <div class="col">
-                <div class="d-flex flex-column justify-content-left align-items-left">
-                    <h2><span class="text-danger">Open</span> Tickets</h2>
-                    <table class="table table-borderless table-group-divider">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Votes</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="ticket in support_open_ticket_list" :key="ticket.ticket_id">
-                                <td class="" :title="ticket.title">
-                                    <router-link
-                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
-                                            ticket.title.substring(0, 30) }}...</router-link>
-                                </td>
-                                <td><small>{{ ticket.votes_count }}</small></td>
-                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td>
-                                    <div class="list-inline">
-                                        <router-link :to="'/ticket/' + ticket.ticket_id"
-                                            class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col">
-                <div class="d-flex flex-column justify-content-right align-items-left">
-                    <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2>
-                    <table class="table table-borderless table-group-divider">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Votes</th>
-                                <th>Date</th>
-                                <th>Resolved on</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="ticket in support_resolved_closed_ticket_list" :key="ticket.ticket_id">
-                                <td class="" :title="ticket.title">
-                                    <router-link
-                                        v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
-                                        :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
-                                            ticket.title.substring(0, 30) }}...</router-link>
-                                </td>
-                                <td><small>{{ ticket.votes_count }}</small></td>
-                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td>
-                                    <small v-if="ticket.status === 'Resolved'">
-                                        {{ ticket.updated_at.substring(0, 10) }}
-                                    </small>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="d-flex flex-column justify-content-left align-items-left">
+                            <h2><span class="text-danger">Open</span> Tickets</h2>
+                            <table class="table table-borderless table-group-divider">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Votes</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="ticket in admin_open_ticket_list" :key="ticket.ticket_id">
+                                        <td class="" :title="ticket.title">
+                                            <router-link
+                                                v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                                :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                                    ticket.title.substring(0, 25) }}...</router-link>
+                                        </td>
+                                        <td><small>{{ ticket.votes_count }}</small></td>
+                                        <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                        <td>
+                                            <div class="list-inline">
+                                                <!-- <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-success">Respond</button></router-link>
+                                            <router-link :to="'/ticket/' + ticket.ticket_id" class=""><button class="badge btn btn-sm btn-secondary">Assign</button></router-link> -->
+                                                <router-link :to="'/ticket/' + ticket.ticket_id"
+                                                    class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
+                                                <!-- &nbsp; -->
+                                                <!-- <span type="button" class="badge text-bg-warning list-inline-item">Assign</span> -->
+                                                <span type="button" @click="get_admin_and_support_user(ticket.ticket_id)"
+                                                    class="badge text-bg-warning list-inline-item" data-bs-toggle="modal"
+                                                    data-bs-target="#ticketAssignmentModel">
+                                                    Assign
+                                                </span>
+                                                <!-- / Assign -->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="d-flex flex-column justify-content-right align-items-left">
+                            <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2>
+                            <table class="table table-borderless table-group-divider">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Votes</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="ticket in admin_resolved_closed_ticket_list" :key="ticket.ticket_id">
+                                        <td class="" :title="ticket.title">
 
-        <div v-if="is_student" id="studentDashboard" class="row">
-            <h1 class="text-secondary">Student Dashboard</h1>
-            <div class="col">
-                <div class="d-flex flex-column justify-content-left align-items-left">
-                    <!-- First flexbox content goes here -->
-                    <h2>My Tickets</h2>
-
-                    <!-- <li v-for="ticket in student_ticket_list">{{ ticket.title }}</li> -->
-                    <table class="table table-borderless table-group-divider">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Votes</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="ticket in student_ticket_list" :key="ticket.ticket_id">
-                                <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title.substring(0,
-                                    30) }}...</router-link></td>
-                                <td>{{ ticket.votes_count }}</td>
-                                <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
-                                <td
-                                    v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }">
-                                    <strong>{{ ticket.status }}</strong>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col">
-                <div class="d-flex flex-column justify-content-center ">
-                    <!-- Second flexbox content goes here -->
-                    <h2>Raise a new Ticket</h2>
-                    <div class="card border-light">
-                        <div class="card-body">
-                            <form @submit.prevent="Createticket">
-                                <div class="form-group mb-3">
-                                    <label for="title" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="title" v-model="ticket_data.title"
-                                        @keyup="search_tickets" required>
-                                </div>
-                                <div class="form-group mb-3">
-
-                                    <label for="tags">Select Tag(s)</label>
-                                    <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
-                                        <!-- <option value="Tags" disabled selected> </option> -->
-                                        <option v-for="tag in tag_list">{{ tag.name }}</option>
-
-                                    </select>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="body">Body</label>
-                                    <textarea type="text" class="form-control" id="body" v-model="ticket_data.body"
-                                        required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            </form>
+                                            <router-link
+                                                v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                                :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                                    ticket.title.substring(0, 30) }}...</router-link>
+                                        </td>
+                                        <td><small>{{ ticket.votes_count }}</small></td>
+                                        <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                        <td>
+                                            <small v-if="ticket.status === 'Resolved'">
+                                                <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs"
+                                                    class="btn badge btn-sm btn-primary mt-0"
+                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+
+                                                    FAQs</button>
+                                            </small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div v-if="is_support" id="supportDashboard" class="row tab-pane " :class="{'active': !is_admin && is_support, 'show': !is_admin && is_support}" role="tabpanel" aria-labelledby="supportDashboard-tab" tabindex="0">
+                <!-- <h1 class="text-secondary">Support Dashboard</h1> -->
+
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-left align-items-left">
+                            <h2><span class="text-danger">Open</span> Tickets</h2>
+                            <table class="table table-borderless table-group-divider">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Votes</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="ticket in support_open_ticket_list" :key="ticket.ticket_id">
+                                        <td class="" :title="ticket.title">
+                                            <router-link
+                                                v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                                :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                                    ticket.title.substring(0, 30) }}...</router-link>
+                                        </td>
+                                        <td><small>{{ ticket.votes_count }}</small></td>
+                                        <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                        <td>
+                                            <div class="list-inline">
+                                                <router-link :to="'/ticket/' + ticket.ticket_id"
+                                                    class="badge text-bg-success list-inline-item text-decoration-none">Respond</router-link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-right align-items-left">
+                            <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2>
+                            <table class="table table-borderless table-group-divider">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Votes</th>
+                                        <th>Date</th>
+                                        <th>Resolved on</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="ticket in support_resolved_closed_ticket_list" :key="ticket.ticket_id">
+                                        <td class="" :title="ticket.title">
+                                            <router-link
+                                                v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
+                                                :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{
+                                                    ticket.title.substring(0, 30) }}...</router-link>
+                                        </td>
+                                        <td><small>{{ ticket.votes_count }}</small></td>
+                                        <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                        <td>
+                                            <small v-if="ticket.status === 'Resolved'">
+                                                {{ ticket.updated_at.substring(0, 10) }}
+                                            </small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div v-if="is_student" id="studentDashboard" class="row tab-pane " :class="{'active': !is_admin && !is_support && is_student, 'show': !is_admin && !is_support  && is_student}" role="tabpanel" aria-labelledby="studentDashboard-tab" tabindex="0">
+                <!-- <h1 class="text-secondary">Student Dashboard</h1> -->
+
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-left align-items-left">
+                            <!-- First flexbox content goes here -->
+                            <h2>My Tickets</h2>
+
+                            <!-- <li v-for="ticket in student_ticket_list">{{ ticket.title }}</li> -->
+                            <table class="table table-borderless table-group-divider">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Votes</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="ticket in student_ticket_list" :key="ticket.ticket_id">
+                                        <td><router-link :to="'/ticket/' + ticket.ticket_id" class="">{{ ticket.title.substring(0,
+                                            30) }}...</router-link></td>
+                                        <td>{{ ticket.votes_count }}</td>
+                                        <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
+                                        <td
+                                            v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }">
+                                            <strong>{{ ticket.status }}</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex flex-column justify-content-center ">
+                            <!-- Second flexbox content goes here -->
+                            <h2>Raise a new Ticket</h2>
+                            <div class="card border-light">
+                                <div class="card-body">
+                                    <form @submit.prevent="Createticket">
+                                        <div class="form-group mb-3">
+                                            <label for="title" class="form-label">Title</label>
+                                            <input type="text" class="form-control" id="title" v-model="ticket_data.title"
+                                                @keyup="search_tickets" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+
+                                            <label for="tags">Select Tag(s)</label>
+                                            <select class="form-control" id="tags" required v-model="ticket_data.tags" multiple>
+                                                <!-- <option value="Tags" disabled selected> </option> -->
+                                                <option v-for="tag in tag_list">{{ tag.name }}</option>
+
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="body">Body</label>
+                                            <textarea type="text" class="form-control" id="body" v-model="ticket_data.body"
+                                                required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+
 
     </div>
 </template>
