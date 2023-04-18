@@ -19,12 +19,12 @@
                     <li v-for="role in user_details.roles">{{ role.name }}</li>
 
                 </ul>
-                <!-- <div v-if="user_details.tags.length != 0">
+                <div v-if="user_details.tags.length != 0">
                     <p><strong>Tags:</strong> </p>
                     <ul>
                         <li v-for="tag in user_details.tags">{{ tag.name }}</li>
                     </ul>
-                </div> -->
+                </div>
 
             </div>
         </div>

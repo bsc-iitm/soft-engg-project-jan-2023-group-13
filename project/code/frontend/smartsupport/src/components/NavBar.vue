@@ -24,7 +24,7 @@
                     </router-link>
                     <router-link v-if="is_admin" :class="{ 'nav-link': true, active: $route.path === '/users' }"
                         to="/users">
-                        Users
+                        All Users
                     </router-link>
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/profile' }" to="/profile">
                         My Profile
@@ -189,8 +189,6 @@ export default {
         this.is_student = localStorage.getItem("is_student");
     },
 
-    mounted() {
-        auth.user_roles(this)
-    }
+
 };
 </script>

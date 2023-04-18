@@ -44,16 +44,79 @@
                                         {{ role.name }}
                                     </label>
                                     <button class="btn btn-primary" v-if="user ===
-                                        selectedUser && editing" @click="updateUser">Save</button>
+                                        selectedUser && editing" @click="update_roles">Save</button>
 
                                     <button v-else class="btn btn-primary float-right"
                                         @click="toggleEditing(user)">Edit</button>
+
+                                    <button class="btn btn-warning m-1" data-bs-toggle="modal" data-bs-target="#tagsModal"
+                                        @click="change_tags(user)">Assign Tags</button>
+
                                 </td>
 
 
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="tagsModal" tabindex="-1" aria-labelledby="tagsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tagsModalLabel">Tags for User X</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6>Assigned Tags</h6>
+                            <ul class="list-group">
+                                <li v-if="selectedUser" v-for="tag in selectedUser.tags" class="list-group-item">{{ tag.name
+                                }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <h6>Available Tags</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item" v-for="tag in avaliable_tags">
+                                    <div class="form-check">
+                                        <input v-model="seleted_tag" class="form-check-input" type="radio"
+                                            name="available-tag" :id="tag.tag_id" :value="tag.tag_id">
+                                        <label class="form-check-label" :for="tag.tag_id">
+                                            {{ tag.name }}
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <form id="add-tag-form" class="row g-2">
+                                <div class="col-8">
+                                    <input type="text" class="form-control" placeholder="New Tag Name">
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" class="btn btn-primary">Add Tag</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="update_tags">Save changes</button>
                 </div>
             </div>
         </div>
@@ -69,11 +132,7 @@ export default {
     },
     data() {
         return {
-            // roles: [
-            //     { name: 'Admin', role_id: 1 },
-            //     { name: 'Support', role_id: 2 },
-            //     { name: 'Student', role_id: 3 },
-            // ],
+
 
             user_list: [],
             roles: [
@@ -100,7 +159,10 @@ export default {
             user_object: {
                 username: '',
                 roles: []
-            }
+            },
+            tag_list: [],
+            avaliable_tags: [],
+            seleted_tag: ''
 
 
         }
@@ -116,9 +178,38 @@ export default {
                 this.editing = true;
             }
         },
-        updateUser() {
 
+        change_tags(user) {
+            this.selectedUser = user;
 
+            this.avaliable_tags = this.tag_list.filter(a => !this.selectedUser.tags.map(b => b.tag_id).includes(a.tag_id))
+        },
+
+        update_tags() {
+
+            const tag_obj = {
+                "username": this.selectedUser.username,
+                "tag_id": this.seleted_tag
+            }
+
+            console.log(tag_obj)
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key")
+
+                },
+                body: JSON.stringify(tag_obj)
+            };
+
+            fetch('http://127.0.0.1:5000/api/user/tags', options)
+                .then(response => response.json())
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        },
+
+        update_roles() {
 
             console.log('update user')
             // console.log(JSON.stringify(this.selectedUser))
@@ -161,10 +252,23 @@ export default {
                 .then(response => response.json())
                 .then(response => this.user_list = response)
                 .catch(err => console.error(err));
+        },
+        get_tags() {
+            //Get list of tags
+
+            fetch(`http://127.0.0.1:5000/api/tags`, {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    this.tag_list = res
+
+                });
         }
     },
     created() {
         this.get_users()
+        this.get_tags()
     },
 
 }
@@ -176,8 +280,9 @@ export default {
     margin-right: 10px;
 }
 
+/* 
 .btn {
     width: 70px;
-    /* adjust the width as needed */
-}
+    
+} */
 </style>
