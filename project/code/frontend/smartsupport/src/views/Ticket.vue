@@ -13,13 +13,18 @@
                         <!-- <span class="badge bg-info rounded-pill me-2">Badge 1</span> -->
                     </div>
 
-                    <div class="row ">
+                    <div class="row">
                         <button @click="upvote" type="button" class="btn btn-sm btn-primary mt-3" style="width: 20%;">
                             Votes <span class="badge text-bg-secondary">{{ ticket.votes_count }}</span>
                         </button> &nbsp;
 
-                        <button type="button" class="btn btn-sm btn-danger mt-3" @click="deleteticket"
-                            style="width: 20%;">Delete Ticket</button>
+                        <button v-if="ticket.student.user_id === currentUser_id" type="button"
+                            class="btn btn-sm btn-danger mt-3" @click="deleteticket" style="width: 20%;">Delete
+                            Ticket</button>
+
+                        <button v-if="(is_admin || is_support) && ticket.status == 'Open'" type="button"
+                            class="btn btn-sm btn-warning mt-3" @click="close_ticket" style="width: 20%;">Close
+                            Ticket</button>
                     </div>
 
                     <p class="mt-4  fs-5 fw-normal text-body">{{ ticket.body }}</p>
@@ -149,8 +154,8 @@ export default {
             new_comment: '',
             currentUser_id: JSON.parse(localStorage.getItem("user_details")).user_id,
             sol: '',
-
-
+            is_admin: localStorage.getItem("is_admin"),
+            is_support: localStorage.getItem("is_support")
 
         }
     },
@@ -283,6 +288,43 @@ export default {
                 });
 
         },
+
+        close_ticket() {
+            swal({
+                title: "Are you sure?",
+                text: "Once Closed, you will not be able to recover this ticket!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willclose) => {
+                    if (willclose) {
+                        const options = {
+                            method: 'PUT',
+                            headers: {
+                                Authorization: localStorage.getItem("access_key")
+
+                            }
+                        };
+
+                        fetch(`http://127.0.0.1:5000/api/tickets/${this.ticket_id}/close`, options)
+                            .then(response => {
+                                if (response.status === 200) {
+                                    this.$router.push('/home')
+                                }
+                            })
+                            .then(response => {
+
+                            })
+                            .catch(err => console.error(err));
+
+                    } else {
+                        swal("Your ticket is safe!");
+                    }
+                });
+
+        },
+
 
 
         get_comments() {

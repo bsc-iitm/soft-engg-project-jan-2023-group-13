@@ -55,7 +55,6 @@ def get_tickets():
     return jsonify(result), 200
 
 
-
 # get all open tickets
 @app.get("/api/tickets/open")
 @jwt_required()
@@ -100,7 +99,7 @@ def get_resolved_closed_tickets():
 
     sorted_tickets = (
         Ticket.query.join(vote_subquery, Ticket.ticket_id == vote_subquery.c.ticket_id)
-        .filter((Ticket.status == 'Resolved') | (Ticket.status == 'Closed'))
+        .filter((Ticket.status == "Resolved") | (Ticket.status == "Closed"))
         .order_by(
             vote_subquery.c.vote_count.desc(),
             Ticket.created_at.desc(),
@@ -119,7 +118,7 @@ def get_resolved_closed_tickets():
 @jwt_required()
 def get_support_open_tickets():
     current_user_id = get_jwt_identity()
-    user = db.session.query(User).filter(User.user_id==current_user_id).first()
+    user = db.session.query(User).filter(User.user_id == current_user_id).first()
     tag_list = user.tags
 
     page = int(request.args.get("page"))
@@ -127,10 +126,13 @@ def get_support_open_tickets():
 
     tag_ids = [tag.tag_id for tag in user.tags]
 
-    tickets = Ticket.query.join(Ticket.tags).filter(Tag.tag_id.in_(tag_ids), Ticket.status=="Open") \
-        .limit(per_page) \
-        .offset(page * per_page) \
+    tickets = (
+        Ticket.query.join(Ticket.tags)
+        .filter(Tag.tag_id.in_(tag_ids), Ticket.status == "Open")
+        .limit(per_page)
+        .offset(page * per_page)
         .all()
+    )
     tickets_sorted = sorted(tickets, key=lambda t: t.votes_count, reverse=True)
 
     result = tickets_schema.dump(tickets_sorted)
@@ -142,7 +144,7 @@ def get_support_open_tickets():
 @jwt_required()
 def get_support_resolved_closed_tickets():
     current_user_id = get_jwt_identity()
-    user = db.session.query(User).filter(User.user_id==current_user_id).first()
+    user = db.session.query(User).filter(User.user_id == current_user_id).first()
     tag_list = user.tags
 
     page = int(request.args.get("page"))
@@ -150,12 +152,16 @@ def get_support_resolved_closed_tickets():
 
     tag_ids = [tag.tag_id for tag in user.tags]
 
-    tickets = Ticket.query.join(Ticket.tags).filter(
+    tickets = (
+        Ticket.query.join(Ticket.tags)
+        .filter(
             Tag.tag_id.in_(tag_ids),
-            ((Ticket.status == 'Resolved') | (Ticket.status == 'Closed'))) \
-        .limit(per_page) \
-        .offset(page * per_page) \
+            ((Ticket.status == "Resolved") | (Ticket.status == "Closed")),
+        )
+        .limit(per_page)
+        .offset(page * per_page)
         .all()
+    )
     tickets_sorted = sorted(tickets, key=lambda t: t.votes_count, reverse=True)
 
     result = tickets_schema.dump(tickets_sorted)
@@ -167,7 +173,7 @@ def get_support_resolved_closed_tickets():
 @jwt_required()
 def get_all_support_tickets():
     current_user_id = get_jwt_identity()
-    user = db.session.query(User).filter(User.user_id==current_user_id).first()
+    user = db.session.query(User).filter(User.user_id == current_user_id).first()
 
     tag_ids = [tag.tag_id for tag in user.tags]
 
@@ -176,7 +182,6 @@ def get_all_support_tickets():
 
     result = tickets_schema.dump(tickets_sorted)
     return jsonify(result), 200
-
 
 
 # raise a new ticket
@@ -209,8 +214,6 @@ def post_ticket():
     db.session.add(new_ticket)
     db.session.commit()
     return ticket_schema.jsonify(new_ticket), 200
-
-
 
 
 # get a ticket by its ticket_id
@@ -282,16 +285,17 @@ def delete_ticket(ticket_id):
         for vote in votes:
             db.session.delete(vote)
 
-        comments = db.session.query(Comment).filter(Comment.ticket_id == ticket_id).all()
+        comments = (
+            db.session.query(Comment).filter(Comment.ticket_id == ticket_id).all()
+        )
         for comment in comments:
-           db.session.delete(comment)
+            db.session.delete(comment)
 
         db.session.delete(ticket)
         db.session.commit()
         return jsonify("Ticket Deleted"), 204
     else:
         raise NotFound(status_code=404, msg="Ticket not found")
-
 
 
 # get ticket for current logged in user ***Added Temporarily
@@ -338,13 +342,17 @@ def close_ticket(ticket_id):
         db.session.add(ticket)
         db.session.commit()
 
-        student = db.session.query(User).filter(User.user_id == ticket.student_id).first()
+        student = (
+            db.session.query(User).filter(User.user_id == ticket.student_id).first()
+        )
         email.send_email(
             "Ticket closure notification",
-            '''You ticket with title: '{}' has been closed.
+            """Your ticket with title: '{}' has been closed.
 Please write to admin@smartTicket.edu in case you want to reopen it.
-'''.format(ticket.title),
-            student.email
+""".format(
+                ticket.title
+            ),
+            student.email,
         )
 
         return ticket_schema.jsonify(ticket), 200
@@ -395,7 +403,6 @@ def search_ticket():
     return jsonify(results), 200
 
 
-
 # send notification
 @app.post("/api/tickets/notify")
 @jwt_required()
@@ -420,20 +427,22 @@ def notify():
     return jsonify("Notification succesfully sent to email of the user"), 200
 
 
-
 # assign ticket to user
 @app.post("/api/tickets/assign")
 @jwt_required()
 def assign_ticket():
     ticket_data = request.get_json()
 
-    ticket_id = ticket_data['ticket_id']
-    username_to_assign_to = ticket_data['username']
+    ticket_id = ticket_data["ticket_id"]
+    username_to_assign_to = ticket_data["username"]
 
-    assignee = db.session.query(User).filter(User.username == username_to_assign_to).first()
+    assignee = (
+        db.session.query(User).filter(User.username == username_to_assign_to).first()
+    )
 
-    message = "Please look into the issues mentioned in the Ticket identified by ticket_id: {} and provide neccessary resolution.".format(ticket_id)
+    message = "Please look into the issues mentioned in the Ticket identified by ticket_id: {} and provide neccessary resolution.".format(
+        ticket_id
+    )
     email.send_email("Ticket Assignment", message, assignee.email)
 
     return jsonify("Ticket assignment done successfully"), 200
-
