@@ -107,7 +107,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="d-flex flex-column justify-content-left align-items-left">
-                            <h2><span class="text-danger">Open</span> Tickets</h2>
+                            <div><h2 class="d-inline"><span class="text-danger">Open</span> Tickets</h2> (Top 10)</div>
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -150,8 +150,12 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="d-flex flex-column justify-content-right align-items-left">
+<<<<<<< HEAD
+                            <div><h2 class="d-inline"><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2> (Top 10)</div>
+=======
                             <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
                                 Tickets</h2>
+>>>>>>> b144ff17a3f31a0cf7759afe75e67d4c9f4e02dd
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -196,7 +200,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="d-flex flex-column justify-content-left align-items-left">
-                            <h2><span class="text-danger">Open</span> Tickets</h2>
+                            <div><h2 class="d-inline"><span class="text-danger">Open</span> Tickets</h2> (Top 10)</div>
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -229,8 +233,12 @@
                     </div>
                     <div class="col">
                         <div class="d-flex flex-column justify-content-right align-items-left">
+<<<<<<< HEAD
+                            <div><h2 class="d-inline"><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2> (Top 10)</div>
+=======
                             <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
                                 Tickets</h2>
+>>>>>>> b144ff17a3f31a0cf7759afe75e67d4c9f4e02dd
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -274,7 +282,7 @@
                     <div class="col">
                         <div class="d-flex flex-column justify-content-left align-items-left">
                             <!-- First flexbox content goes here -->
-                            <h2>My Tickets</h2>
+                            <div><h2 class="d-inline">My Tickets</h2> (Top 10)</div>
 
                             <!-- <li v-for="ticket in student_ticket_list">{{ ticket.title }}</li> -->
                             <table v-if="student_ticket_list.length>0" class="table table-borderless table-group-divider">
