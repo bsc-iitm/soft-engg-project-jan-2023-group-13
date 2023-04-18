@@ -13,9 +13,7 @@
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/home' }" to="/home">
                         Home
                     </router-link>
-                    <router-link :class="{ 'nav-link': true, active: $route.path === '/profile' }" to="/profile">
-                        Profile
-                    </router-link>
+
                     <router-link v-if="is_student" :class="{ 'nav-link': true, active: $route.path === '/mytickets' }"
                         to="/mytickets">
                         My Tickets
@@ -28,9 +26,13 @@
                         to="/users">
                         Users
                     </router-link>
+                    <router-link :class="{ 'nav-link': true, active: $route.path === '/profile' }" to="/profile">
+                        My Profile
+                    </router-link>
                     <router-link :class="{ 'nav-link': true, active: $route.path === '/faqs' }" to="/faqs">
                         FAQs
                     </router-link>
+
 
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
@@ -39,6 +41,7 @@
                             Search
                         </button>
                     </form>
+
                     <router-link :class="{ 'nav-link': true }" to="/">
                         Logout
                     </router-link>
