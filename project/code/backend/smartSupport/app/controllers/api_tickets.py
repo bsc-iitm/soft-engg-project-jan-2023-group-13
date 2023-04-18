@@ -162,6 +162,22 @@ def get_support_resolved_closed_tickets():
     return jsonify(result), 200
 
 
+# get resolved and closed tickets for a support user
+@app.get("/api/tickets/support/all")
+@jwt_required()
+def get_all_support_tickets():
+    current_user_id = get_jwt_identity()
+    user = db.session.query(User).filter(User.user_id==current_user_id).first()
+
+    tag_ids = [tag.tag_id for tag in user.tags]
+
+    tickets = Ticket.query.join(Ticket.tags).filter(Tag.tag_id.in_(tag_ids)).all()
+    tickets_sorted = sorted(tickets, key=lambda t: t.votes_count, reverse=True)
+
+    result = tickets_schema.dump(tickets_sorted)
+    return jsonify(result), 200
+
+
 
 # raise a new ticket
 @app.post("/api/tickets")

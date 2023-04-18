@@ -30,6 +30,7 @@ def register():
     userdata = request.get_json()
     usr = User.query.filter_by(username=userdata["username"]).first()
     em = User.query.filter_by(email=userdata["email"]).first()
+    student_role = Role.query.filter(Role.name == "Student").first()
 
     if usr or em:
         return jsonify("User already Exists"), 409
@@ -49,6 +50,7 @@ def register():
         fs_uniquifier=fs_uniquifier,
     )
 
+    new_user.roles.append(student_role)
     # commiting Data
     db.session.add(new_user)
     db.session.commit()
