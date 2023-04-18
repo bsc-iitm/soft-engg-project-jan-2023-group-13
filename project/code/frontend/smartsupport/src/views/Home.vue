@@ -185,12 +185,12 @@
                                 <th>Title</th>
                                 <th>Votes</th>
                                 <th>Date</th>
-                                <th>Actions</th>
+                                <th>Resolved on</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="ticket in admin_resolved_closed_ticket_list" :key="ticket.ticket_id">
-                                <!-- <td class="" :title="ticket.title">
+                            <tr v-for="ticket in support_resolved_closed_ticket_list" :key="ticket.ticket_id">
+                                <td class="" :title="ticket.title">
                                     <router-link
                                         v-bind:class="{ 'text-danger': ticket.status === 'Open', 'text-success': ticket.status === 'Resolved', 'text-warning': ticket.status === 'Closed' }"
                                         :to="'/ticket/' + ticket.ticket_id" class="text-decoration-none">{{ ticket.title.substring(0, 30) }}...</router-link>
@@ -199,9 +199,9 @@
                                 <td><small>{{ ticket.created_at.substring(0, 10) }}</small></td>
                                 <td>
                                     <small v-if="ticket.status === 'Resolved'">
-                                        <button @click="Convert_to_faq(ticket.ticket_id)" title="Add to FAQs" class="btn badge btn-sm btn-primary mt-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+ FAQs</button>
+                                        {{ ticket.updated_at.substring(0, 10) }}
                                     </small>
-                                </td> -->
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -397,6 +397,17 @@ export default {
                     console.log("got Support open ticket list")
                 });
         },
+        Get_Support_Resolved_Closed_Ticket_list() {
+            // Get list of tickets
+            fetch(`${config.BASE_API_URL}/tickets/support/resolved-or-closed?page=0&per_page=10`, {
+                headers: { Authorization: localStorage.getItem("access_key") },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    this.support_resolved_closed_ticket_list = res
+                    console.log("got Support resolved or closed ticket list")
+                });
+        },
         Convert_to_faq(ticket_id){
             swal({
                 title: "Convert Ticket to FAQ",
@@ -524,6 +535,7 @@ export default {
         this.Get_Admin_Open_Ticket_list()
         this.Get_Admin_Resolved_Closed_Ticket_list()
         this.Get_Support_Open_Ticket_list()
+        this.Get_Support_Resolved_Closed_Ticket_list()
     }
 };
 </script>
