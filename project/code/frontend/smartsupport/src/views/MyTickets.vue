@@ -47,7 +47,7 @@
             </div>
 
             <div v-if="is_student" id="studentTickets" class="row tab-pane " :class="{'active': !is_support && is_student, 'show': !is_support  && is_student}" role="tabpanel" aria-labelledby="studentDashboard-tab" tabindex="0">
-                <table id="mySupportTickets" class="table table-borderless table-group-divider" v-if="student_ticket_list.length>0">
+                <table id="myTickets" class="table table-borderless table-group-divider" v-if="student_ticket_list.length>0">
                     <thead>
                         <tr>
                             <th>Title</th>

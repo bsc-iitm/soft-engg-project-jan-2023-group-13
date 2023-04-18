@@ -264,7 +264,7 @@
                             <h2>My Tickets</h2>
 
                             <!-- <li v-for="ticket in student_ticket_list">{{ ticket.title }}</li> -->
-                            <table class="table table-borderless table-group-divider">
+                            <table v-if="student_ticket_list.length>0" class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
                                         <th>Title</th>
@@ -286,6 +286,9 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div v-if="student_ticket_list.length === 0">
+                                No tickets to show
+                            </div>
                         </div>
                     </div>
                     <div class="col">
@@ -334,6 +337,7 @@
 <script>
 import { ref, reactive, watch } from 'vue';
 import * as search from '../utilities/search.js';
+import * as assign from '../utilities/assign.js';
 import * as auth from '../utilities/auth.js';
 import config from "@/config.js";
 import NavBar from '@/components/NavBar.vue';
@@ -507,50 +511,11 @@ export default {
                     }
                 });
         },
-        get_admin_and_support_user(ticket_id) {
-            this.ticket_id_to_assign = ticket_id
-            console.log(this.ticket_id_to_assign)
-            console.log('gettng users')
-            const options = {
-                method: 'GET',
-                headers: {
-                    Authorization: localStorage.getItem("access_key")
-
-                }
-            };
-
-            fetch(`${config.BASE_API_URL}/user/admin-and-support`, options)
-                .then(response => response.json())
-                .then(response => this.admin_and_support_user_list = response)
-                .then(response => console.log(this.admin_and_support_user_list))
-                .catch(err => console.error(err));
+        assign_ticket_to_user(username){
+            assign.assign_ticket_to_user(username, this)
         },
-        assign_ticket_to_user(username) {
-            console.log(this.ticket_id_to_assign, username)
-            let assignment_data = {
-                ticket_id: this.ticket_id_to_assign,
-                username: username
-            }
-
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: localStorage.getItem("access_key"),
-                },
-                body: JSON.stringify(assignment_data)
-            };
-
-            fetch(`${config.BASE_API_URL}/tickets/assign`, options)
-                .then(response => response.json())
-                .then(
-                    swal({
-                        title: "Success",
-                        text: "Ticket with ticket_id - " + this.ticket_id_to_assign + " assigned to user - " + username + " successfully via Email.",
-                        icon: "success",
-                        button: "Okay"
-                    }))
-                .catch(err => console.error(err));
+        get_admin_and_support_user(ticket_id){
+            assign.get_admin_and_support_user(ticket_id, this)
         },
         search_tickets() {
             search.search_tickets(this.ticket_data.title, this)
