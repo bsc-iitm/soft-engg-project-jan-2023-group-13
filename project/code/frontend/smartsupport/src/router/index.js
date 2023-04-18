@@ -45,6 +45,9 @@ const routes = [
   {
     path: "/ticket/:tid",
     component: Ticket,
+    meta: {
+      watchParam: 'tid'
+    }
   },
   {
     path: "/users",
