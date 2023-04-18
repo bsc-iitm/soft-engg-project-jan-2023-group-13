@@ -16,7 +16,7 @@
 
                     <router-link v-if="is_student" :class="{ 'nav-link': true, active: $route.path === '/mytickets' }"
                         to="/mytickets">
-                        Tickets
+                        My Tickets
                     </router-link>
                     <router-link v-if="is_admin || is_support"
                         :class="{ 'nav-link': true, active: $route.path === '/alltickets' }" to="/alltickets">
