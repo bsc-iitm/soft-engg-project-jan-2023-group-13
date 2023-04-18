@@ -150,12 +150,9 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="d-flex flex-column justify-content-right align-items-left">
-<<<<<<< HEAD
                             <div><h2 class="d-inline"><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2> (Top 10)</div>
-=======
-                            <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
-                                Tickets</h2>
->>>>>>> b144ff17a3f31a0cf7759afe75e67d4c9f4e02dd
+                            <!-- <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
+                                Tickets</h2> -->
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
@@ -233,12 +230,9 @@
                     </div>
                     <div class="col">
                         <div class="d-flex flex-column justify-content-right align-items-left">
-<<<<<<< HEAD
                             <div><h2 class="d-inline"><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span> Tickets</h2> (Top 10)</div>
-=======
-                            <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
-                                Tickets</h2>
->>>>>>> b144ff17a3f31a0cf7759afe75e67d4c9f4e02dd
+                            <!-- <h2><span class="text-success">Resolved</span> / <span class="text-warning">Closed</span>
+                                Tickets</h2> -->
                             <table class="table table-borderless table-group-divider">
                                 <thead>
                                     <tr>
