@@ -9,7 +9,6 @@ from app.data.schema import TagSchema
 from app.utils.auth import Auth, NotAuthorized
 
 
-
 # Get all tags
 @app.get("/api/tags")
 @jwt_required()
@@ -27,6 +26,7 @@ def get_all_tags():
 @jwt_required()
 def create_tag():
     current_user_id = get_jwt_identity()
+    print("Sacac")
     if not Auth.authorize_admin(current_user_id):
         raise NotAuthorized()
 
@@ -81,4 +81,3 @@ def delete_tag(tag_id):
         return jsonify(f"Tag name delted"), 204
     else:
         return jsonify("Tag doesn't exist"), 400
-

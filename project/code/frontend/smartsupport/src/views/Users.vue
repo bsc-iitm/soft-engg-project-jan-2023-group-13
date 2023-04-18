@@ -105,10 +105,10 @@
                         <div class="col-12">
                             <form id="add-tag-form" class="row g-2">
                                 <div class="col-8">
-                                    <input type="text" class="form-control" placeholder="New Tag Name">
+                                    <input type="text" v-model="new_tag" class="form-control" placeholder="New Tag Name">
                                 </div>
                                 <div class="col-4">
-                                    <button type="button" class="btn btn-primary">Add Tag</button>
+                                    <button type="button" class="btn btn-primary" @click="add_tag">Add Tag</button>
                                 </div>
                             </form>
                         </div>
@@ -135,6 +135,7 @@ export default {
 
 
             user_list: [],
+            new_tag: "",
             roles: [
                 {
                     "description": null,
@@ -269,6 +270,28 @@ export default {
                     this.tag_list = res
 
                 });
+        },
+        add_tag() {
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem("access_key")
+
+
+                },
+                body: JSON.stringify({ "name": this.new_tag })
+            };
+
+            fetch('http://127.0.0.1:5000/api/tags', options)
+                .then(response => {
+                    if (response.status == 200) {
+                        document.getElementById('close').click();
+                        this.$router.go()
+                    }
+                })
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
         }
     },
     created() {
