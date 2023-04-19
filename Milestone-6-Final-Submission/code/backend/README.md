@@ -5,9 +5,9 @@ A Course Project for **Software Engineering (Jan-2023 Term)**  offered as a part
 
 
 Prepared By:
-**NAVIN KUMAR SINGH**  Enrollment Number: **21f1003002**
-**UDAY RAVI PATIL**  Enrollment Number: **21f1003481**
-**KRISHU GUPTA**  Enrollment Number: **21f1003442**
+* **NAVIN KUMAR SINGH**  Enrollment Number: **21f1003002**
+* **UDAY RAVI PATIL**  Enrollment Number: **21f1003481**
+* **KRISHU GUPTA**  Enrollment Number: **21f1003442**
 
 <br>
 
