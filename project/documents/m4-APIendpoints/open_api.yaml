@@ -1,0 +1,1396 @@
+openapi: 3.0.0
+info:
+  title: Smart Support (SE Project)
+  version: 1.0.0
+  description: API for Smart Support App
+servers:
+  - url: http://127.0.0.1:5000/api
+security:
+  - Bearer: ["Authentication-Token: {token}"]
+tags:
+  - name: Users
+    description: APIs related to managing all users
+  - name: Ticket
+    description: APIs related to managing tickets
+  - name: Comment
+    description: APIs related to managing comments
+  - name: Tag
+    description: APIs related to managing tags
+  - name: Vote
+    description: APIs related to managing votes
+  - name: FAQ
+    description: APIs related to managing FAQs
+
+paths:
+  /user/all:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /user/register:
+    post:
+      summary: Create a new user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+
+  /user/login:
+    post:
+      summary: login
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: jdoe
+                password:
+                  type: string
+                  example: pass123
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+
+
+  /user:
+    get:
+      summary: Get a user by JWT
+      tags:
+        - Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+    put:
+      summary: Update a user by JWT
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+        "404":
+          description: User not found
+    delete:
+      summary: Delete a user by JWT
+      tags:
+        - Users
+      responses:
+        "204":
+          description: No content
+        "404":
+          description: User not found
+
+  /user/tags:
+    post:
+      summary: Assign a tag to a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTagAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  username: jdoe
+                  tag_id: 4
+
+      responses:
+        '201':
+          description: Tag successfully assigned to the user
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Revoke a tag from a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTagAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of removing a tag from a user
+                value:
+                  username: jdoe
+                  tag_id: 4
+      responses:
+        '204':
+          description: Tag successfully revoked from user
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+  /user/roles:
+    put:
+      summary: Add role to a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  role: "Support"
+                  username: "jdoe"
+      responses:
+        '200':
+          description: Role added to user successfully
+        '404':
+          description: User or role not found
+    delete:
+      summary: Remove role from a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleAssignmentRequest'
+            examples:
+              example-1:
+                summary: Example of assigning a tag to a user
+                value:
+                  role: "Support"
+                  username: "jdoe"
+      responses:
+        '204':
+          description: Role removed from user successfully
+        '404':
+          description: User or role not found
+
+
+  /tickets:
+    get:
+      summary: Get all tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+    post:
+      summary: Create a new ticket
+      tags:
+        - Ticket
+      requestBody:
+        description: Ticket object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketPost'
+      responses:
+        201:
+          description: Return the newly created ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+  /tickets/open:
+    get:
+      summary: Get all open tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /tickets/resolved-or-closed:
+    get:
+      summary: Get all reolved or closed tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /tickets/support/all:
+    get:
+      summary: Get all open tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /tickets/support/open:
+    get:
+      summary: Get all open tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /tickets/support/resolved-or-closed:
+    get:
+      summary: Get all open tickets
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /tickets/user:
+    get:
+      summary: Get all tickets raised by a given user
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          example: craig_fox
+          description: username of user whose tickets to get
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+          example: 0
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: integer
+          example: 8
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Return a list of all tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+
+  /tickets/{ticket_id}:
+    get:
+      summary: Get a ticket by ID
+      tags:
+        - Ticket
+      parameters:
+        - in: path
+          name: ticket_id
+          schema:
+            type: integer
+          required: true
+          description: ID of the ticket to get
+      responses:
+        200:
+          description: Return the ticket with the specified ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        404:
+          description: Ticket not found
+
+    put:
+      summary: Update a ticket by ID
+      tags:
+        - Ticket
+      parameters:
+        - in: path
+          name: ticket_id
+          schema:
+            type: integer
+          required: true
+          description: ID of the ticket to update
+      requestBody:
+        description: Ticket object to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketPost'
+      responses:
+        200:
+          description: Return the updated ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        404:
+          description: Ticket not found
+
+    delete:
+      summary: Delete a ticket by ID
+      tags:
+        - Ticket
+      parameters:
+        - in: path
+          name: ticket_id
+          schema:
+            type: integer
+          required: true
+          description: ID of the ticket to delete
+      responses:
+        204:
+          description: Ticket deleted
+        404:
+          description: Ticket not found
+
+
+
+  /tickets/{ticket_id}/upvote:
+    post:
+      summary: Upvote a ticket
+      tags:
+        - Vote
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: ID of the ticket to upvote
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Ticket upvoted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        400:
+          description: Invalid input
+        404:
+          description: Ticket not found
+
+  /tickets/{ticket_id}/revoke-vote:
+    delete:
+      summary: Revoke vote on a ticket
+      tags:
+        - Vote
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: ID of the ticket to revoke vote from
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Vote revoked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        400:
+          description: Invalid input
+        404:
+          description: Ticket not found
+
+  /tickets/{ticket_id}/comments:
+    parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        description: ID of the ticket with which comment is associated
+        schema:
+          type: integer
+    get:
+      summary: Get all comments for a ticket by ticket_id
+      tags:
+        - Ticket
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+    post:
+      summary: Create a new comment on a Ticket with ticket_id
+      tags:
+        - Ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreateRequest'
+      responses:
+        201:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: Invalid request body
+  /comments/{comment_id}:
+    get:
+      summary: Get a comment by ID
+      tags:
+        - Comment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: ID of the comment to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        404:
+          description: Comment not found
+    put:
+      summary: Update a comment by ID
+      tags:
+        - Comment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: ID of the comment to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentUpdateRequest'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: Invalid request body
+        404:
+          description: Comment not found
+    delete:
+      summary: Delete a comment by ID
+      tags:
+        - Comment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: ID of the comment to delete
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Successful response
+        404:
+          description: Comment not found
+
+  /tags:
+    get:
+      summary: "Get all tags"
+      tags:
+        - "Tag"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+    post:
+      summary: "Create a new tag"
+      tags:
+        - "Tag"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagCreateRequest"
+            example:
+              name: "bug"
+      responses:
+        "201":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+  /tags/{tag_id}:
+    put:
+      summary: "Update a tag"
+      tags:
+        - "Tag"
+      parameters:
+        - name: "tag_id"
+          in: "path"
+          description: "ID of the tag to update"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagUpdateRequest"
+            example:
+              name: "feature"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+    delete:
+      summary: "Delete a tag"
+      tags:
+        - "Tag"
+      parameters:
+        - name: "tag_id"
+          in: "path"
+          description: "ID of the tag to delete"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "204":
+          description: "Successful operation"
+
+  /faqs:
+    get:
+      summary: Get all FAQs
+      tags:
+        - FAQ
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FAQ'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create a new FAQ
+      tags:
+        - FAQ
+      requestBody:
+        description: Request body containing information about the new FAQ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQCreateRequest'
+            example:
+              question: What is the return policy?
+              answer: We accept returns within 30 days of purchase.
+      responses:
+        '201':
+          description: FAQ created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 30 days of purchase.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /faqs/{faq_id}:
+    get:
+      summary: Get an FAQ by ID
+      tags:
+        - FAQ
+      parameters:
+        - $ref: '#/components/parameters/FAQId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 30 days of purchase.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update an existing FAQ
+      tags:
+        - FAQ
+      parameters:
+        - $ref: '#/components/parameters/FAQId'
+      requestBody:
+        description: Request body containing updated information for the FAQ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQUpdateRequest'
+            example:
+              answer: We accept returns within 60 days of purchase.
+      responses:
+        '200':
+          description: FAQ updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 60 days of purchase.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete an existing FAQ
+      tags:
+        - FAQ
+      parameters:
+        - $ref: '#/components/parameters/FAQId'
+      responses:
+        '204':
+          description: FAQ deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /comments/{comment_id}/solution:
+    put:
+      summary: Mark a comment as solution
+      tags:
+        - Comment
+      parameters:
+        - $ref: '#/components/parameters/CommentId'
+      responses:
+        '200':
+          description: Comment marked as solution successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+              example:
+                id: 1
+                content: "This is the solution to the problem."
+                author: "JohnDoe"
+                ticket_id: 1
+                solution: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets/search:
+    get:
+      summary: Search tickets by keyword
+      tags:
+        - Ticket
+      parameters:
+        - in: query
+          name: q
+          description: Keyword to search for in ticket title and description
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /tickets/{ticket_id}/close:
+    put:
+      summary: Mark a ticket as resolved
+      tags:
+        - Ticket
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: ID of the ticket to close
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Ticket resolved successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets/notify:
+    post:
+      summary: Send email notification to student about resolved ticket
+      tags:
+        - Ticket
+      requestBody:
+        description: Email notification request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+            example:
+              recipient_email: john.doe@example.com
+              message: Your ticket has been resolved.
+      responses:
+        '200':
+          description: Email sent successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets/{ticket_id}/faqs:
+    post:
+      summary: Convert a ticket to a FAQ
+      tags:
+        - Ticket
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: ID of the ticket to convert to FAQ
+          schema:
+            type: integer
+      # requestBody:
+      #   description: Request body containing information about the ticket to be converted
+      #   required: true
+        # content:
+        #   application/json:
+        #     schema:
+        #       $ref: '#/components/schemas/TicketToFAQRequest'
+        #     example:
+        #       ticket_id: 1
+        #       question: What is the return policy?
+        #       answer: We accept returns within 30 days of purchase.
+      responses:
+        '201':
+          description: FAQ created successfully from the ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+              example:
+                id: 1
+                question: What is the return policy?
+                answer: We accept returns within 30 days of purchase.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    CommentId:
+      name: comment_id
+      in: path
+      description: The ID of the comment to mark as the solution.
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 123
+    FAQId:
+      name: faq_id
+      in: path
+      description: The ID of the FAQ to retrieve or modify.
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        example: 1
+    TicketId:
+      name: id
+      in: path
+      description: ID of the ticket to be updated
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+    UserId:
+      name: user_id
+      in: path
+      description: ID of the user to assign a tag to
+      required: true
+      schema:
+        type: integer
+    TagId:
+      name: tag_id
+      in: path
+      description: ID of the tag to assign
+      required: true
+      schema:
+        type: integer
+  schemas:
+    Ticket:
+      type: object
+      properties:
+        ticket_id:
+          type: integer
+          format: int64
+          description: The unique identifier for the ticket
+        title:
+          type: string
+          description: The title of the ticket
+        body:
+          type: string
+          description: The body of the ticket
+        status:
+          type: string
+          description: The status of the ticket
+        created_at:
+          type: string
+          format: date-time
+          description: The date and time the ticket was created
+        updated_at:
+          type: string
+          format: date-time
+          description: The date and time the ticket was last updated
+        student:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
+
+      example:
+        ticket_id: 1
+        title: "Need help with Python"
+        body: "I'm having trouble understanding Python classes. Can someone help me?"
+        status: "Open"
+        created_at: "2022-03-10T18:42:31Z"
+        updated_at: "2022-03-10T18:42:31Z"
+        student:
+          username: "Anika"
+          email: "anika@mail.com"
+          first_name: "Anika"
+          last_name: "Mishra"
+    TicketPost:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the ticket
+        body:
+          type: string
+          description: The body of the ticket
+        tags:
+          type: array
+          items:
+            type: string
+            description: A list of tags associated with the ticket
+      example:
+        title: "Need help with Python"
+        body: "I'm having trouble understanding Python classes. Can someone help me?"
+        tags: ["SoftEng", "SoftTest", "PSM"]
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+      required:
+        - User_id
+        - Username
+        - email
+        - first_name
+
+      example:
+        user_id: 1
+        username: jdoe
+        email: jdoe@example.com
+        first_name: John
+        last_name: Doe
+
+    UserCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+      required:
+        - Username
+        - password
+        - email
+        - first_name
+
+      example:
+        username: jdoe
+        password: pass123
+        email: jdoe@example.com
+        first_name: John
+        last_name: Doe
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+        password:
+          type: string
+          minLength: 6
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        tags:
+          type: array
+          items:
+            type: integer
+        roles:
+          type: array
+          items:
+            type: integer
+      # required: []
+    UserRoleAssignmentRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the user to assign the role to.
+        role:
+          type: string
+          description: The name of the role to assign to the user.
+      required:
+        - username
+        - role
+
+    Comment:
+      type: object
+      properties:
+        comment_id:
+          type: integer
+          format: int64
+        body:
+          type: string
+        ticket_id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        student:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
+      required:
+        - id
+        - text
+        - user_id
+        - ticket_id
+        - created_at
+        - updated_at
+    CommentCreateRequest:
+      type: object
+      properties:
+        body:
+          type: string
+          description: The content of the comment.
+          example: "This is a comment on the ticket."
+      required:
+        - content
+    CommentUpdateRequest:
+      type: object
+      properties:
+        body:
+          type: string
+          description: The updated comment text.
+          example: This is an updated comment.
+      required:
+        - body
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "The unique identifier for a tag"
+          example: 1
+        name:
+          type: string
+          description: "The name of the tag"
+          example: "Science"
+      required:
+        - name
+    TagCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "The name of the tag"
+          example: "Science"
+      required:
+        - name
+    TagUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "The new name of the tag"
+          example: "Technology"
+      required:
+        - name
+    UserTagAssignmentRequest:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          description: ID of the user to assign a tag to
+        tag_id:
+          type: integer
+          description: ID of the tag to assign
+      required:
+        - user_id
+        - tag_id
+      example:
+        user_id: 1
+        tag_id: 2
+    FAQ:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the FAQ.
+          example: 1
+        question:
+          type: string
+          description: The question for the FAQ.
+          example: What is the return policy?
+        answer:
+          type: string
+          description: The answer for the FAQ.
+          example: We accept returns within 30 days of purchase.
+      required:
+        - question
+    FAQCreateRequest:
+      type: object
+      properties:
+        question:
+          type: string
+          description: The question for the new FAQ.
+          example: What is the return policy?
+          minLength: 1
+        answer:
+          type: string
+          description: The answer for the new FAQ.
+          example: We accept returns within 30 days of purchase.
+          minLength: 1
+      required:
+        - question
+        - answer
+    FAQUpdateRequest:
+      type: object
+      properties:
+        question:
+          type: string
+          description: The updated question for the FAQ.
+          example: What is the return policy?
+        answer:
+          type: string
+          description: The updated answer for the FAQ.
+          example: We accept returns within 60 days of purchase.
+      anyOf:
+        - required:
+            - question
+          not:
+            properties:
+              question:
+                type: string
+                maxLength: 0
+        - required:
+            - answer
+          not:
+            properties:
+              answer:
+                type: string
+                maxLength: 0
+    NotificationRequest:
+      type: object
+      properties:
+        recipient_email:
+          type: string
+          description: The email address of the recipient
+          example: john.doe@example.com
+        message:
+          type: string
+          description: The message to be sent in the email
+          example: Your ticket has been resolved.
+      required:
+        - recipient_email
+        - message
+    TicketToFAQRequest:
+      type: object
+      properties:
+        ticket_id:
+          type: integer
+          description: The ID of the ticket to be converted to a FAQ.
+          example: 1
+        question:
+          type: string
+          description: The question for the FAQ.
+          example: What is the return policy?
+        answer:
+          type: string
+          description: The answer for the FAQ.
+          example: We accept returns within 30 days of purchase.
+      required:
+        - ticket_id
+        - question
+        - answer
+  responses:
+    BadRequest:
+      description: Invalid request parameter(s)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Error type
+            example:
+              message: Invalid user ID
+              error: Bad Request
+    NotFound:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Error type
+            example:
+              message: Tag not found
+              error: Not Found

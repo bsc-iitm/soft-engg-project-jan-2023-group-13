@@ -1,0 +1,50 @@
+Widescreen Page: Ticket Page
+Block: Navigation
+    One row
+    Image "Smart Support"   
+    Link to Home
+    Link to Profile
+    Link to My tickets
+    Link to Search
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+Block: Ticket and Comment  
+    Blocks aligned in two columns
+
+    Block: Ticket           
+        One row              
+            Header "Ticket Title"              
+        One row    
+            button "+" 
+            "12 votes" 
+        One row
+            "Tag 1"
+            "Tag 2"
+            "Tag 3"
+            "...."
+        One row
+            "Ticket body. This can be a big space text containing a user query that the user expects to be clarified by the support team. Below this section is the comment section which the students and support team may use for further clarifications."
+            
+        One row
+            Link to "Accepted Resolve - The accepted answer from the support team will show here as a resolve for the ticket. "
+
+    
+
+    Block: Comments          
+        // One row
+        Header "Comments"
+        List of comments
+        consists of        
+                "Comment- can be a long comment body "            
+                "user details - date" 
+                "Mark as answer"       
+    
+Block: Post Comment   
+    One Row
+    Header "Post Comment"
+    One Row
+    Input "Comment body"
+    One Row
+    Button "Post"

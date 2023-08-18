@@ -1,0 +1,19 @@
+Widescreen Page: Register page
+Block: Navigation
+    One row
+    Image "Smart Support"
+
+
+Blocks aligned in two columns
+    
+Block: Register
+    Header Register
+    Input "full name"
+    Input e-mail
+    Input password
+    Input "re-enter password"
+    Button "Register"       
+    "Already a member? Login"
+
+
+

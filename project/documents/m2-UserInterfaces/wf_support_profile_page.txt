@@ -1,0 +1,54 @@
+Widescreen Page: Profile Page - Support
+Block: Navigation
+    One row
+    Image "Smart Support"   
+    Link to Home
+    Link to Profile
+    Link to "All tickets"
+    Link to Search
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+Block: Ticket and Comment  
+    Blocks aligned in two columns
+
+    Block: Ticket   
+        Two row
+        Header "Profile"   
+
+         
+        
+        One row
+            "Name:"
+            "Uday"
+            "(Edit)"
+            
+        One row
+            "email:"
+            "uday@mail.com" 
+
+        One row
+            "# of tickets resolved:"
+            "15"     
+
+        One row
+            "# of open tickets:"
+            "6" 
+
+    
+    Block: Profile Pic
+        ""
+        ""
+        ""
+        Image "-----"  
+        Image "Profile Pic "  
+        Image "-----"  
+        "(Add/Change)"
+   
+    
+
+   
+       
+    
+

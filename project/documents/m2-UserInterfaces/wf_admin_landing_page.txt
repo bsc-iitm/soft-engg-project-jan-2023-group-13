@@ -1,0 +1,99 @@
+Widescreen Page: Landing page - Admin
+Block: Navigation
+    One row
+    Image "Smart Support"   
+    Link to Home
+    Link to Profile    
+    Link to "All Tickets"
+    Link to Search
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+
+Block: OpenTickets   
+    One row
+    Header "Open Tickets" 
+        One row
+            "Subject" 
+            "" 
+            "" 
+            ""             
+            "Votes"
+            "" 
+            "Date"
+            "" 
+            "" 
+            "" 
+            "Action"
+            
+        One row
+            "Ticket 1 subject"
+            "16"
+            "" 
+            "2023/02/01"
+            "Respond / Assign"
+        One row
+            "Ticket 2 subject"
+            "10"
+            "" 
+            "2023/02/01"
+             "Respond / Assign"
+        One row
+            "Ticket 3 subject"
+            "09"
+            "" 
+            "2023/02/01"
+             "Respond / Assign"
+        One row
+            "Ticket 4 subject"
+            "06"
+            "" 
+            "2023/02/01"
+             "Respond / Assign" 
+
+    
+Block: ResolvedTickets   
+    One row
+    Header "Resolved Tickets"   
+        One row
+            "Subject" 
+            "Votes"
+            "Date"
+            ""
+            ""
+            ""
+           
+            "Resolved on"
+            "Action"
+            
+        One row
+            "Ticket 1 "
+            "16"
+            "" 
+            "2023/02/01"
+            "2023/02/01" 
+            "Add to FAQ"
+        One row
+            "Ticket 2 " 
+            "10"
+            "" 
+            "2023/02/01"
+            "2023/02/01"  
+            "Add to FAQ"
+        One row
+            "Ticket 3 "
+            "09"
+            "" 
+            "2023/02/01"
+            "2023/02/01" 
+            "Add to FAQ" 
+        One row
+            "Ticket 4 "
+            "06"
+            "" 
+            "2023/02/01"
+            "2023/02/01"
+            "Add to FAQ"  
+    
+

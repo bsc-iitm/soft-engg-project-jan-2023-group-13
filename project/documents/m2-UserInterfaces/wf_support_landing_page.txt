@@ -1,0 +1,97 @@
+Widescreen Page: Landing page - Support Team
+Block: Navigation
+    One row
+    Image "Smart Support"   
+    Link to Home
+    Link to Profile    
+    Link to "All Tickets"
+    Link to Search
+    Link to Logout
+    
+   
+Blocks aligned in two columns
+
+Block: OpenTickets   
+    One row
+    Header "Open Tickets" 
+        One row
+            "Subject" 
+            "" 
+            "" 
+            ""             
+            "Votes"
+            "" 
+            "Date"
+            "" 
+            "" 
+            "" 
+            "Action"
+            
+        One row
+            "Ticket 1 subject"
+            "16"
+            "" 
+            "2023/02/01"
+            "Respond"
+        One row
+            "Ticket 2 subject"
+            "10"
+            "" 
+            "2023/02/01"
+             "Respond"
+        One row
+            "Ticket 3 subject"
+            "09"
+            "" 
+            "2023/02/01"
+             "Respond"
+        One row
+            "Ticket 4 subject"
+            "06"
+            "" 
+            "2023/02/01"
+             "Respond" 
+
+    
+Block: ResolvedTickets   
+    One row
+    Header "Resolved Tickets"   
+        One row
+            "Subject" 
+            "" 
+            "" 
+            ""             
+            "Votes"
+            "Date"
+            ""
+            ""
+            ""
+            ""
+            "Resolved on"
+            
+        One row
+            "Ticket 1 subject"
+            "16"
+            "" 
+            "2023/02/01"
+            "2023/02/01" 
+        One row
+            "Ticket 2 subject" 
+            "10"
+            "" 
+            "2023/02/01"
+            "2023/02/01"  
+        One row
+            "Ticket 3 subject"
+            "09"
+            "" 
+            "2023/02/01"
+            "2023/02/01"  
+        One row
+            "Ticket 4 subject"
+            "06"
+            "" 
+            "2023/02/01"
+            "2023/02/01"  
+    
+
